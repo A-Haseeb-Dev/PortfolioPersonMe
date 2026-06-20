@@ -1,0 +1,57 @@
+import { db } from "@/lib/db"
+import { apiResponse, apiError } from "@/lib/api"
+import { getAdminTestimonials } from "@/lib/admin-data"
+import { requireRole } from "@/lib/api-utils"
+import { getCollection, addToCollection } from "@/lib/data-store"
+
+export async function GET() {
+  try {
+    const testimonials = await db.testimonial.findMany({
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+    })
+
+    return apiResponse({ testimonials })
+  } catch (prismaError) {
+    console.warn("[TESTIMONIALS_GET] DB unavailable, using data store", prismaError)
+    const data = getCollection("testimonials", getAdminTestimonials())
+    return apiResponse({ data, total: data.length, fallback: true })
+  }
+}
+
+export async function POST(request: Request) {
+  await requireRole(["ADMIN", "SUPER_ADMIN"])
+  const body = await request.json()
+  const { name, title, company, avatar, content, rating, featured, order } = body
+
+  try {
+
+    if (!name || typeof name !== "string") {
+      return apiError("Name is required", 400)
+    }
+
+    if (!content || typeof content !== "string") {
+      return apiError("Content is required", 400)
+    }
+
+    const testimonial = await db.testimonial.create({
+      data: {
+        name,
+        title: title || null,
+        company: company || null,
+        avatar: avatar || null,
+        content,
+        rating: typeof rating === "number" ? rating : 5,
+        featured: typeof featured === "boolean" ? featured : false,
+        order: typeof order === "number" ? order : 0,
+      },
+    })
+
+    return apiResponse({ testimonial }, 201)
+  } catch (prismaError) {
+    console.warn("[TESTIMONIALS_POST] DB unavailable, using data store", prismaError)
+    const fallback = getAdminTestimonials()
+    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
+    const data = addToCollection("testimonials", newItem, fallback)
+    return apiResponse({ data, item: newItem }, 201)
+  }
+}

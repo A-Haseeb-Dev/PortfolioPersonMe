@@ -1,0 +1,192 @@
+[
+  {
+    "id": "1",
+    "title": "Building Scalable Web Applications with Next.js",
+    "slug": "building-scalable-web-apps-nextjs",
+    "coverImage": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=800&fit=crop",
+    "excerpt": "A deep dive into architecture patterns, optimization techniques, and best practices for building production-ready Next.js applications that scale.",
+    "content": "## Introduction\n\nBuilding web applications that scale is both an art and a science. As your user base grows, the architecture decisions you make early on can either enable rapid growth or become a bottleneck that slows your entire team down.\n\nNext.js has emerged as the leading React framework for production applications, offering a powerful hybrid rendering model that combines the best of server-side rendering (SSR), static site generation (SSG), and incremental static regeneration (ISR).\n\n## Architecture Patterns\n\n### The App Router\n\nNext.js 13+ introduced the App Router, a fundamental shift in how we structure Next.js applications. The App Router is built on React Server Components (RSC), allowing components to run on the server by default.\n\n```typescript\n// app/layout.tsx\nexport default function RootLayout({\n  children,\n}: {\n  children: React.ReactNode\n}) {\n  return (\n    <html lang=\"en\">\n      <body>{children}</body>\n    </html>\n  )\n}\n```\n\n### Route Groups and Layouts\n\nRoute groups allow you to organize routes without affecting the URL structure:\n\n```typescript\n// app/(marketing)/layout.tsx\nexport default function MarketingLayout({\n  children,\n}: {\n  children: React.ReactNode\n}) {\n  return (\n    <div className=\"min-h-screen\">\n      <MarketingHeader />\n      {children}\n      <MarketingFooter />\n    </div>\n  )\n}\n```\n\n## Performance Optimization\n\n### Image Optimization\n\nNext.js provides automatic image optimization through the `next/image` component:\n\n```typescript\nimport Image from \"next/image\"\n\nexport default function Hero() {\n  return (\n    <Image\n      src=\"/hero.webp\"\n      alt=\"Hero\"\n      width={1200}\n      height={600}\n      priority\n      className=\"rounded-2xl\"\n    />\n  )\n}\n```\n\n### Caching Strategies\n\nImplementing effective caching strategies is crucial for performance:\n\n- **Static Rendering**: Pre-render pages at build time for instant loads\n- **Incremental Static Regeneration**: Update static pages without rebuilding\n- **On-Demand Revalidation**: Revalidate pages when data changes\n\n```typescript\n// app/posts/page.tsx\nexport const revalidate = 3600 // revalidate every hour\n\nasync function getPosts() {\n  const res = await fetch(\"https://api.example.com/posts\")\n  return res.json()\n}\n```\n\n## Data Fetching Patterns\n\n### Server Components\n\nWith React Server Components, you can fetch data directly in your components:\n\n```typescript\nasync function PostList() {\n  const posts = await db.post.findMany({\n    orderBy: { createdAt: \"desc\" },\n    take: 10,\n  })\n\n  return (\n    <div className=\"grid gap-6\">\n      {posts.map((post) => (\n        <PostCard key={post.id} post={post} />\n      ))}\n    </div>\n  )\n}\n```\n\n### Streaming and Suspense\n\nUse streaming to improve perceived performance:\n\n```typescript\nimport { Suspense } from \"react\"\n\nexport default function DashboardPage() {\n  return (\n    <div>\n      <h1>Dashboard</h1>\n      <Suspense fallback={<Skeleton />}>\n        <SlowComponent />\n      </Suspense>\n    </div>\n  )\n}\n```\n\n## Conclusion\n\nBuilding scalable web applications with Next.js requires thoughtful architecture, performance optimization, and a solid data fetching strategy. By leveraging the App Router, React Server Components, and the built-in optimization features, you can build applications that handle millions of users without breaking a sweat.\n\nThe key takeaways are:\n- Use the App Router for better performance and developer experience\n- Implement caching strategies appropriate for your data\n- Leverage streaming for improved perceived performance\n- Optimize images and fonts for faster loading",
+    "category": "Next.js",
+    "tags": [
+      "Next.js",
+      "React",
+      "Performance",
+      "Architecture",
+      "Web Development"
+    ],
+    "readingTime": "8 min read",
+    "date": "Mar 15, 2026",
+    "featured": true,
+    "author": {
+      "name": "Abdul Haseeb",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      "role": "Full-Stack Developer"
+    }
+  },
+  {
+    "id": "2",
+    "title": "The Future of TypeScript: What's New in 2026",
+    "slug": "future-of-typescript-2026",
+    "coverImage": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=1200&h=800&fit=crop",
+    "excerpt": "Exploring the latest TypeScript features, type system improvements, and how they're shaping the modern development landscape.",
+    "content": "## Introduction\n\nTypeScript continues to evolve at a rapid pace. The 2026 release brings several groundbreaking features that enhance developer productivity and type safety.\n\n## Key Features\n\n### Decorators\n\nThe native decorator implementation is now stable:\n\n```typescript\nfunction log(target: any, context: ClassMethodDecoratorContext) {\n  const methodName = String(context.name)\n\n  function replacementMethod(this: any, ...args: any[]) {\n    console.log(`Calling ${methodName} with`, args)\n    const result = target.call(this, ...args)\n    console.log(`${methodName} returned`, result)\n    return result\n  }\n\n  return replacementMethod\n}\n\nclass Calculator {\n  @log\n  add(a: number, b: number) {\n    return a + b\n  }\n}\n```\n\n### Const Type Parameters\n\nType parameter inference with `const` modifier:\n\n```typescript\nfunction getConfig<const T extends readonly string[]>(items: T): T {\n  return items\n}\n\n// Type is inferred as readonly [\"admin\", \"user\", \"guest\"]\nconst roles = getConfig([\"admin\", \"user\", \"guest\"])\n```\n\n### Improved Type Narrowing\n\nBetter control flow analysis for discriminated unions:\n\n```typescript\ntype Shape =\n  | { kind: \"circle\"; radius: number }\n  | { kind: \"rectangle\"; width: number; height: number }\n  | { kind: \"triangle\"; base: number; height: number }\n\nfunction area(shape: Shape) {\n  if (shape.kind === \"circle\") {\n    return Math.PI * shape.radius ** 2\n  }\n  if (shape.kind === \"rectangle\") {\n    return shape.width * shape.height\n  }\n  return (shape.base * shape.height) / 2\n}\n```\n\n## Best Practices\n\n### Use Strict Mode\n\nAlways enable strict mode in your `tsconfig.json`:\n\n```json\n{\n  \"compilerOptions\": {\n    \"strict\": true,\n    \"noUncheckedIndexedAccess\": true,\n    \"exactOptionalPropertyTypes\": true\n  }\n}\n```\n\n### Prefer Interfaces Over Types\n\nInterfaces are more extensible and produce better error messages:\n\n```typescript\n// Prefer this\ninterface User {\n  id: string\n  name: string\n  email: string\n}\n\n// Over this\ntype User = {\n  id: string\n  name: string\n  email: string\n}\n```\n\n## Conclusion\n\nTypeScript in 2026 is more powerful than ever. The new features focus on making type-safe code easier to write and maintain, while the tooling improvements make the developer experience even smoother.",
+    "category": "JavaScript",
+    "tags": [
+      "TypeScript",
+      "JavaScript",
+      "Programming",
+      "Web Development"
+    ],
+    "readingTime": "6 min read",
+    "date": "Feb 28, 2026",
+    "featured": false,
+    "author": {
+      "name": "Abdul Haseeb",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      "role": "Full-Stack Developer"
+    }
+  },
+  {
+    "id": "3",
+    "title": "AI-Powered Development: Tools and Workflows in 2026",
+    "slug": "ai-powered-development",
+    "coverImage": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=800&fit=crop",
+    "excerpt": "How AI is transforming software development workflows, from code generation to automated testing and deployment.",
+    "content": "## Introduction\n\nArtificial intelligence is fundamentally changing how we write software. In 2026, AI-powered development tools have become an essential part of every developer's toolkit.\n\n## AI Code Assistants\n\n### Cursor and VS Code Integration\n\nModern AI assistants can understand entire codebases:\n\n```typescript\n// AI can generate entire functions from comments\n// It understands your codebase context, style, and conventions\n\n/** Fetches user data with caching and error handling */\nasync function fetchUserData(userId: string): Promise<User> {\n  const cacheKey = `user:${userId}`\n  const cached = await redis.get(cacheKey)\n  if (cached) return JSON.parse(cached)\n\n  const user = await db.user.findUnique({ where: { id: userId } })\n  if (!user) throw new NotFoundError(\"User not found\")\n\n  await redis.setex(cacheKey, 300, JSON.stringify(user))\n  return user\n}\n```\n\n### Automated Testing\n\nAI can generate comprehensive test suites:\n\n```typescript\ndescribe(\"UserService\", () => {\n  it(\"should create a new user\", async () => {\n    const user = await UserService.create({\n      name: \"John Doe\",\n      email: \"john@example.com\",\n    })\n    expect(user).toBeDefined()\n    expect(user.name).toBe(\"John Doe\")\n  })\n\n  it(\"should throw on duplicate email\", async () => {\n    await UserService.create({\n      name: \"Jane Doe\",\n      email: \"jane@example.com\",\n    })\n    await expect(\n      UserService.create({ name: \"Jane Doe\", email: \"jane@example.com\" })\n    ).rejects.toThrow(DuplicateEmailError)\n  })\n})\n```\n\n## AI-Powered Code Review\n\nAutomated code reviews catch issues before they reach production:\n\n```typescript\n// AI review catches this potential issue\nfunction processPayment(amount: number, currency: string) {\n  // WARNING: Missing input validation\n  // WARNING: No currency conversion handling\n  // SUGGESTION: Add rate limiting\n  return paymentGateway.charge(amount, currency)\n}\n```\n\n## Workflow Automation\n\n### CI/CD with AI\n\nAI can optimize your build pipeline:\n\n```yaml\nname: CI\non: [push, pull_request]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n      - run: npm ci\n      - run: npm run lint\n      - run: npm test\n      - run: npm run build\n```\n\n## The Human Element\n\nDespite all the AI advancement, human developers remain crucial for:\n- **Architecture decisions** — AI can suggest but humans design\n- **Product intuition** — Understanding user needs\n- **Code review judgment** — AI misses business context\n- **Creative problem-solving** — Novel solutions require human creativity\n\n## Conclusion\n\nAI is not replacing developers — it's making us more productive than ever. Embrace these tools while focusing on the uniquely human aspects of software engineering.",
+    "category": "AI",
+    "tags": [
+      "AI",
+      "Development",
+      "Tools",
+      "Productivity",
+      "Future"
+    ],
+    "readingTime": "10 min read",
+    "date": "Feb 10, 2026",
+    "featured": false,
+    "author": {
+      "name": "Abdul Haseeb",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      "role": "Full-Stack Developer"
+    }
+  },
+  {
+    "id": "4",
+    "title": "Mastering React Server Components: A Practical Guide",
+    "slug": "mastering-react-server-components",
+    "coverImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&h=800&fit=crop",
+    "excerpt": "Learn how to leverage React Server Components to build faster, more efficient applications with less client-side JavaScript.",
+    "content": "## Introduction\n\nReact Server Components (RSC) represent a paradigm shift in how we think about React applications. By running components on the server, we can reduce bundle size, improve performance, and simplify data fetching.\n\n## Understanding Server vs Client Components\n\n### Server Components (Default)\n\n```typescript\n// This is a Server Component by default\n// It can use async/await directly\nasync function ProductList() {\n  const products = await db.product.findMany()\n\n  return (\n    <div className=\"grid gap-4\">\n      {products.map((product) => (\n        <ProductCard key={product.id} product={product} />\n      ))}\n    </div>\n  )\n}\n```\n\n### Client Components\n\n```typescript\n\"use client\"\n\nimport { useState } from \"react\"\n\nexport function AddToCart({ productId }: { productId: string }) {\n  const [added, setAdded] = useState(false)\n\n  return (\n    <button\n      onClick={() => {\n        setAdded(true)\n        addToCart(productId)\n      }}\n      className=\"rounded-lg bg-zinc-900 px-4 py-2 text-white\"\n    >\n      {added ? \"Added!\" : \"Add to Cart\"}\n    </button>\n  )\n}\n```\n\n## Composition Patterns\n\n### Passing Client Components to Server Components\n\n```typescript\n// Server Component\nasync function ProductPage({ id }: { id: string }) {\n  const product = await db.product.findUnique({ where: { id } })\n\n  return (\n    <div>\n      <h1>{product.name}</h1>\n      <p>{product.description}</p>\n      {/* Client component passed as a prop */}\n      <AddToCart productId={product.id} />\n    </div>\n  )\n}\n```\n\n## Data Fetching\n\n### Parallel Data Fetching\n\n```typescript\nasync function Dashboard() {\n  // Fetch in parallel\n  const [user, posts, analytics] = await Promise.all([\n    getUser(),\n    getPosts(),\n    getAnalytics(),\n  ])\n\n  return (\n    <div>\n      <UserProfile user={user} />\n      <PostList posts={posts} />\n      <AnalyticsChart data={analytics} />\n    </div>\n  )\n}\n```\n\n## Performance Benefits\n\nServer Components eliminate the need to send JavaScript to the client for purely presentational components. This means:\n\n- **Smaller bundle sizes** — Only interactive components send JS\n- **Faster page loads** — HTML is streamed from the server\n- **Better SEO** — Content is immediately available\n- **Reduced client processing** — Less work for the browser\n\n## Conclusion\n\nReact Server Components are not just a performance optimization — they're a better mental model for building web applications. By defaulting to the server, you naturally build faster, more efficient apps.",
+    "category": "React",
+    "tags": [
+      "React",
+      "Server Components",
+      "Performance",
+      "Next.js"
+    ],
+    "readingTime": "7 min read",
+    "date": "Jan 25, 2026",
+    "featured": true,
+    "author": {
+      "name": "Abdul Haseeb",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      "role": "Full-Stack Developer"
+    }
+  },
+  {
+    "id": "5",
+    "title": "Building Cross-Platform Apps with Flutter: Lessons Learned",
+    "slug": "cross-platform-flutter-lessons",
+    "coverImage": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&h=800&fit=crop",
+    "excerpt": "Key insights and lessons from building production Flutter applications for iOS, Android, and the web.",
+    "content": "## Introduction\n\nFlutter has matured into a powerful framework for building cross-platform applications. After shipping multiple production apps, here are the most valuable lessons I've learned.\n\n## State Management\n\n### Riverpod: The Modern Approach\n\n```dart\nfinal userRepository = Provider<UserRepository>((ref) {\n  return UserRepository();\n});\n\nfinal currentUser = FutureProvider<User>((ref) {\n  final repository = ref.watch(userRepository);\n  return repository.fetchCurrentUser();\n});\n\nclass UserProfile extends ConsumerWidget {\n  @override\n  Widget build(BuildContext context, WidgetRef ref) {\n    final userAsync = ref.watch(currentUser);\n\n    return userAsync.when(\n      loading: () => const CircularProgressIndicator(),\n      error: (err, stack) => Text('Error: $err'),\n      data: (user) => Text('Hello, ${user.name}!'),\n    );\n  }\n}\n```\n\n## Platform-Specific Code\n\n### Using Platform Channels\n\n```dart\nimport 'package:flutter/services.dart';\n\nclass BatteryLevel {\n  static const platform = MethodChannel('samples.flutter.dev/battery');\n\n  static Future<int> getBatteryLevel() async {\n    try {\n      final result = await platform.invokeMethod('getBatteryLevel');\n      return result as int;\n    } on PlatformException catch (e) {\n      throw Exception(\"Failed to get battery level: ${e.message}\");\n    }\n  }\n}\n```\n\n## Performance Optimization\n\n### Image Caching\n\n```dart\nCachedNetworkImage(\n  imageUrl: \"https://example.com/image.jpg\",\n  placeholder: (context, url) => const CircularProgressIndicator(),\n  errorWidget: (context, url, error) => const Icon(Icons.error),\n  fadeInDuration: const Duration(milliseconds: 300),\n)\n```\n\n## Testing\n\n### Widget Testing\n\n```dart\nvoid main() {\n  testWidgets('Login form validates email', (tester) async {\n    await tester.pumpWidget(const MaterialApp(home: LoginPage()));\n\n    await tester.enterText(\n      find.byKey(const Key('email-field')),\n      'invalid-email',\n    );\n\n    await tester.tap(find.byKey(const Key('submit-button')));\n    await tester.pump();\n\n    expect(find.text('Please enter a valid email'), findsOneWidget);\n  });\n}\n```\n\n## Key Takeaways\n\n1. **Choose state management early** — Riverpod or Bloc are great choices\n2. **Test on real devices** — Simulators miss platform-specific issues\n3. **Optimize images** — Use cached_network_image for production\n4. **Handle platform differences** — Use Platform.isIOS or Platform.isAndroid\n5. **Monitor performance** — Use the DevTools profiler regularly\n\n## Conclusion\n\nFlutter is an excellent choice for cross-platform development when you need pixel-perfect UIs and native performance. The ecosystem has matured significantly, and the developer experience is world-class.",
+    "category": "Flutter",
+    "tags": [
+      "Flutter",
+      "Cross-Platform",
+      "Mobile",
+      "Dart",
+      "Development"
+    ],
+    "readingTime": "9 min read",
+    "date": "Jan 12, 2026",
+    "featured": false,
+    "author": {
+      "name": "Abdul Haseeb",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      "role": "Full-Stack Developer"
+    }
+  },
+  {
+    "id": "6",
+    "title": "From Junior to Senior: A Developer's Career Roadmap",
+    "slug": "junior-to-senior-developer-roadmap",
+    "coverImage": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=800&fit=crop",
+    "excerpt": "A practical guide to advancing your software engineering career, from mastering technical skills to building leadership capabilities.",
+    "content": "## Introduction\n\nThe journey from junior to senior developer is not just about writing better code. It's about developing a holistic set of skills that span technical expertise, communication, leadership, and business acumen.\n\n## Technical Skills\n\n### Master Your Stack\n\nDeep knowledge of your primary stack is non-negotiable. But being a senior means understanding the WHY, not just the HOW:\n\n```typescript\n// Junior mindset: \"This works\"\nfunction fetchData() {\n  return fetch(\"/api/data\").then((r) => r.json())\n}\n\n// Senior mindset: \"This works reliably and efficiently\"\nasync function fetchData<T>(url: string): Promise<T> {\n  const response = await fetch(url, {\n    next: { revalidate: 60 },\n    headers: { \"Content-Type\": \"application/json\" },\n  })\n\n  if (!response.ok) {\n    throw new ApiError(\n      `API request failed: ${response.statusText}`,\n      response.status\n    )\n  }\n\n  return response.json()\n}\n```\n\n## System Design\n\nSeniors think in systems, not just features:\n\n- **Scalability** — How will this handle 10x growth?\n- **Reliability** — What happens when things fail?\n- **Maintainability** — Can another team understand this in 6 months?\n- **Observability** — How do we know it's working in production?\n\n## Soft Skills\n\n### Communication\n\nClear communication is the most underrated engineering skill:\n\n```typescript\n// Instead of:\n// \"The API is slow\"\n// Say:\n// \"The /users endpoint currently responds in 2.3s (p95).\n//  We should add database indexing and implement Redis caching\n//  to bring this under 200ms. Estimated effort: 2 days.\"\n```\n\n### Code Review Mindset\n\n| Junior Review | Senior Review |\n|--------------|---------------|\n| \"This works\" | \"Is this testable?\" |\n| \"LGTM\" | \"What's the error budget?\" |\n| No comments | Constructive feedback |\n| Focuses on style | Focuses on correctness |\n\n## Career Growth Strategies\n\n### 1. Build Things End-to-End\n\nDon't just own the frontend or backend. Build complete features that touch every layer.\n\n### 2. Write Things Down\n\nDocument architecture decisions, post-mortems, and design docs. Writing clarifies thinking.\n\n### 3. Mentor Others\n\nTeaching is the best way to learn. Start by pair programming with juniors.\n\n### 4. Say No Strategically\n\nSeniors know when to say no to features, meetings, and scope creep — and how to do it constructively.\n\n## Conclusion\n\nThe path from junior to senior is not a straight line. It's a spiral where you revisit the same concepts at increasing levels of depth and abstraction. Focus on building systems that work, mentoring those around you, and continuously expanding your understanding of the craft.",
+    "category": "Career",
+    "tags": [
+      "Career",
+      "Growth",
+      "Mentorship",
+      "Software Engineering",
+      "Leadership"
+    ],
+    "readingTime": "11 min read",
+    "date": "Dec 28, 2025",
+    "featured": false,
+    "author": {
+      "name": "Abdul Haseeb",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      "role": "Full-Stack Developer"
+    }
+  },
+  {
+    "id": "7",
+    "title": "Complete Guide to Modern CSS in 2026",
+    "slug": "modern-css-guide-2026",
+    "coverImage": "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=1200&h=800&fit=crop",
+    "excerpt": "From Container Queries to CSS Nesting, explore the modern CSS features that are changing how we style the web.",
+    "content": "## Introduction\n\nCSS in 2026 is more powerful than ever. Modern CSS features are reducing our reliance on preprocessors and JavaScript-based styling solutions.\n\n## Container Queries\n\nThe most requested CSS feature is finally here:\n\n```css\n.card-container {\n  container-type: inline-size;\n  container-name: card;\n}\n\n@container card (min-width: 400px) {\n  .card {\n    display: grid;\n    grid-template-columns: 200px 1fr;\n    gap: 1rem;\n  }\n}\n\n@container card (max-width: 399px) {\n  .card {\n    display: flex;\n    flex-direction: column;\n  }\n}\n```\n\n## CSS Nesting\n\nNo more preprocessor requirement for clean nesting:\n\n```css\n.card {\n  background: white;\n  border-radius: 12px;\n  padding: 1.5rem;\n\n  & .title {\n    font-size: 1.25rem;\n    font-weight: 600;\n  }\n\n  & .description {\n    color: #666;\n    line-height: 1.5;\n  }\n\n  &:hover {\n    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);\n    transform: translateY(-2px);\n  }\n}\n```\n\n## The :has() Selector\n\nThe \"parent selector\" changes everything:\n\n```css\n/* Style a card differently when it contains an image */\n.card:has(img) {\n  grid-column: span 2;\n}\n\n/* Style a form group when input is invalid */\n.form-group:has(input:invalid) {\n  & .error-message {\n    display: block;\n  }\n}\n\n/* Style a nav item when it's active */\n.nav-item:has(a[aria-current=\"page\"]) {\n  background: var(--accent);\n}\n```\n\n## Scroll-Driven Animations\n\n```css\n@keyframes fade-in {\n  from { opacity: 0; transform: translateY(20px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n.animate-on-scroll {\n  animation: fade-in linear;\n  animation-timeline: view();\n  animation-range: entry 0% entry 100%;\n}\n```\n\n## Color Spaces\n\nModern color functions provide more vibrant options:\n\n```css\n:root {\n  --primary: oklch(0.5 0.2 240);\n  --accent: color(display-p3 1 0.5 0);\n  --gradient: linear-gradient(\n    in oklch,\n    oklch(0.6 0.3 20),\n    oklch(0.4 0.2 280)\n  );\n}\n```\n\n## Conclusion\n\nModern CSS has transformed from a styling language to a design tool that rivals any framework. The best part? It's all native — no build step required.",
+    "category": "Development",
+    "tags": [
+      "CSS",
+      "Web Development",
+      "Design",
+      "Frontend"
+    ],
+    "readingTime": "7 min read",
+    "date": "Dec 15, 2025",
+    "featured": false,
+    "author": {
+      "name": "Abdul Haseeb",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      "role": "Full-Stack Developer"
+    }
+  },
+  {
+    "id": "8",
+    "title": "Building a Full-Stack SaaS with Next.js and Stripe",
+    "slug": "building-saas-nextjs-stripe",
+    "coverImage": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=800&fit=crop",
+    "excerpt": "A step-by-step guide to building and launching a SaaS product with Next.js, Stripe, authentication, and a PostgreSQL database.",
+    "content": "## Introduction\n\nLaunching a SaaS product is easier than ever with modern tools. In this guide, I'll walk through building a complete SaaS application using Next.js, Stripe for payments, and PostgreSQL for data.\n\n## Project Setup\n\n### Initial Configuration\n\n```typescript\n// next.config.ts\nimport type { NextConfig } from \"next\"\n\nconst nextConfig: NextConfig = {\n  images: {\n    domains: [\"images.unsplash.com\"],\n  },\n}\n\nexport default nextConfig\n```\n\n## Authentication\n\n### Using NextAuth.js\n\n```typescript\nimport NextAuth from \"next-auth\"\nimport GitHub from \"next-auth/providers/github\"\nimport Google from \"next-auth/providers/google\"\nimport { PrismaAdapter } from \"@auth/prisma-adapter\"\nimport { db } from \"@/lib/db\"\n\nexport const { handlers, signIn, signOut, auth } = NextAuth({\n  adapter: PrismaAdapter(db),\n  providers: [GitHub, Google],\n  callbacks: {\n    session({ session, user }) {\n      session.user.id = user.id\n      session.user.role = user.role\n      return session\n    },\n  },\n})\n```\n\n## Subscription Management\n\n### Stripe Integration\n\n```typescript\nimport Stripe from \"stripe\"\n\nexport const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {\n  typescript: true,\n})\n\nexport async function createCheckoutSession(\n  userId: string,\n  priceId: string\n) {\n  const session = await stripe.checkout.sessions.create({\n    mode: \"subscription\",\n    payment_method_types: [\"card\"],\n    line_items: [{ price: priceId, quantity: 1 }],\n    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,\n    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,\n    metadata: { userId },\n  })\n\n  return session\n}\n```\n\n### Webhook Handler\n\n```typescript\nimport { NextResponse } from \"next/server\"\nimport { headers } from \"next/headers\"\nimport { stripe } from \"@/lib/stripe\"\nimport { db } from \"@/lib/db\"\n\nexport async function POST(req: Request) {\n  const body = await req.text()\n  const signature = (await headers()).get(\"stripe-signature\")!\n\n  let event: Stripe.Event\n  try {\n    event = stripe.webhooks.constructEvent(\n      body,\n      signature,\n      process.env.STRIPE_WEBHOOK_SECRET!\n    )\n  } catch {\n    return NextResponse.json({ error: \"Invalid signature\" }, { status: 400 })\n  }\n\n  switch (event.type) {\n    case \"checkout.session.completed\": {\n      const session = event.data.object\n      await db.user.update({\n        where: { id: session.metadata?.userId },\n        data: {\n          subscriptionId: session.subscription as string,\n          status: \"active\",\n        },\n      })\n      break\n    }\n  }\n\n  return NextResponse.json({ received: true })\n}\n```\n\n## Database Schema\n\n```prisma\nmodel User {\n  id             String    @id @default(cuid())\n  name           String?\n  email          String?   @unique\n  subscriptionId String?\n  status         String    @default(\"inactive\")\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n}\n```\n\n## Deployment\n\n```bash\n# Deploy to Vercel\nvercel --prod\n\n# Run database migrations\nnpx prisma migrate deploy\n\n# Set environment variables\nvercel env add STRIPE_SECRET_KEY\nvercel env add DATABASE_URL\nvercel env add NEXTAUTH_SECRET\n```\n\n## Conclusion\n\nBuilding a SaaS with Next.js and Stripe is incredibly straightforward. The combination of Next.js for the frontend and API routes, Prisma for the database layer, and Stripe for payments gives you everything you need to launch a production-ready product.",
+    "category": "Tutorial",
+    "tags": [
+      "Next.js",
+      "Stripe",
+      "SaaS",
+      "Full-Stack",
+      "Tutorial",
+      "Prisma"
+    ],
+    "readingTime": "12 min read",
+    "date": "Nov 20, 2025",
+    "featured": true,
+    "author": {
+      "name": "Abdul Haseeb",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      "role": "Full-Stack Developer"
+    }
+  }
+]

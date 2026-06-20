@@ -1,0 +1,114 @@
+import { db } from "@/lib/db"
+import { apiResponse, apiError } from "@/lib/api"
+import { requireRole } from "@/lib/api-utils"
+import { slugify } from "@/lib/utils"
+import { getAdminStartupIdeas } from "@/lib/admin-data"
+import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
+
+const statusMap: Record<string, "IDEA" | "VALIDATING" | "BUILDING" | "LAUNCHED" | "FAILED"> = {
+  idea: "IDEA",
+  validating: "VALIDATING",
+  "in-progress": "BUILDING",
+  launched: "LAUNCHED",
+  pivoted: "FAILED",
+  failed: "FAILED",
+}
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params
+  try {
+    const startupIdea = await db.startupIdea.findFirst({
+      where: { id, deletedAt: null },
+    })
+
+    if (!startupIdea) {
+      return apiError("Startup idea not found", 404)
+    }
+
+    return apiResponse({ startupIdea })
+  } catch (error) {
+    console.warn("[STARTUP_IDEA_GET] DB unavailable, using data store", error)
+    const data = getCollection("startup-ideas", getAdminStartupIdeas())
+    const item = data.find((i: any) => i.id === id)
+    if (!item) return apiError("Not found", 404)
+    return apiResponse({ startupIdea: item })
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  await requireRole(["ADMIN", "SUPER_ADMIN"])
+  const { id } = await params
+  const body = await request.json()
+
+  try {
+    const existing = await db.startupIdea.findFirst({
+      where: { id, deletedAt: null },
+    })
+    if (!existing) {
+      return apiError("Startup idea not found", 404)
+    }
+
+    const { title, slug, problem, solution, market, revenueModel, status, published } = body
+
+    const data: Record<string, unknown> = {}
+    if (title !== undefined) {
+      data.title = title
+      data.slug = slug || slugify(title)
+    }
+    if (problem !== undefined) data.problem = problem
+    if (solution !== undefined) data.solution = solution
+    if (market !== undefined) data.market = market
+    if (revenueModel !== undefined) data.revenueModel = revenueModel
+    if (status !== undefined) data.status = statusMap[status] || "IDEA"
+    if (published !== undefined) data.published = published === true
+
+    const startupIdea = await db.startupIdea.update({
+      where: { id },
+      data,
+    })
+
+    return apiResponse({ startupIdea })
+  } catch (error) {
+    console.warn("[STARTUP_IDEA_PUT] DB unavailable, using data store", error)
+    const fallback = getAdminStartupIdeas()
+    const collection = updateInCollection("startup-ideas", id, body, fallback)
+    const item = collection.find((i: any) => i.id === id)
+    if (!item) return apiError("Not found", 404)
+    return apiResponse({ startupIdea: item })
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  await requireRole(["ADMIN", "SUPER_ADMIN"])
+  const { id } = await params
+
+  try {
+    const existing = await db.startupIdea.findFirst({
+      where: { id, deletedAt: null },
+    })
+    if (!existing) {
+      return apiError("Startup idea not found", 404)
+    }
+
+    await db.startupIdea.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    })
+
+    return apiResponse({ message: "Startup idea deleted successfully" })
+  } catch (error) {
+    console.warn("[STARTUP_IDEA_DELETE] DB unavailable, using data store", error)
+    const fallback = getAdminStartupIdeas()
+    removeFromCollection("startup-ideas", id, fallback)
+    return apiResponse({ message: "Startup idea deleted successfully" })
+  }
+}
