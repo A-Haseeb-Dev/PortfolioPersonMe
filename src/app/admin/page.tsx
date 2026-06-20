@@ -48,6 +48,11 @@ interface Activity {
   user: string
 }
 
+interface SparklineDatum {
+  value: number
+  label: string
+}
+
 interface SiteSection {
   label: string
   description: string
@@ -75,6 +80,9 @@ const siteSections: SiteSection[] = [
 export default function AdminDashboard() {
   const [greeting, setGreeting] = useState("Welcome back")
   const [stats, setStats] = useState({ posts: 0, projects: 0, caseStudies: 0, services: 0, skills: 0, learning: 0, achievements: 0, resources: 0, startupIdeas: 0, testimonials: 0, messages: 0, loading: true })
+  const [recentActivity, setRecentActivity] = useState<Activity[]>([])
+  const [pageViews, setPageViews] = useState<SparklineDatum[]>([])
+  const [totalPageViews, setTotalPageViews] = useState(0)
 
   useEffect(() => {
     const hour = new Date().getHours()
@@ -86,7 +94,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function loadStats() {
       const endpoints = ["/api/blog", "/api/projects", "/api/case-studies", "/api/services", "/api/skills", "/api/learning", "/api/achievements", "/api/resources", "/api/startup-ideas", "/api/testimonials", "/api/messages"]
-      const results = await Promise.allSettled(endpoints.map(e => fetchAdminData(e, [])))
+      const results = await Promise.allSettled(endpoints.map(e => fetchAdminData<Record<string, unknown>>(e).catch(() => [])))
       const counts = results.map(r => r.status === "fulfilled" ? r.value.length : 0)
       setStats({
         posts: counts[0],
@@ -102,8 +110,53 @@ export default function AdminDashboard() {
         messages: counts[10],
         loading: false,
       })
+
+      const recentItems: Activity[] = []
+      const entityTypeMap: Array<{ index: number; type: "project" | "blog" | "case-study" | "message" }> = [
+        { index: 1, type: "project" },
+        { index: 0, type: "blog" },
+        { index: 2, type: "case-study" },
+        { index: 10, type: "message" },
+      ]
+      for (const { index, type } of entityTypeMap) {
+        const r = results[index]
+        if (r?.status === "fulfilled" && Array.isArray(r.value)) {
+          for (const item of r.value.slice(0, 3)) {
+            recentItems.push({
+              id: `${type}-${(item as any).id || Math.random()}`,
+              type: type === "message" ? "message" : "create",
+              entity: (item as any).title || (item as any).subject || (item as any).name || "Untitled",
+              entityType: type,
+              timestamp: (item as any).createdAt ? new Date((item as any).createdAt) : new Date(),
+              user: (item as any).name || (item as any).author?.name || "You",
+            })
+          }
+        }
+      }
+      recentItems.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      setRecentActivity(recentItems.slice(0, 5))
     }
     loadStats()
+  }, [])
+
+  useEffect(() => {
+    async function loadAnalytics() {
+      try {
+        const res = await fetch("/api/analytics/data?days=7")
+        if (res.ok) {
+          const data = await res.json()
+          if (data.pageViewsChart?.length) {
+            const chartData: SparklineDatum[] = data.pageViewsChart.map((d: any) => ({
+              value: d.views || 0,
+              label: new Date(d.date).toLocaleDateString("en", { weekday: "short" }),
+            }))
+            setPageViews(chartData)
+            setTotalPageViews(data.totalPageViews || 0)
+          }
+        }
+      } catch {}
+    }
+    loadAnalytics()
   }, [])
 
   const statsData = [
@@ -165,7 +218,7 @@ export default function AdminDashboard() {
               <Link key={section.href} href={section.href}>
                 <GlassCard
                   intensity="light"
-                  className="group p-4 transition-all hover:scale-[1.02]"
+                  className="group p-4 transition-all hover:scale-[1.02] dark:bg-zinc-900/60 dark:border-zinc-800/50"
                 >
                   <div className="flex items-start gap-3">
                     <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", section.bgColor, section.color)}>
@@ -185,7 +238,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <GlassCard intensity="light" className="p-6 lg:col-span-2">
+        <GlassCard intensity="light" className="p-6 lg:col-span-2 dark:bg-zinc-900/60 dark:border-zinc-800/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-muted-foreground" />
@@ -231,24 +284,24 @@ export default function AdminDashboard() {
         </GlassCard>
 
         <div className="space-y-6">
-          <GlassCard intensity="light" className="p-6">
+          <GlassCard intensity="light" className="p-6 dark:bg-zinc-900/60 dark:border-zinc-800/50">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold text-foreground">Page Views</h2>
               <Eye className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className="mt-4 flex items-end justify-between">
               <div>
-                <p className="text-2xl font-bold text-foreground">1,899</p>
+                <p className="text-2xl font-bold text-foreground">{totalPageViews.toLocaleString()}</p>
                 <p className="text-xs text-muted-foreground">This week</p>
               </div>
-              <Sparkline data={pageViewsSparkline} className="text-blue-500" />
+              <Sparkline data={pageViews.length ? pageViews : [{ value: 0, label: "" }]} className="text-blue-500" />
             </div>
             <div className="mt-4 grid grid-cols-7 gap-1">
-              {pageViewsSparkline.map((d) => (
-                <div key={d.label} className="text-center">
+              {(pageViews.length ? pageViews : Array.from({ length: 7 }, (_, i) => ({ value: 0, label: "" }))).map((d) => (
+                <div key={d.label || Math.random()} className="text-center">
                   <div
                     className="mx-auto w-full rounded-sm bg-blue-500/15"
-                    style={{ height: `${(d.value / 401) * 40}px` }}
+                    style={{ height: `${(d.value / Math.max(...pageViews.map((x) => x.value), 1)) * 40}px` }}
                   />
                   <p className="mt-1 text-[10px] text-muted-foreground">{d.label.slice(0, 2)}</p>
                 </div>
@@ -256,7 +309,7 @@ export default function AdminDashboard() {
             </div>
           </GlassCard>
 
-          <GlassCard intensity="light" className="p-6">
+          <GlassCard intensity="light" className="p-6 dark:bg-zinc-900/60 dark:border-zinc-800/50">
             <h2 className="text-base font-semibold text-foreground">Quick Actions</h2>
             <Separator className="my-4" />
             <div className="grid grid-cols-2 gap-3">
@@ -282,24 +335,6 @@ export default function AdminDashboard() {
     </motion.div>
   )
 }
-
-const recentActivity: Activity[] = [
-  { id: "1", type: "create", entity: "AI-Powered Analytics Dashboard", entityType: "project", timestamp: new Date(Date.now() - 1000 * 60 * 15), user: "Abdul Haseeb" },
-  { id: "2", type: "update", entity: "Getting Started with Next.js", entityType: "blog", timestamp: new Date(Date.now() - 1000 * 60 * 45), user: "Abdul Haseeb" },
-  { id: "3", type: "message", entity: "Project Inquiry from Ahmed", entityType: "message", timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), user: "Ahmed Khan" },
-  { id: "4", type: "create", entity: "E-Commerce Platform Redesign", entityType: "case-study", timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), user: "Abdul Haseeb" },
-  { id: "5", type: "delete", entity: "Old Portfolio Draft", entityType: "project", timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), user: "Abdul Haseeb" },
-]
-
-const pageViewsSparkline = [
-  { value: 120, label: "Mon" },
-  { value: 245, label: "Tue" },
-  { value: 189, label: "Wed" },
-  { value: 312, label: "Thu" },
-  { value: 276, label: "Fri" },
-  { value: 401, label: "Sat" },
-  { value: 356, label: "Sun" },
-]
 
 const quickActions = [
   { label: "New Project", href: "/admin/projects/create", icon: Plus, color: "text-blue-500 bg-blue-500/10" },

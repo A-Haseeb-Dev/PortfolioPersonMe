@@ -2,8 +2,6 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getAdminCaseStudies } from "@/lib/admin-data"
-import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
 
 export async function GET(
   _request: Request,
@@ -21,11 +19,8 @@ export async function GET(
 
     return apiResponse({ caseStudy })
   } catch (error) {
-    console.warn("[CASE_STUDY_GET] DB unavailable, using data store", error)
-    const data = getCollection("case-studies", getAdminCaseStudies())
-    const item = data.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ caseStudy: item })
+    console.error("[CASE_STUDY_GET] Failed to fetch case study", error)
+    return apiError("Failed to fetch case study", 500)
   }
 }
 
@@ -77,12 +72,8 @@ export async function PUT(
 
     return apiResponse({ caseStudy })
   } catch (error) {
-    console.warn("[CASE_STUDY_PUT] DB unavailable, using data store", error)
-    const fallback = getAdminCaseStudies()
-    const collection = updateInCollection("case-studies", id, body, fallback)
-    const item = collection.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ caseStudy: item })
+    console.error("[CASE_STUDY_PUT] Failed to update case study", error)
+    return apiError("Failed to update case study", 500)
   }
 }
 
@@ -108,9 +99,7 @@ export async function DELETE(
 
     return apiResponse({ message: "Case study deleted successfully" })
   } catch (error) {
-    console.warn("[CASE_STUDY_DELETE] DB unavailable, using data store", error)
-    const fallback = getAdminCaseStudies()
-    removeFromCollection("case-studies", id, fallback)
-    return apiResponse({ message: "Case study deleted successfully" })
+    console.error("[CASE_STUDY_DELETE] Failed to delete case study", error)
+    return apiError("Failed to delete case study", 500)
   }
 }

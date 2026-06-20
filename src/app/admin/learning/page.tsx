@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Plus, Edit3, Trash2, ArrowUp, ArrowDown } from "lucide-react"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
-import { getAdminLearning } from "@/lib/admin-data"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -48,7 +47,7 @@ export default function AdminLearning() {
   const [form, setForm] = useState({ title: "", description: "", category: "", status: "not-started" as LearningItem["status"] })
 
   useEffect(() => {
-    fetchAdminData<LearningItem>("/api/learning", getAdminLearning()).then((data) => {
+    fetchAdminData<LearningItem>("/api/learning").then((data) => {
       setLearning(data)
       setLoading(false)
     })

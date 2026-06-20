@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
   Globe,
   Smartphone,
@@ -20,135 +19,6 @@ import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
-const services = [
-  {
-    id: "web-development",
-    title: "Web Development",
-    tagline: "Full-stack apps that ship fast and scale hard",
-    icon: Globe,
-    color: "from-blue-500 to-cyan-400",
-    description:
-      "Production-grade web applications built with Next.js, React, Node.js, and modern frameworks. Performance-obsessed, SEO-optimized, and accessible by default.",
-    features: [
-      "Single-page & server-rendered apps",
-      "REST & GraphQL APIs",
-      "Authentication & authorization",
-      "Database design & optimization",
-      "CI/CD & deployment",
-      "Performance auditing",
-    ],
-    price: "Starting at $500",
-  },
-  {
-    id: "mobile-apps",
-    title: "Mobile Apps",
-    tagline: "Cross-platform native experiences",
-    icon: Smartphone,
-    color: "from-purple-500 to-pink-400",
-    description:
-      "Cross-platform mobile applications using React Native and Expo. One codebase, native feel on both iOS and Android.",
-    features: [
-      "iOS & Android from one codebase",
-      "Push notifications",
-      "Offline-first architecture",
-      "App store deployment",
-      "Real-time sync",
-      "Custom animations",
-    ],
-    price: "Starting at $800",
-  },
-  {
-    id: "saas-development",
-    title: "SaaS Development",
-    tagline: "Build your product, not infrastructure",
-    icon: Cloud,
-    color: "from-emerald-500 to-teal-400",
-    description:
-      "End-to-end SaaS platforms with multi-tenancy, subscription billing, and scalable cloud infrastructure.",
-    features: [
-      "Multi-tenant architecture",
-      "Subscription & billing (Stripe)",
-      "Team collaboration features",
-      "Analytics dashboards",
-      "Scalable cloud deployment",
-      "Admin portals",
-    ],
-    price: "Starting at $2,000",
-  },
-  {
-    id: "api-development",
-    title: "API Development",
-    tagline: "APIs that developers love to use",
-    icon: Code2,
-    color: "from-amber-500 to-orange-400",
-    description:
-      "Robust, type-safe APIs with automatic documentation, rate limiting, and monitoring out of the box.",
-    features: [
-      "RESTful & GraphQL APIs",
-      "Type-safe with tRPC / OpenAPI",
-      "Auto-generated docs",
-      "Rate limiting & caching",
-      "WebSocket support",
-      "Monitoring & logging",
-    ],
-    price: "Starting at $400",
-  },
-  {
-    id: "database-design",
-    title: "Database Design",
-    tagline: "Data architecture that just works",
-    icon: Database,
-    color: "from-sky-500 to-indigo-400",
-    description:
-      "Schema design, query optimization, and data modeling for relational and NoSQL databases.",
-    features: [
-      "ERD & data modeling",
-      "Query optimization",
-      "Migration strategies",
-      "Replication & sharding",
-      "Backup & recovery",
-      "Performance tuning",
-    ],
-    price: "Starting at $300",
-  },
-  {
-    id: "ai-solutions",
-    title: "AI Solutions",
-    tagline: "Intelligence baked into your product",
-    icon: BrainCircuit,
-    color: "from-rose-500 to-red-400",
-    description:
-      "Integrate LLMs, chatbots, recommendation engines, and automation into your workflow.",
-    features: [
-      "Chatbots & virtual assistants",
-      "Content generation pipelines",
-      "Data extraction & analysis",
-      "Recommendation engines",
-      "Process automation",
-      "Model fine-tuning",
-    ],
-    price: "Starting at $600",
-  },
-  {
-    id: "consulting",
-    title: "Consulting",
-    tagline: "Strategic technical guidance",
-    icon: Cpu,
-    color: "from-zinc-600 to-zinc-400",
-    description:
-      "Code reviews, architecture design, tech stack planning, and best-practice guidance for your team.",
-    features: [
-      "Architecture review",
-      "Code quality audits",
-      "Tech stack evaluation",
-      "Performance consulting",
-      "Security assessments",
-      "Team mentoring",
-    ],
-    price: "$200 / hr",
-  },
-]
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -166,14 +36,24 @@ const cardVariants = {
   },
 }
 
+interface ServiceItem {
+  id: string
+  title: string
+  tagline: string
+  icon: React.ComponentType<{ size?: number }>
+  color: string
+  description: string
+  features: string[]
+  price: string
+}
+
 interface ServicesGridProps {
-  onSelect: (service: (typeof services)[0] | null) => void
+  services: ServiceItem[]
+  onSelect: (service: ServiceItem | null) => void
   selectedId?: string | null
 }
 
-export { services }
-
-export default function ServicesGrid({ onSelect, selectedId }: ServicesGridProps) {
+export default function ServicesGrid({ services, onSelect, selectedId }: ServicesGridProps) {
   return (
     <motion.div
       variants={containerVariants}

@@ -83,8 +83,8 @@ export default function AdminUsers() {
             {u.name.charAt(0)}
           </div>
           <div>
-            <p className="font-medium text-zinc-900 text-foreground">{u.name}</p>
-            <p className="text-xs text-zinc-500">{u.email}</p>
+            <p className="font-medium text-foreground">{u.name}</p>
+            <p className="text-xs text-muted-foreground">{u.email}</p>
           </div>
         </div>
       ),
@@ -108,7 +108,7 @@ export default function AdminUsers() {
         )
       },
     },
-    { key: "createdAt", label: "Created", render: (u) => <span className="text-zinc-500">{formatDate(u.createdAt)}</span> },
+    { key: "createdAt", label: "Created", render: (u) => <span className="text-muted-foreground">{formatDate(u.createdAt)}</span> },
     {
       key: "actions",
       label: "Actions",
@@ -133,7 +133,7 @@ export default function AdminUsers() {
               Super Admin Only
             </Badge>
           </div>
-          <p className="text-sm text-zinc-500 text-muted-foreground">Manage admin users and roles</p>
+          <p className="text-sm text-muted-foreground">Manage admin users and roles</p>
         </div>
         <Button onClick={() => setShowNew(true)}>
           <Plus className="h-4 w-4" />
@@ -142,8 +142,8 @@ export default function AdminUsers() {
       </div>
 
       <GlassCard intensity="light" className="p-4">
-        <div className="flex items-center gap-4 text-sm text-zinc-500 text-muted-foreground">
-          <ShieldAlert size={16} className="text-zinc-400" />
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <ShieldAlert size={16} className="text-muted-foreground" />
           Only Super Admins can manage users. Changes are applied immediately.
         </div>
       </GlassCard>
@@ -189,10 +189,10 @@ export default function AdminUsers() {
                       )}
                     >
                       <Icon size={16} className={cn(
-                        form.role === role && "text-zinc-900 text-foreground",
-                        "text-zinc-400"
+                        form.role === role && "text-foreground",
+                        "text-muted-foreground"
                       )} />
-                      <span className="font-medium text-zinc-700 text-muted-foreground">
+                      <span className="font-medium text-muted-foreground">
                         {role === "SUPER_ADMIN" ? "Super" : role.charAt(0) + role.slice(1).toLowerCase()}
                       </span>
                     </button>
@@ -218,7 +218,7 @@ export default function AdminUsers() {
               <Input label="Name" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
               <Input label="Email" type="email" value={editing.email} onChange={(e) => setEditing({ ...editing, email: e.target.value })} />
               <div>
-                <p className="text-sm font-medium text-zinc-700 text-muted-foreground mb-1.5">Role</p>
+                <p className="text-sm font-medium text-muted-foreground mb-1.5">Role</p>
                 <div className="grid grid-cols-3 gap-2">
                   {(["EDITOR", "ADMIN", "SUPER_ADMIN"] as UserRole[]).map((role) => {
                     const Icon = roleIcons[role]
@@ -233,8 +233,8 @@ export default function AdminUsers() {
                             : "border-zinc-200 hover:border-zinc-300 border-border hover:border-foreground"
                         )}
                       >
-                        <Icon size={16} className="text-zinc-400" />
-                        <span className="font-medium text-zinc-700 text-muted-foreground">
+                        <Icon size={16} className="text-muted-foreground" />
+                        <span className="font-medium text-muted-foreground">
                           {role === "SUPER_ADMIN" ? "Super" : role.charAt(0) + role.slice(1).toLowerCase()}
                         </span>
                       </button>

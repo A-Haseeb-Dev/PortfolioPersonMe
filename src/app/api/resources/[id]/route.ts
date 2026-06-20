@@ -2,8 +2,6 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getAdminResources } from "@/lib/admin-data"
-import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
 
 const typeMap: Record<string, string> = {
   resume: "RESUME",
@@ -29,11 +27,8 @@ export async function GET(
 
     return apiResponse({ resource })
   } catch (error) {
-    console.warn("[RESOURCE_GET] DB unavailable, using data store", error)
-    const data = getCollection("resources", getAdminResources())
-    const item = data.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ resource: item })
+    console.error("[RESOURCE_GET] Failed to fetch resource", error)
+    return apiError("Failed to fetch resource", 500)
   }
 }
 
@@ -74,12 +69,8 @@ export async function PUT(
 
     return apiResponse({ resource })
   } catch (error) {
-    console.warn("[RESOURCE_PUT] DB unavailable, using data store", error)
-    const fallback = getAdminResources()
-    const collection = updateInCollection("resources", id, body, fallback)
-    const item = collection.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ resource: item })
+    console.error("[RESOURCE_PUT] Failed to update resource", error)
+    return apiError("Failed to update resource", 500)
   }
 }
 
@@ -105,9 +96,7 @@ export async function DELETE(
 
     return apiResponse({ message: "Resource deleted successfully" })
   } catch (error) {
-    console.warn("[RESOURCE_DELETE] DB unavailable, using data store", error)
-    const fallback = getAdminResources()
-    removeFromCollection("resources", id, fallback)
-    return apiResponse({ message: "Resource deleted successfully" })
+    console.error("[RESOURCE_DELETE] Failed to delete resource", error)
+    return apiError("Failed to delete resource", 500)
   }
 }

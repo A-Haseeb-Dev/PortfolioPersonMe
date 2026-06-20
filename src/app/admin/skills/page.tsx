@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Plus, Edit3, Trash2, GripVertical, ChevronDown, ChevronRight, Loader2 } from "lucide-react"
 import { DataTable, type Column } from "@/components/admin/data-table"
-import { getAdminSkills } from "@/lib/admin-data"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -57,10 +56,10 @@ export default function AdminSkills() {
   const [showNewTech, setShowNewTech] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchAdminData<Category>("/api/skills", getAdminSkills()).then(data => {
+    fetchAdminData<Category>("/api/skills").then(data => {
       setCategories(data)
       setExpanded(data.map((c) => c.id))
-    }).finally(() => setLoading(false))
+    }).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const toggleExpand = (id: string) => {

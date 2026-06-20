@@ -1,9 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
-import { getAdminSkills } from "@/lib/admin-data"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getCollection, addToCollection } from "@/lib/data-store"
 
 export async function GET() {
   try {
@@ -23,10 +21,9 @@ export async function GET() {
     })
 
     return apiResponse({ categories, technologies })
-  } catch (prismaError) {
-    console.warn("[SKILLS_GET] DB unavailable, using data store", prismaError)
-    const categories = getCollection("skills", getAdminSkills())
-    return apiResponse({ categories, technologies: [], fallback: true })
+  } catch (error) {
+    console.error("[SKILLS_GET] Failed to fetch skills", error)
+    return apiError("Failed to fetch skills", 500)
   }
 }
 
@@ -61,11 +58,8 @@ export async function POST(request: Request) {
     })
 
     return apiResponse({ category }, 201)
-  } catch (prismaError) {
-    console.warn("[SKILLS_POST] DB unavailable, using data store", prismaError)
-    const fallback = getAdminSkills()
-    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
-    const data = addToCollection("skills", newItem, fallback)
-    return apiResponse({ data, item: newItem }, 201)
+  } catch (error) {
+    console.error("[SKILLS_POST] Failed to create skill category", error)
+    return apiError("Failed to create skill category", 500)
   }
 }

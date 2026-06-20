@@ -1,8 +1,6 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
-import { getAdminTestimonials } from "@/lib/admin-data"
-import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
 
 export async function GET(
   _request: Request,
@@ -20,11 +18,8 @@ export async function GET(
 
     return apiResponse({ testimonial })
   } catch (error) {
-    console.warn("[TESTIMONIAL_GET] DB unavailable, using data store", error)
-    const data = getCollection("testimonials", getAdminTestimonials())
-    const item = data.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ testimonial: item })
+    console.error("[TESTIMONIAL_GET] Failed to fetch testimonial", error)
+    return apiError("Failed to fetch testimonial", 500)
   }
 }
 
@@ -63,12 +58,8 @@ export async function PUT(
 
     return apiResponse({ testimonial })
   } catch (error) {
-    console.warn("[TESTIMONIAL_PUT] DB unavailable, using data store", error)
-    const fallback = getAdminTestimonials()
-    const collection = updateInCollection("testimonials", id, body, fallback)
-    const item = collection.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ testimonial: item })
+    console.error("[TESTIMONIAL_PUT] Failed to update testimonial", error)
+    return apiError("Failed to update testimonial", 500)
   }
 }
 
@@ -92,9 +83,7 @@ export async function DELETE(
 
     return apiResponse({ message: "Testimonial deleted successfully" })
   } catch (error) {
-    console.warn("[TESTIMONIAL_DELETE] DB unavailable, using data store", error)
-    const fallback = getAdminTestimonials()
-    removeFromCollection("testimonials", id, fallback)
-    return apiResponse({ message: "Testimonial deleted successfully" })
+    console.error("[TESTIMONIAL_DELETE] Failed to delete testimonial", error)
+    return apiError("Failed to delete testimonial", 500)
   }
 }

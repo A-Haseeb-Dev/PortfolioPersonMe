@@ -4,7 +4,7 @@ import * as React from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, FileText } from "lucide-react"
-import { blogPosts as staticPosts, getBlogPost } from "@/data/blog"
+import { blogPosts as staticPosts, getBlogPost, transformBlogPost } from "@/data/blog"
 import { useData } from "@/hooks/use-data"
 import { Container } from "@/components/ui/container"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -14,7 +14,7 @@ export default function BlogPostPage() {
   const params = useParams()
   const slug = params?.slug as string
 
-  const allPosts = useData("/api/blog", staticPosts)
+  const allPosts = useData("/api/blog", staticPosts, (data) => ((data as any).posts || []).map(transformBlogPost))
   const post = allPosts.find((p) => p.slug === slug) || getBlogPost(slug)
   const relatedPosts = post
     ? allPosts
@@ -32,7 +32,7 @@ export default function BlogPostPage() {
           action={
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-600 dark:text-zinc-50 dark:hover:text-zinc-400"
+              className="inline-flex items-center gap-2 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Blog

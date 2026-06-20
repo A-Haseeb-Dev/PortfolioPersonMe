@@ -2,8 +2,6 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getAdminStartupIdeas } from "@/lib/admin-data"
-import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
 
 const statusMap: Record<string, "IDEA" | "VALIDATING" | "BUILDING" | "LAUNCHED" | "FAILED"> = {
   idea: "IDEA",
@@ -30,11 +28,8 @@ export async function GET(
 
     return apiResponse({ startupIdea })
   } catch (error) {
-    console.warn("[STARTUP_IDEA_GET] DB unavailable, using data store", error)
-    const data = getCollection("startup-ideas", getAdminStartupIdeas())
-    const item = data.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ startupIdea: item })
+    console.error("[STARTUP_IDEA_GET] Failed to fetch startup idea", error)
+    return apiError("Failed to fetch startup idea", 500)
   }
 }
 
@@ -75,12 +70,8 @@ export async function PUT(
 
     return apiResponse({ startupIdea })
   } catch (error) {
-    console.warn("[STARTUP_IDEA_PUT] DB unavailable, using data store", error)
-    const fallback = getAdminStartupIdeas()
-    const collection = updateInCollection("startup-ideas", id, body, fallback)
-    const item = collection.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ startupIdea: item })
+    console.error("[STARTUP_IDEA_PUT] Failed to update startup idea", error)
+    return apiError("Failed to update startup idea", 500)
   }
 }
 
@@ -106,9 +97,7 @@ export async function DELETE(
 
     return apiResponse({ message: "Startup idea deleted successfully" })
   } catch (error) {
-    console.warn("[STARTUP_IDEA_DELETE] DB unavailable, using data store", error)
-    const fallback = getAdminStartupIdeas()
-    removeFromCollection("startup-ideas", id, fallback)
-    return apiResponse({ message: "Startup idea deleted successfully" })
+    console.error("[STARTUP_IDEA_DELETE] Failed to delete startup idea", error)
+    return apiError("Failed to delete startup idea", 500)
   }
 }

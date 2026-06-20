@@ -5,7 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(date: Date | string, options?: Intl.DateTimeFormatOptions) {
+export function formatDate(date: Date | string | null | undefined, options?: Intl.DateTimeFormatOptions) {
+  if (!date) return "—"
   const d = typeof date === "string" ? new Date(date) : date
   return d.toLocaleDateString("en-US", {
     day: "numeric",
@@ -15,7 +16,8 @@ export function formatDate(date: Date | string, options?: Intl.DateTimeFormatOpt
   })
 }
 
-export function formatDateShort(date: Date | string) {
+export function formatDateShort(date: Date | string | null | undefined) {
+  if (!date) return "—"
   const d = typeof date === "string" ? new Date(date) : date
   return d.toLocaleDateString("en-US", {
     day: "numeric",

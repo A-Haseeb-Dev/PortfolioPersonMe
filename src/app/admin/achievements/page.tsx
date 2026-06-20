@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Plus, Edit3, Trash2, Trophy, Award, BookOpen, Medal, Sparkles } from "lucide-react"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
-import { getAdminAchievements } from "@/lib/admin-data"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -48,8 +47,21 @@ export default function AdminAchievements() {
   const [form, setForm] = useState({ title: "", description: "", date: "", category: "certification" as Achievement["category"], issuer: "" })
 
   useEffect(() => {
-    fetchAdminData<Achievement>("/api/achievements", getAdminAchievements()).then((data) => {
-      setAchievements(data)
+    fetchAdminData<Achievement>("/api/achievements").then((data) => {
+      const transformed = data.map((a: any) => {
+        if (a.category) return a as Achievement
+        return {
+          id: a.id,
+          title: a.title,
+          description: a.description || "",
+          date: a.date ? new Date(a.date) : new Date(),
+          category: (a.type || "MILESTONE").toLowerCase() as Achievement["category"],
+          issuer: a.issuer || a.url || "",
+          featured: a.featured || false,
+          createdAt: a.createdAt ? new Date(a.createdAt) : new Date(),
+        } satisfies Achievement
+      })
+      setAchievements(transformed)
       setLoading(false)
     })
   }, [])

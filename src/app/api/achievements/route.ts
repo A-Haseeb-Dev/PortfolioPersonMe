@@ -1,8 +1,6 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
-import { getAdminAchievements } from "@/lib/admin-data"
 import { requireRole } from "@/lib/api-utils"
-import { getCollection, addToCollection } from "@/lib/data-store"
 type AchievementType = "AWARD" | "CERTIFICATION" | "MILESTONE" | "PROJECT"
 
 const TYPE_MAP: Record<string, AchievementType> = {
@@ -24,10 +22,9 @@ export async function GET() {
     })
 
     return apiResponse({ achievements })
-  } catch (prismaError) {
-    console.warn("[ACHIEVEMENTS_GET] DB unavailable, using data store", prismaError)
-    const data = getCollection("achievements", getAdminAchievements())
-    return apiResponse({ data, total: data.length, fallback: true })
+  } catch (error) {
+    console.error("[ACHIEVEMENTS_GET] Failed to fetch achievements", error)
+    return apiError("Failed to fetch achievements", 500)
   }
 }
 
@@ -53,11 +50,8 @@ export async function POST(request: Request) {
     })
 
     return apiResponse({ achievement }, 201)
-  } catch (prismaError) {
-    console.warn("[ACHIEVEMENTS_POST] DB unavailable, using data store", prismaError)
-    const fallback = getAdminAchievements()
-    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
-    const data = addToCollection("achievements", newItem, fallback)
-    return apiResponse({ data, item: newItem }, 201)
+  } catch (error) {
+    console.error("[ACHIEVEMENTS_POST] Failed to create achievement", error)
+    return apiError("Failed to create achievement", 500)
   }
 }

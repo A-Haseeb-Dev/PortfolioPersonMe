@@ -18,7 +18,8 @@ export async function requireAuth() {
 
 export async function requireRole(roles: (Role | "SUPER_ADMIN" | "ADMIN" | "EDITOR")[]) {
   const session = await requireAuth()
-  if (!roles.includes(session.user.role as Role)) {
+  const userRole = String(session.user.role).toUpperCase()
+  if (!roles.some((r) => r.toUpperCase() === userRole)) {
     throw new ApiError("Forbidden", 403)
   }
   return session

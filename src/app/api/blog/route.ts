@@ -3,8 +3,6 @@ import { blogSchema } from "@/lib/validations"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getCollection, addToCollection } from "@/lib/data-store"
-import { getAdminBlogPosts } from "@/lib/admin-data"
 
 export async function GET(request: Request) {
   try {
@@ -61,10 +59,9 @@ export async function GET(request: Request) {
         totalPages: Math.ceil(total / limit),
       },
     })
-  } catch (prismaError) {
-    console.warn("[BLOG_GET] DB unavailable, using data store", prismaError)
-    const data = getCollection("blog", getAdminBlogPosts())
-    return apiResponse({ data, total: data.length, fallback: true })
+  } catch (error) {
+    console.error("[BLOG_GET] Failed to fetch blog posts", error)
+    return apiError("Failed to fetch blog posts", 500)
   }
 }
 
@@ -127,10 +124,8 @@ export async function POST(request: Request) {
     }
 
     return apiResponse({ post }, 201)
-  } catch (prismaError) {
-    console.warn("[BLOG_POST] DB unavailable, using data store", prismaError)
-    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
-    const data = addToCollection("blog", newItem, getAdminBlogPosts())
-    return apiResponse({ data, item: newItem }, 201)
+  } catch (error) {
+    console.error("[BLOG_POST] Failed to create blog post", error)
+    return apiError("Failed to create blog post", 500)
   }
 }

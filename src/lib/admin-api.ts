@@ -1,13 +1,15 @@
 "use client"
 
-export async function fetchAdminData<T>(endpoint: string, fallback: T[]): Promise<T[]> {
+export async function fetchAdminData<T>(endpoint: string): Promise<T[]> {
   try {
     const res = await fetch(endpoint)
-    if (!res.ok) throw new Error("API unavailable")
+    if (!res.ok) throw new Error(`API error: ${res.status}`)
     const json = await res.json()
-    return json.data || json.posts || json.projects || json.caseStudies || json.services || json.testimonials || json.achievements || json.resources || json.startupIdeas || json.learning || json.categories || json.items || json.messages || fallback
-  } catch {
-    return fallback
+    const data = json.data || json.posts || json.projects || json.caseStudies || json.services || json.testimonials || json.achievements || json.resources || json.startupIdeas || json.learning || json.categories || json.items || json.messages || json.skills || []
+    return data as T[]
+  } catch (error) {
+    console.error(`[fetchAdminData] Failed to fetch ${endpoint}:`, error)
+    throw error
   }
 }
 
@@ -22,8 +24,13 @@ export async function apiAction(
       headers: { "Content-Type": "application/json" },
       body: body ? JSON.stringify(body) : undefined,
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: "Request failed" }))
+      console.error(`[apiAction] ${method} ${url}:`, err)
+    }
     return res.ok
-  } catch {
+  } catch (error) {
+    console.error(`[apiAction] ${method} ${url}:`, error)
     return false
   }
 }

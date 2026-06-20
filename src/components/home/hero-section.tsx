@@ -12,7 +12,6 @@ import {
   Globe,
   Link2,
   MessageCircle,
-  Share2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -21,14 +20,7 @@ import { FadeIn } from "@/components/ui/animated-text"
 import { ParticleBackground } from "@/components/ui/particle-background"
 import { Container } from "@/components/ui/container"
 import { cn } from "@/lib/utils"
-import { socialLinks, stats } from "@/lib/constants"
-
-const rotatingTitles = [
-  "Full Stack Developer",
-  "Software Engineer",
-  "Tech Entrepreneur",
-  "AI Enthusiast",
-]
+import { useSettings } from "@/contexts/settings-context"
 
 const socialIconMap: Record<string, React.ReactNode> = {
   "message-circle": <MessageCircle className="h-4 w-4" />,
@@ -36,19 +28,16 @@ const socialIconMap: Record<string, React.ReactNode> = {
   github: <Code2 className="h-4 w-4" />,
   facebook: <Globe className="h-4 w-4" />,
   instagram: <Camera className="h-4 w-4" />,
-}
-
-const statIconMap: Record<string, string> = {
-  "Projects Completed": "50+",
-  "Technologies Used": "30+",
-  "Years Experience": "5+",
-  "Happy Clients": "20+",
+  mail: <ExternalLink className="h-4 w-4" />,
 }
 
 export default function HeroSection() {
+  const { settings } = useSettings()
+  const { site_config, hero, social_links, stats } = settings
   const [titleIndex, setTitleIndex] = React.useState(0)
   const [displayText, setDisplayText] = React.useState("")
   const [isDeleting, setIsDeleting] = React.useState(false)
+  const rotatingTitles = hero.titles.length > 0 ? hero.titles : ["Full Stack Developer"]
 
   React.useEffect(() => {
     const currentTitle = rotatingTitles[titleIndex]
@@ -70,7 +59,7 @@ export default function HeroSection() {
     }
 
     return () => clearTimeout(timeout)
-  }, [displayText, isDeleting, titleIndex])
+  }, [displayText, isDeleting, titleIndex, rotatingTitles])
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden">
@@ -82,7 +71,7 @@ export default function HeroSection() {
           <FadeIn delay={0.1}>
             <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm">
               <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-500" />
-              Available for opportunities
+              {hero.availability || "Available for opportunities"}
             </Badge>
           </FadeIn>
 
@@ -95,7 +84,7 @@ export default function HeroSection() {
                 to="to-zinc-400"
                 className="dark:from-zinc-50 dark:via-zinc-300 dark:to-zinc-500"
               >
-                Abdul Haseeb
+                {hero.name || site_config.name}
               </GradientText>
             </h1>
           </FadeIn>
@@ -118,8 +107,7 @@ export default function HeroSection() {
 
           <FadeIn delay={0.4} className="mt-6 max-w-2xl">
             <p className="text-base text-zinc-500 dark:text-zinc-400 sm:text-lg">
-              Crafting digital experiences with modern technologies. Passionate about building
-              products that make a difference and solving complex problems with elegant solutions.
+              {hero.subtitle || site_config.description}
             </p>
           </FadeIn>
 
@@ -136,58 +124,56 @@ export default function HeroSection() {
                 <ExternalLink className="ml-2 h-4 w-4" />
               </a>
             </Button>
-            <Button variant="ghost" size="lg" asChild>
-              <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">
-                <Download className="mr-2 h-4 w-4" />
-                Resume
-              </a>
-            </Button>
           </FadeIn>
 
-          <FadeIn delay={0.6} className="mt-8">
-            <div className="flex items-center gap-4">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={link.label}
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full",
-                    "border border-zinc-200 bg-white/50 text-zinc-600 backdrop-blur-sm",
-                    "transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:text-zinc-900 hover:shadow-lg",
-                    "dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-400",
-                    "dark:hover:border-zinc-500 dark:hover:text-zinc-50"
-                  )}
-                >
-                  {socialIconMap[link.icon] || <ExternalLink className="h-4 w-4" />}
-                </a>
-              ))}
-            </div>
-          </FadeIn>
+          {hero.showSocialLinks !== false && (
+            <FadeIn delay={0.6} className="mt-8">
+              <div className="flex items-center gap-4">
+                {(social_links.length > 0 ? social_links : []).map((link: Record<string, string>) => (
+                  <a
+                    key={link.platform || link.label || link.url}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={link.label}
+                    className={cn(
+                      "flex h-10 w-10 items-center justify-center rounded-full",
+                      "border border-zinc-200 bg-white/50 text-zinc-600 backdrop-blur-sm",
+                      "transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:text-zinc-900 hover:shadow-lg",
+                      "dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-400",
+                      "dark:hover:border-zinc-500 dark:hover:text-zinc-50"
+                    )}
+                  >
+                    {socialIconMap[(link.icon || "").toLowerCase()] || <ExternalLink className="h-4 w-4" />}
+                  </a>
+                ))}
+              </div>
+            </FadeIn>
+          )}
 
-          <FadeIn delay={0.7} className="mt-12 w-full">
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className={cn(
-                    "rounded-2xl border border-zinc-200/50 bg-white/40 p-4 backdrop-blur-md",
-                    "transition-all duration-300 hover:border-zinc-300 hover:shadow-lg",
-                    "dark:border-zinc-700/50 dark:bg-zinc-900/40 dark:hover:border-zinc-600"
-                  )}
-                >
-                  <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
-                    {stat.value}
+          {hero.showStats !== false && (
+            <FadeIn delay={0.7} className="mt-12 w-full">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {(stats.length > 0 ? stats : []).map((stat: Record<string, string>) => (
+                  <div
+                    key={stat.label}
+                    className={cn(
+                      "rounded-2xl border border-zinc-200/50 bg-white/40 p-4 backdrop-blur-md",
+                      "transition-all duration-300 hover:border-zinc-300 hover:shadow-lg",
+                      "dark:border-zinc-700/50 dark:bg-zinc-900/40 dark:hover:border-zinc-600"
+                    )}
+                  >
+                    <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+                      {stat.value}
+                    </div>
+                    <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 sm:text-sm">
+                      {stat.label}
+                    </div>
                   </div>
-                  <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 sm:text-sm">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </FadeIn>
+                ))}
+              </div>
+            </FadeIn>
+          )}
         </div>
       </Container>
 

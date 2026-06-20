@@ -56,7 +56,7 @@ export async function GET() {
       orderBy: { downloadCount: "desc" },
     })
 
-    const totalDownloads = resources.reduce((sum, r) => sum + r.downloadCount, 0)
+    const totalDownloads = resources.reduce((sum: number, r) => sum + r.downloadCount, 0)
 
     const recentDownloads = await db.download.findMany({
       orderBy: { timestamp: "desc" },

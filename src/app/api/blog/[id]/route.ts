@@ -3,7 +3,6 @@ import { blogSchema } from "@/lib/validations"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
 
 const postIncludes = {
   tags: { include: { tag: true } },
@@ -28,8 +27,8 @@ export async function GET(
 
     return apiResponse({ post })
   } catch (error) {
-    console.warn("[BLOG_GET] DB unavailable, using data store", error)
-    return apiError("Blog post not found in fallback", 404)
+    console.error("[BLOG_GET] Failed to fetch blog post", error)
+    return apiError("Failed to fetch blog post", 500)
   }
 }
 
@@ -96,11 +95,8 @@ export async function PUT(
 
     return apiResponse({ post })
   } catch (error) {
-    console.warn("[BLOG_PUT] DB unavailable, using data store", error)
-    const collection = updateInCollection("blog", id, body as any, [] as any[])
-    const item = collection.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ post: item })
+    console.error("[BLOG_PUT] Failed to update blog post", error)
+    return apiError("Failed to update blog post", 500)
   }
 }
 
@@ -126,8 +122,7 @@ export async function DELETE(
 
     return apiResponse({ message: "Post deleted successfully" })
   } catch (error) {
-    console.warn("[BLOG_DELETE] DB unavailable, using data store", error)
-    removeFromCollection("blog", id, [] as any[])
-    return apiResponse({ message: "Post deleted successfully" })
+    console.error("[BLOG_DELETE] Failed to delete blog post", error)
+    return apiError("Failed to delete blog post", 500)
   }
 }

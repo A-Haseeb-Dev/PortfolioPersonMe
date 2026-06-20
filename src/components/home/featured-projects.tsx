@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const gradients = [
   "from-blue-600 via-blue-500 to-cyan-400",
@@ -16,55 +17,60 @@ const gradients = [
   "from-amber-600 via-amber-500 to-orange-400",
 ]
 
-const featuredProjects = [
-  {
-    title: "Enterprise CRM Platform",
-    description:
-      "A comprehensive customer relationship management system with real-time analytics, AI-powered insights, and automated workflow management.",
-    techStack: ["Next.js", "TypeScript", "Prisma", "PostgreSQL", "Tailwind CSS"],
-    githubUrl: "https://github.com",
-    liveUrl: "https://example.com",
-    category: "Web App",
-    details:
-      "Built for a fast-growing SaaS company, this platform handles 10K+ daily active users with sub-second query times. Features include real-time dashboards, automated email workflows, role-based access control, and AI-powered lead scoring.",
-  },
-  {
-    title: "E-Commerce Marketplace",
-    description:
-      "Full-featured e-commerce platform with multi-vendor support, real-time inventory management, and integrated payment processing.",
-    techStack: ["React", "Node.js", "MongoDB", "Stripe", "Redis"],
-    githubUrl: "https://github.com",
-    liveUrl: "https://example.com",
-    category: "Web App",
-    details:
-      "A multi-vendor marketplace connecting 500+ sellers with 50K+ customers. Implemented real-time inventory sync across warehouses, Stripe Connect for automated payouts, and a recommendation engine that boosted average order value by 34%.",
-  },
-  {
-    title: "AI Content Generator",
-    description:
-      "An intelligent content generation tool leveraging large language models for automated blog posts, social media content, and marketing copy.",
-    techStack: ["Python", "FastAPI", "React", "OpenAI", "Docker"],
-    githubUrl: "https://github.com",
-    liveUrl: "https://example.com",
-    category: "AI/ML",
-    details:
-      "Developed an AI-powered platform that generates SEO-optimized content at scale. Features include custom fine-tuned models for different industries, batch generation capabilities, plagiarism checking, and direct publishing to WordPress and Medium APIs.",
-  },
-  {
-    title: "Health Tracking Mobile App",
-    description:
-      "Cross-platform mobile application for health monitoring with workout tracking, nutrition logging, and AI-powered recommendations.",
-    techStack: ["React Native", "Expo", "Firebase", "TypeScript"],
-    githubUrl: "https://github.com",
-    liveUrl: "https://example.com",
-    category: "Mobile",
-    details:
-      "A cross-platform health companion app with 100K+ downloads. Includes workout tracking with custom exercise creation, nutrition logging with barcode scanning, wearable device integration, and personalized AI health insights based on user patterns.",
-  },
-]
+interface Project {
+  id: string
+  title: string
+  description: string
+  techStack: string[]
+  githubUrl: string | null
+  liveUrl: string | null
+  category: string
+  details?: string
+}
 
 export default function FeaturedProjects() {
   const [selected, setSelected] = React.useState(0)
+  const [projects, setProjects] = React.useState<Project[]>([])
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    fetch("/api/projects?featured=true&published=true&limit=6")
+      .then((r) => r.json())
+      .then((json) => {
+        const items = json.projects || []
+        if (items.length > 0) {
+          setProjects(items.map((p: Record<string, unknown>) => ({
+            id: p.id as string,
+            title: p.title as string,
+            description: p.description as string,
+            techStack: Array.isArray(p.technologies) ? p.technologies.map((t: Record<string, unknown>) => {
+              const tech = t.technology as Record<string, unknown> | undefined
+              return (tech?.name as string) || (t.name as string) || ""
+            }) : [],
+            githubUrl: p.githubUrl as string | null,
+            liveUrl: p.liveUrl as string | null,
+            category: (p as Record<string, string>).category || "Project",
+            details: p.solution as string || p.description as string,
+          })))
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <Section title="Featured Projects" subtitle="Loading featured projects...">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-64 rounded-xl" />
+          ))}
+        </div>
+      </Section>
+    )
+  }
+
+  if (projects.length === 0) return null
 
   return (
     <Section
@@ -81,9 +87,9 @@ export default function FeaturedProjects() {
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
         <div className="w-full shrink-0 space-y-1 lg:w-72 xl:w-80 lg:max-h-[600px] lg:overflow-y-auto">
-          {featuredProjects.map((project, index) => (
+          {projects.map((project, index) => (
             <button
-              key={project.title}
+              key={project.id}
               onClick={() => setSelected(index)}
               className={cn(
                 "group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-200",
@@ -115,7 +121,7 @@ export default function FeaturedProjects() {
             >
               <GlassCard intensity="light" hover={false} className="h-full overflow-hidden">
                 {(() => {
-                  const project = featuredProjects[selected]
+                  const project = projects[selected]
                   const gradient = gradients[selected % gradients.length]
                   return (
                     <div>
@@ -130,18 +136,22 @@ export default function FeaturedProjects() {
                           </span>
                         </div>
                         <div className="absolute bottom-4 right-4 flex gap-2">
-                          <Button size="sm" variant="secondary" asChild className="bg-white/80 backdrop-blur-sm dark:bg-zinc-800/80">
-                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                              <GitBranch className="h-3.5 w-3.5" />
-                              Source
-                            </a>
-                          </Button>
-                          <Button size="sm" variant="secondary" asChild className="bg-white/80 backdrop-blur-sm dark:bg-zinc-800/80">
-                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-3.5 w-3.5" />
-                              Live Demo
-                            </a>
-                          </Button>
+                          {project.githubUrl && (
+                            <Button size="sm" variant="secondary" asChild className="bg-white/80 backdrop-blur-sm dark:bg-zinc-800/80">
+                              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                                <GitBranch className="h-3.5 w-3.5" />
+                                Source
+                              </a>
+                            </Button>
+                          )}
+                          {project.liveUrl && (
+                            <Button size="sm" variant="secondary" asChild className="bg-white/80 backdrop-blur-sm dark:bg-zinc-800/80">
+                              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="h-3.5 w-3.5" />
+                                Live Demo
+                              </a>
+                            </Button>
+                          )}
                         </div>
                       </div>
                       <div className="p-6 sm:p-8">
@@ -154,18 +164,20 @@ export default function FeaturedProjects() {
                           {project.title}
                         </h3>
                         <p className="mt-3 text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
-                          {project.details}
+                          {project.details || project.description}
                         </p>
-                        <div className="mt-6 flex flex-wrap gap-2">
-                          {project.techStack.map((tech) => (
-                            <span
-                              key={tech}
-                              className="inline-flex items-center rounded-md border border-zinc-200 bg-zinc-50/50 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800/30 dark:text-zinc-400"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
+                        {project.techStack.length > 0 && (
+                          <div className="mt-6 flex flex-wrap gap-2">
+                            {project.techStack.map((tech) => (
+                              <span
+                                key={tech}
+                                className="inline-flex items-center rounded-md border border-zinc-200 bg-zinc-50/50 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800/30 dark:text-zinc-400"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )

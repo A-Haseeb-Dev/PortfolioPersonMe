@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "title": "Advanced Next.js 15 Patterns",
+    "description": "Deep dive into server components, server actions, caching strategies, and advanced data fetching patterns in Next.js 15.",
+    "category": "Web Development",
+    "status": "not-started",
+    "startedAt": "2026-05-01T00:00:00.000Z",
+    "order": 1,
+    "createdAt": "2026-05-01T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Machine Learning Specialization",
+    "description": "Stanford's comprehensive ML course covering supervised learning, neural networks, and model evaluation techniques.",
+    "category": "AI",
+    "status": "not-started",
+    "startedAt": "2026-04-10T00:00:00.000Z",
+    "order": 2,
+    "createdAt": "2026-04-10T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Flutter & Dart - The Complete Guide",
+    "description": "Building cross-platform mobile applications with Flutter framework and Dart programming language.",
+    "category": "Mobile",
+    "status": "not-started",
+    "startedAt": "2026-06-01T00:00:00.000Z",
+    "order": 3,
+    "createdAt": "2026-06-01T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "title": "AWS Solutions Architect Associate",
+    "description": "Preparing for the AWS SAA-C03 certification covering compute, storage, networking, and security services.",
+    "category": "DevOps",
+    "status": "not-started",
+    "startedAt": "2026-05-15T00:00:00.000Z",
+    "order": 4,
+    "createdAt": "2026-05-15T00:00:00.000Z"
+  }
+]

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Plus, Edit3, Trash2, ArrowUp, ArrowDown, Loader2 } from "lucide-react"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
-import { getAdminServices } from "@/lib/admin-data"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -38,7 +37,7 @@ export default function AdminServices() {
   const [form, setForm] = useState({ title: "", description: "", price: "", category: "" })
 
   useEffect(() => {
-    fetchAdminData<Service>("/api/services", getAdminServices()).then((data) => {
+    fetchAdminData<Service>("/api/services").then((data) => {
       setServices(data)
       setLoading(false)
     })
@@ -112,13 +111,13 @@ export default function AdminServices() {
       label: "Service",
       render: (s) => (
         <div>
-          <p className="font-medium text-zinc-900 text-foreground">{s.title}</p>
-          <p className="text-xs text-zinc-500">{s.description}</p>
+          <p className="font-medium text-foreground">{s.title}</p>
+          <p className="text-xs text-muted-foreground">{s.description}</p>
         </div>
       ),
     },
     { key: "category", label: "Category", render: (s) => <Badge variant="secondary">{s.category}</Badge> },
-    { key: "price", label: "Price", render: (s) => <span className="font-medium text-zinc-900 text-foreground">{s.price || "—"}</span> },
+    { key: "price", label: "Price", render: (s) => <span className="font-medium text-foreground">{s.price || "—"}</span> },
     {
       key: "actions",
       label: "Actions",
@@ -144,8 +143,8 @@ export default function AdminServices() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900 text-foreground">Services</h1>
-          <p className="text-sm text-zinc-500 text-muted-foreground">Manage your service offerings</p>
+          <h1 className="text-xl font-semibold text-foreground">Services</h1>
+          <p className="text-sm text-muted-foreground">Manage your service offerings</p>
         </div>
         <Button onClick={() => setShowNew(true)}>
           <Plus className="h-4 w-4" />

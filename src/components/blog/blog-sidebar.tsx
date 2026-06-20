@@ -42,7 +42,7 @@ export default function BlogSidebar({
             placeholder="Search articles..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full rounded-lg border border-border bg-muted py-2 pl-3 pr-8 text-sm text-foreground placeholder:text-muted-foreground focus:border-zinc-400 focus:outline-none dark:focus:border-zinc-500"
+            className="w-full rounded-lg border border-border bg-muted py-2 pl-3 pr-8 text-sm text-foreground placeholder:text-muted-foreground focus:border-foreground focus:outline-none"
           />
         </div>
       </div>

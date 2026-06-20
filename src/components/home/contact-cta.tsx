@@ -6,9 +6,14 @@ import { ArrowRight, Mail } from "lucide-react"
 import { Container } from "@/components/ui/container"
 import { Button } from "@/components/ui/button"
 import { FadeIn } from "@/components/ui/animated-text"
-import { siteConfig } from "@/lib/constants"
+import { useSettings } from "@/contexts/settings-context"
 
 export default function ContactCTA() {
+  const { settings } = useSettings()
+  const emailLink = settings.social_links?.find((l: Record<string, string>) =>
+    (l.icon || "").toLowerCase() === "mail" || (l.platform || "").toLowerCase() === "email"
+  )
+
   return (
     <section className="relative overflow-hidden py-20 sm:py-28">
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 dark:from-zinc-950 dark:via-zinc-900 dark:to-black" />
@@ -37,17 +42,19 @@ export default function ContactCTA() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-zinc-500 text-zinc-100 hover:bg-zinc-800 hover:text-zinc-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-zinc-800"
-                asChild
-              >
-                <a href={`mailto:${siteConfig.links.email}`}>
-                  <Mail className="mr-2 h-4 w-4" />
-                  {siteConfig.links.email}
-                </a>
-              </Button>
+              {emailLink?.url && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-zinc-500 text-zinc-100 hover:bg-zinc-800 hover:text-zinc-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  asChild
+                >
+                  <a href={emailLink.url}>
+                    <Mail className="mr-2 h-4 w-4" />
+                    {emailLink.url.replace("mailto:", "")}
+                  </a>
+                </Button>
+              )}
             </div>
           </div>
         </FadeIn>

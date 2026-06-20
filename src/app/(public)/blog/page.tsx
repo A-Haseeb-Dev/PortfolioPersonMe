@@ -1,14 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { blogPosts as staticPosts } from "@/data/blog"
+import { blogPosts as staticPosts, transformBlogPost } from "@/data/blog"
 import { useData } from "@/hooks/use-data"
 import BlogHeader from "@/components/blog/blog-header"
 import BlogGrid from "@/components/blog/blog-grid"
 import BlogSidebar from "@/components/blog/blog-sidebar"
 
 export default function BlogPage() {
-  const livePosts = useData("/api/blog", staticPosts)
+  const livePosts = useData("/api/blog", staticPosts, (data) => ((data as any).posts || []).map(transformBlogPost))
   const [activeCategory, setActiveCategory] = React.useState("All")
   const [searchQuery, setSearchQuery] = React.useState("")
   const [selectedTags, setSelectedTags] = React.useState<string[]>([])

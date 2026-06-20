@@ -66,7 +66,7 @@ export async function GET(request: Request) {
     })
 
     const aggregatedDaily = dailyViews.reduce(
-      (acc, curr) => {
+      (acc: Record<string, { date: string; views: number; uniqueVisitors: number }>, curr) => {
         const key = curr.date.toISOString().split("T")[0]
         if (!acc[key]) acc[key] = { date: key, views: 0, uniqueVisitors: 0 }
         acc[key].views += curr.views
@@ -86,17 +86,17 @@ export async function GET(request: Request) {
         totalVisitors: totalVisitors,
       },
       dailyViews: Object.values(aggregatedDaily).sort(
-        (a, b) => a.date.localeCompare(b.date),
+        (a: { date: string }, b: { date: string }) => a.date.localeCompare(b.date),
       ),
-      topPages: topPages.map((p) => ({
+      topPages: topPages.map((p: { page: string; _sum: { views: number | null } }) => ({
         page: p.page,
         views: p._sum.views || 0,
       })),
-      deviceBreakdown: deviceBreakdown.map((d) => ({
+      deviceBreakdown: deviceBreakdown.map((d: { device: string | null; _count: { id: number } }) => ({
         device: d.device || "unknown",
         count: d._count.id,
       })),
-      trafficSources: trafficSources.map((s) => ({
+      trafficSources: trafficSources.map((s: { referrer: string | null; _count: { id: number } }) => ({
         source: s.referrer || "direct",
         count: s._count.id,
       })),

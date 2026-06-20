@@ -1,8 +1,6 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
-import { getAdminTestimonials } from "@/lib/admin-data"
 import { requireRole } from "@/lib/api-utils"
-import { getCollection, addToCollection } from "@/lib/data-store"
 
 export async function GET() {
   try {
@@ -11,10 +9,9 @@ export async function GET() {
     })
 
     return apiResponse({ testimonials })
-  } catch (prismaError) {
-    console.warn("[TESTIMONIALS_GET] DB unavailable, using data store", prismaError)
-    const data = getCollection("testimonials", getAdminTestimonials())
-    return apiResponse({ data, total: data.length, fallback: true })
+  } catch (error) {
+    console.error("[TESTIMONIALS_GET] Failed to fetch testimonials", error)
+    return apiError("Failed to fetch testimonials", 500)
   }
 }
 
@@ -47,11 +44,8 @@ export async function POST(request: Request) {
     })
 
     return apiResponse({ testimonial }, 201)
-  } catch (prismaError) {
-    console.warn("[TESTIMONIALS_POST] DB unavailable, using data store", prismaError)
-    const fallback = getAdminTestimonials()
-    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
-    const data = addToCollection("testimonials", newItem, fallback)
-    return apiResponse({ data, item: newItem }, 201)
+  } catch (error) {
+    console.error("[TESTIMONIALS_POST] Failed to create testimonial", error)
+    return apiError("Failed to create testimonial", 500)
   }
 }

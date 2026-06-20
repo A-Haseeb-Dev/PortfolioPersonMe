@@ -9,21 +9,24 @@ import {
   Cloud,
   Smartphone,
   Wrench,
+  Code2,
   ChevronRight,
   Star,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { GlassCard } from "@/components/ui/glass-card"
+import { useSettings } from "@/contexts/settings-context"
 import { cn } from "@/lib/utils"
-import { techCategories } from "@/lib/constants"
 
-const categoryIcons: Record<string, React.ReactNode> = {
-  monitor: <Monitor className="h-5 w-5" />,
-  server: <Server className="h-5 w-5" />,
-  database: <Database className="h-5 w-5" />,
-  cloud: <Cloud className="h-5 w-5" />,
-  smartphone: <Smartphone className="h-5 w-5" />,
-  tool: <Wrench className="h-5 w-5" />,
+const categoryIcons: Record<string, LucideIcon> = {
+  monitor: Monitor,
+  server: Server,
+  database: Database,
+  cloud: Cloud,
+  smartphone: Smartphone,
+  tool: Wrench,
+  code: Code2,
 }
 
 const accentGradients = [
@@ -36,7 +39,11 @@ const accentGradients = [
 ]
 
 export default function TechStackPreview() {
+  const { settings } = useSettings()
+  const techCategories = settings.tech_categories || []
   const [selected, setSelected] = React.useState(0)
+
+  if (techCategories.length === 0) return null
 
   return (
     <Section
@@ -45,9 +52,9 @@ export default function TechStackPreview() {
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
         <div className="w-full shrink-0 space-y-1 lg:w-72 xl:w-80 lg:max-h-[600px] lg:overflow-y-auto">
-          {techCategories.map((category, index) => (
+          {techCategories.map((category: Record<string, unknown>, index: number) => (
             <button
-              key={category.name}
+              key={(category.name as string) || index}
               onClick={() => setSelected(index)}
               className={cn(
                 "group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-200",
@@ -60,11 +67,14 @@ export default function TechStackPreview() {
                 "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
                 selected === index ? "bg-zinc-800 text-zinc-50 dark:bg-zinc-700 dark:text-zinc-200" : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
               )}>
-                {categoryIcons[category.icon] || <Wrench className="h-4 w-4" />}
+                {(() => {
+                  const Icon = categoryIcons[(category.icon as string) || ""] || Wrench
+                  return <Icon className="h-4 w-4" />
+                })()}
               </span>
               <div className="flex-1 truncate">
-                <div className="truncate">{category.name}</div>
-                <div className="text-xs text-zinc-400 dark:text-zinc-500">{category.technologies.length} technologies</div>
+                <div className="truncate">{category.name as string}</div>
+                <div className="text-xs text-zinc-400 dark:text-zinc-500">{(category.technologies as string[])?.length || 0} technologies</div>
               </div>
               <ChevronRight className={cn(
                 "h-4 w-4 shrink-0 transition-all duration-200",
@@ -83,8 +93,9 @@ export default function TechStackPreview() {
               transition={{ duration: 0.2 }}
             >
               {(() => {
-                const category = techCategories[selected]
+                const category = techCategories[selected] as Record<string, unknown>
                 const gradient = accentGradients[selected % accentGradients.length]
+                const technologies = (category.technologies as string[]) || []
                 return (
                   <GlassCard intensity="light" hover={false} className="group relative h-full overflow-hidden">
                     <div className={cn("absolute left-0 top-0 h-1 w-full bg-gradient-to-r opacity-80", gradient)} />
@@ -92,20 +103,19 @@ export default function TechStackPreview() {
                       <div className="mb-6 flex items-center gap-4">
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-100 shadow-sm dark:bg-zinc-800">
                           <span className="text-zinc-600 dark:text-zinc-400">
-                            {categoryIcons[category.icon] || <Wrench className="h-7 w-7" />}
+                            {(() => {
+                              const Icon = categoryIcons[(category.icon as string) || ""] || Wrench
+                              return <Icon className="h-7 w-7" />
+                            })()}
                           </span>
                         </div>
                         <div>
-                          <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-                            {category.name}
-                          </h3>
-                          <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                            {category.technologies.length} technologies
-                          </p>
+                          <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{category.name as string}</h3>
+                          <p className="text-sm text-zinc-400 dark:text-zinc-500">{technologies.length} technologies</p>
                         </div>
                       </div>
                       <div className="grid gap-3 sm:grid-cols-2">
-                        {category.technologies.map((tech, i) => (
+                        {technologies.map((tech: string, i: number) => (
                           <motion.div
                             key={tech}
                             initial={{ opacity: 0, y: 10 }}

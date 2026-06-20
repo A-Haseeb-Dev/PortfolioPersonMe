@@ -16,7 +16,7 @@ export async function GET() {
       },
     })
 
-    const nodes = technologies.map((t) => ({
+    const nodes = technologies.map((t: { id: string; name: string; category: { name: string }; experienceLevel: string; icon: string | null }) => ({
       id: t.id,
       name: t.name,
       category: t.category.name,
@@ -24,7 +24,7 @@ export async function GET() {
       icon: t.icon,
     }))
 
-    const edges = relations.map((r) => ({
+    const edges = relations.map((r: { id: string; fromTechnologyId: string; toTechnologyId: string; fromTechnology: { name: string }; toTechnology: { name: string }; relationType: string | null }) => ({
       id: r.id,
       source: r.fromTechnologyId,
       target: r.toTechnologyId,

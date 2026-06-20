@@ -14,7 +14,6 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
-import { getAdminProjects } from "@/lib/admin-data"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -49,7 +48,7 @@ export default function AdminProjects() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc")
 
   useEffect(() => {
-    fetchAdminData<Project>("/api/projects", getAdminProjects()).then((data) => {
+    fetchAdminData<Project>("/api/projects").then((data) => {
       setProjects(data)
       setLoading(false)
     })
@@ -85,7 +84,7 @@ export default function AdminProjects() {
       label: "Title",
       sortable: true,
       render: (p) => (
-        <span className="font-medium text-zinc-900 text-foreground">{p.title}</span>
+        <span className="font-medium text-foreground">{p.title}</span>
       ),
     },
     {
@@ -105,7 +104,7 @@ export default function AdminProjects() {
         p.featured ? (
           <Badge variant="info" dot>Featured</Badge>
         ) : (
-          <span className="text-zinc-400">—</span>
+          <span className="text-muted-foreground">—</span>
         )
       ),
     },
@@ -114,7 +113,7 @@ export default function AdminProjects() {
       label: "Created",
       sortable: true,
       render: (p) => (
-        <span className="text-zinc-500">{formatDate(p.createdAt)}</span>
+        <span className="text-muted-foreground">{formatDate(p.createdAt)}</span>
       ),
     },
     {
@@ -153,8 +152,8 @@ export default function AdminProjects() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900 text-foreground">Projects</h1>
-          <p className="text-sm text-zinc-500 text-muted-foreground">Manage your portfolio projects</p>
+          <h1 className="text-xl font-semibold text-foreground">Projects</h1>
+          <p className="text-sm text-muted-foreground">Manage your portfolio projects</p>
         </div>
         <Button asChild>
           <Link href="/admin/projects/create">
@@ -166,7 +165,7 @@ export default function AdminProjects() {
 
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}

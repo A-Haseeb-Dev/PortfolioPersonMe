@@ -87,7 +87,7 @@ export function DataTable<T extends Record<string, unknown>>({
   }
 
   const renderSortIcon = (key: string) => {
-    if (sortKey !== key) return <ChevronsUpDown className="ml-1 h-3.5 w-3.5 shrink-0 text-zinc-400" />
+    if (sortKey !== key) return <ChevronsUpDown className="ml-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
     if (sortDirection === "asc") return <ChevronUp className="ml-1 h-3.5 w-3.5 shrink-0" />
     return <ChevronDown className="ml-1 h-3.5 w-3.5 shrink-0" />
   }
@@ -96,7 +96,7 @@ export function DataTable<T extends Record<string, unknown>>({
     <div className={cn("space-y-4", className)}>
       {searchable && (
         <div className="relative max-w-sm">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={searchValue}
             onChange={(e) => onSearch?.(e.target.value)}
@@ -106,7 +106,7 @@ export function DataTable<T extends Record<string, unknown>>({
           {searchValue && (
             <button
               onClick={() => onSearch?.("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               <X className="h-4 w-4" />
             </button>
@@ -114,11 +114,11 @@ export function DataTable<T extends Record<string, unknown>>({
         </div>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card dark:border-zinc-700/50 dark:bg-zinc-900">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border bg-muted/50">
+              <tr className="border-b border-border bg-muted/50 dark:border-zinc-700/50 dark:bg-zinc-800/50">
                 {selectable && (
                   <th className="w-10 px-4 py-3">
                     <input
@@ -189,9 +189,9 @@ export function DataTable<T extends Record<string, unknown>>({
                         exit={{ opacity: 0, y: -4 }}
                         transition={{ delay: index * 0.03 }}
                         className={cn(
-                          "transition-colors hover:bg-muted/50",
+                          "transition-colors hover:bg-muted/50 dark:hover:bg-zinc-800/50",
                           onRowClick && "cursor-pointer",
-                          selectedIds.includes(id) && "bg-muted/50"
+                          selectedIds.includes(id) && "bg-muted/50 dark:bg-zinc-800/30"
                         )}
                         onClick={() => onRowClick?.(item)}
                       >

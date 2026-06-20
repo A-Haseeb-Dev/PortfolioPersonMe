@@ -298,10 +298,10 @@ export async function getAnalytics(days: number = 30): Promise<AnalyticsSummary>
     }),
   ])
 
-  const totalPageViews = analyticsRecords.reduce((sum, r) => sum + r.views, 0)
+  const totalPageViews = analyticsRecords.reduce((sum: number, r) => sum + r.views, 0)
   const totalDownloads = downloads.length
 
-  const pageViewsChart = aggregateByDate(analyticsRecords.map(r => ({
+  const pageViewsChart = aggregateByDate(analyticsRecords.map((r: { date: Date; views: number; uniqueVisitors: number }) => ({
     date: r.date.toISOString().split("T")[0],
     views: r.views,
     visitors: r.uniqueVisitors,
@@ -320,11 +320,11 @@ export async function getAnalytics(days: number = 30): Promise<AnalyticsSummary>
     .slice(0, 10)
 
   const downloadsOverTime = aggregateByDate(
-    downloads.map(d => ({ date: d.timestamp.toISOString().split("T")[0], count: 1 }))
+    downloads.map((d: { timestamp: Date }) => ({ date: d.timestamp.toISOString().split("T")[0], count: 1 }))
   )
 
   const contactsOverTime = aggregateByDate(
-    contacts.map(c => ({ date: c.createdAt.toISOString().split("T")[0], count: 1 }))
+    contacts.map((c: { createdAt: Date }) => ({ date: c.createdAt.toISOString().split("T")[0], count: 1 }))
   )
 
   return {
@@ -336,19 +336,19 @@ export async function getAnalytics(days: number = 30): Promise<AnalyticsSummary>
     totalContacts: contacts.length,
     pageViewsChart,
     topPages,
-    topReferrers: topReferrers.map(r => ({
+    topReferrers: topReferrers.map((r: { referrer: string | null; _count: { id: number } }) => ({
       referrer: r.referrer || "direct",
       count: r._count.id,
     })),
-    countries: countries.map(c => ({
+    countries: countries.map((c: { country: string | null; _count: { id: number } }) => ({
       country: c.country || "unknown",
       count: c._count.id,
     })),
-    devices: devices.map(d => ({
+    devices: devices.map((d: { device: string | null; _count: { id: number } }) => ({
       device: d.device || "unknown",
       count: d._count.id,
     })),
-    browsers: browsers.map(b => ({
+    browsers: browsers.map((b: { browser: string | null; _count: { id: number } }) => ({
       browser: b.browser || "unknown",
       count: b._count.id,
     })),

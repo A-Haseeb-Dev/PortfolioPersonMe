@@ -1097,6 +1097,34 @@ export function getCategoryCounts(): Record<string, number> {
   return counts
 }
 
+export function transformBlogPost(p: any): BlogPost {
+  const isObject = (v: any) => v !== null && typeof v === "object"
+  return {
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    excerpt: p.excerpt || "",
+    content: p.content,
+    coverImage: p.coverImage || null,
+    category: isObject(p.category) ? p.category.name : (p.category ?? ""),
+    tags: Array.isArray(p.tags)
+      ? p.tags.map((t: any) => (isObject(t) ? (t.tag?.name ?? t.name ?? "") : t))
+      : [],
+    readingTime: typeof p.readingTime === "number" ? `${p.readingTime} min read` : (p.readingTime ?? "5 min read"),
+    date: p.date
+      ? p.date
+      : p.createdAt
+        ? new Date(p.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+        : "",
+    featured: p.featured || false,
+    author: {
+      name: p.author?.name ?? "Author",
+      avatar: p.author?.image ?? p.author?.avatar ?? null,
+      role: p.author?.role ?? "Author",
+    },
+  }
+}
+
 export function getAllTags(): string[] {
   const tags = new Set<string>()
   for (const post of blogPosts) {

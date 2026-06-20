@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Plus, Edit3, Trash2, Lightbulb, Loader2 } from "lucide-react"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
-import { getAdminStartupIdeas } from "@/lib/admin-data"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -49,7 +48,7 @@ export default function AdminStartupIdeas() {
   const [form, setForm] = useState({ title: "", description: "", problem: "", solution: "", status: "idea" as StartupIdea["status"] })
 
   useEffect(() => {
-    fetchAdminData<StartupIdea>("/api/startup-ideas", getAdminStartupIdeas()).then(setIdeas).finally(() => setLoading(false))
+    fetchAdminData<StartupIdea>("/api/startup-ideas").then(setIdeas).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const { search, setSearch, filtered } = useTableSearch(ideas, ["title", "description", "problem", "solution"])

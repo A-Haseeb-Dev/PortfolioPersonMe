@@ -10,31 +10,29 @@ import {
   Camera,
   ArrowUpRight,
 } from "lucide-react"
+import { useSettings } from "@/contexts/settings-context"
 
-const quickLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Skills", href: "/skills" },
-  { label: "Projects", href: "/projects" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
-]
-
-const resourceLinks = [
-  { label: "Knowledge Base", href: "/knowledge" },
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Service", href: "/terms" },
-]
-
-const socialLinks = [
-  { label: "WhatsApp", href: "https://wa.me/your-number", icon: MessageCircle },
-  { label: "LinkedIn", href: "https://linkedin.com/in/your-profile", icon: Users },
-  { label: "GitHub", href: "https://github.com/your-username", icon: Code2 },
-  { label: "Facebook", href: "https://facebook.com/your-profile", icon: Globe },
-  { label: "Instagram", href: "https://instagram.com/your-username", icon: Camera },
-]
+const socialIconMap: Record<string, React.ReactNode> = {
+  whatsapp: <MessageCircle size={16} />,
+  linkedin: <Users size={16} />,
+  github: <Code2 size={16} />,
+  facebook: <Globe size={16} />,
+  instagram: <Camera size={16} />,
+  "message-circle": <MessageCircle size={16} />,
+}
 
 export default function Footer() {
+  const { settings } = useSettings()
+  const { site_config, social_links, footer } = settings
+  const socialLinks = social_links.length > 0 ? social_links : []
+  const quickLinks = footer.quickLinks.length > 0
+    ? footer.quickLinks
+    : [{ label: "Home", href: "/" }, { label: "About", href: "/about" }, { label: "Skills", href: "/skills" }, { label: "Projects", href: "/projects" }, { label: "Contact", href: "/contact" }]
+
+  const resourceLinks = [
+    { label: "Knowledge Base", href: "/knowledge" },
+  ]
+
   return (
     <footer className="footer-bg relative border-t" style={{ borderColor: "var(--footer-border)" }}>
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -45,29 +43,26 @@ export default function Footer() {
               className="flex items-center gap-2 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50"
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-xs font-bold text-white dark:bg-white dark:text-zinc-900">
-                H
+                {site_config.name.charAt(0).toUpperCase()}
               </span>
-              Haseeb
+              {site_config.name.split(" ")[0]}
             </Link>
             <p className="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-              Building premium digital experiences with modern technologies.
+              {footer.tagline || "Building premium digital experiences with modern technologies."}
             </p>
             <div className="flex items-center gap-2">
-              {socialLinks.map((link) => {
-                const Icon = link.icon
-                return (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={link.label}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-400 transition-all duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
-                  >
-                    <Icon size={16} />
-                  </a>
-                )
-              })}
+              {socialLinks.map((link: Record<string, string>) => (
+                <a
+                  key={link.platform || link.label}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.label}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-400 transition-all duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+                >
+                  {socialIconMap[(link.icon || link.platform || "").toLowerCase()] || <Globe size={16} />}
+                </a>
+              ))}
             </div>
           </div>
 
@@ -76,7 +71,7 @@ export default function Footer() {
               Quick Links
             </h3>
             <ul className="space-y-2.5">
-              {quickLinks.map((link) => (
+              {quickLinks.map((link: Record<string, string>) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -134,7 +129,7 @@ export default function Footer() {
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t pt-8 sm:flex-row" style={{ borderColor: "var(--footer-border)" }}>
           <p className="text-xs text-zinc-400 dark:text-zinc-500">
-            &copy; {new Date().getFullYear()} Haseeb. All rights reserved.
+            &copy; {new Date().getFullYear()} {site_config.name.split(" ")[0]}. {footer.copyright || "All rights reserved."}
           </p>
           <p className="inline-flex items-center gap-1 text-xs text-zinc-400 dark:text-zinc-500">
             Built with

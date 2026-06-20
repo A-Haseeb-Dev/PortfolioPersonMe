@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "Scaling E-Commerce Platform for 500% Growth",
+    "slug": "scaling-ecommerce-platform",
+    "client": "RetailTech Inc.",
+    "featured": true,
+    "status": "published",
+    "completedDate": "2024-03-15T00:00:00.000Z",
+    "createdAt": "2026-06-20T16:19:18.753Z"
+  },
+  {
+    "id": "2",
+    "title": "Building a Real-Time Analytics Engine",
+    "slug": "real-time-analytics-engine",
+    "client": "DataFlow Corp",
+    "featured": true,
+    "status": "published",
+    "completedDate": "2024-06-01T00:00:00.000Z",
+    "createdAt": "2026-06-20T16:19:18.753Z"
+  },
+  {
+    "id": "3",
+    "title": "Modernizing Healthcare Records System",
+    "slug": "healthcare-records-modernization",
+    "client": "MediCore Health",
+    "featured": false,
+    "status": "published",
+    "completedDate": "2024-08-20T00:00:00.000Z",
+    "createdAt": "2026-06-20T16:19:18.753Z"
+  }
+]

@@ -2,8 +2,6 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 type AchievementType = "AWARD" | "CERTIFICATION" | "MILESTONE" | "PROJECT"
-import { getAdminAchievements } from "@/lib/admin-data"
-import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
 
 const TYPE_MAP: Record<string, AchievementType> = {
   award: "AWARD",
@@ -33,11 +31,8 @@ export async function GET(
 
     return apiResponse({ achievement })
   } catch (error) {
-    console.warn("[ACHIEVEMENT_GET] DB unavailable, using data store", error)
-    const data = getCollection("achievements", getAdminAchievements())
-    const item = data.find((i: any) => i.id === id)
-    if (!item) return apiError("Achievement not found", 404)
-    return apiResponse({ achievement: item })
+    console.error("[ACHIEVEMENT_GET] Failed to fetch achievement", error)
+    return apiError("Failed to fetch achievement", 500)
   }
 }
 
@@ -74,12 +69,8 @@ export async function PUT(
 
     return apiResponse({ achievement })
   } catch (error) {
-    console.warn("[ACHIEVEMENT_PUT] DB unavailable, using data store", error)
-    const fallback = getAdminAchievements()
-    const updatedData = updateInCollection("achievements", id, body, fallback)
-    const updated = updatedData.find((i: any) => i.id === id)
-    if (!updated) return apiError("Achievement not found", 404)
-    return apiResponse({ achievement: updated })
+    console.error("[ACHIEVEMENT_PUT] Failed to update achievement", error)
+    return apiError("Failed to update achievement", 500)
   }
 }
 
@@ -103,9 +94,7 @@ export async function DELETE(
 
     return apiResponse({ message: "Achievement deleted successfully" })
   } catch (error) {
-    console.warn("[ACHIEVEMENT_DELETE] DB unavailable, using data store", error)
-    const fallback = getAdminAchievements()
-    removeFromCollection("achievements", id, fallback)
-    return apiResponse({ message: "Achievement deleted successfully" })
+    console.error("[ACHIEVEMENT_DELETE] Failed to delete achievement", error)
+    return apiError("Failed to delete achievement", 500)
   }
 }

@@ -66,9 +66,41 @@ export default function CreateProject() {
 
   const handleSave = async (asDraft = false) => {
     setSaving(true)
-    await new Promise((r) => setTimeout(r, 1000))
-    setSaving(false)
-    router.push("/admin/projects")
+    try {
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          slug,
+          description,
+          problem: problem || undefined,
+          solution: solution || undefined,
+          architecture: architecture || undefined,
+          features: features.filter(Boolean),
+          techStack,
+          githubUrl: githubUrl || undefined,
+          liveUrl: liveUrl || undefined,
+          videoDemo: videoDemo || undefined,
+          results: results || undefined,
+          lessonsLearned: lessons || undefined,
+          image: "",
+          category: "Web",
+          featured,
+          status: asDraft ? "in-progress" : "completed",
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        console.error("Failed to create project:", err)
+        return
+      }
+      router.push("/admin/projects")
+    } catch (error) {
+      console.error("Failed to create project:", error)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -107,7 +139,7 @@ export default function CreateProject() {
         <div className="space-y-2">
           {features.map((feat, i) => (
             <div key={i} className="flex items-center gap-2">
-              <GripVertical className="h-4 w-4 shrink-0 text-zinc-400" />
+              <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground" />
               <Input value={feat} onChange={(e) => updateFeature(i, e.target.value)} placeholder={`Feature ${i + 1}`} />
               {features.length > 1 && (
                 <Button variant="ghost" size="icon" onClick={() => removeFeature(i)}>

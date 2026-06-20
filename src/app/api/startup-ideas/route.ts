@@ -1,9 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
-import { getAdminStartupIdeas } from "@/lib/admin-data"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getCollection, addToCollection } from "@/lib/data-store"
 
 const statusMap: Record<string, "IDEA" | "VALIDATING" | "BUILDING" | "LAUNCHED" | "FAILED"> = {
   idea: "IDEA",
@@ -54,10 +52,9 @@ export async function GET(request: Request) {
         totalPages: Math.ceil(total / limit),
       },
     })
-  } catch (prismaError) {
-    console.warn("[STARTUP_IDEAS_GET] DB unavailable, using data store", prismaError)
-    const data = getCollection("startup-ideas", getAdminStartupIdeas())
-    return apiResponse({ data, total: data.length, fallback: true })
+  } catch (error) {
+    console.error("[STARTUP_IDEAS_GET] Failed to fetch startup ideas", error)
+    return apiError("Failed to fetch startup ideas", 500)
   }
 }
 
@@ -93,11 +90,8 @@ export async function POST(request: Request) {
     })
 
     return apiResponse({ startupIdea }, 201)
-  } catch (prismaError) {
-    console.warn("[STARTUP_IDEAS_POST] DB unavailable, using data store", prismaError)
-    const fallback = getAdminStartupIdeas()
-    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
-    const data = addToCollection("startup-ideas", newItem, fallback)
-    return apiResponse({ data, item: newItem }, 201)
+  } catch (error) {
+    console.error("[STARTUP_IDEAS_POST] Failed to create startup idea", error)
+    return apiError("Failed to create startup idea", 500)
   }
 }

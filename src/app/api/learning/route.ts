@@ -1,8 +1,6 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
-import { getAdminLearning } from "@/lib/admin-data"
 import { requireRole } from "@/lib/api-utils"
-import { getCollection, addToCollection } from "@/lib/data-store"
 
 const statusMap: Record<string, "CURRENT" | "COMPLETED" | "PLANNED"> = {
   "in-progress": "CURRENT",
@@ -24,10 +22,9 @@ export async function GET() {
       include: { milestones: true },
     })
     return apiResponse({ learning })
-  } catch (prismaError) {
-    console.warn("[LEARNING_GET] DB unavailable, using data store", prismaError)
-    const data = getCollection("learning", getAdminLearning())
-    return apiResponse({ data, total: data.length, fallback: true })
+  } catch (error) {
+    console.error("[LEARNING_GET] Failed to fetch learning journeys", error)
+    return apiError("Failed to fetch learning journeys", 500)
   }
 }
 
@@ -66,11 +63,8 @@ export async function POST(req: Request) {
     })
 
     return apiResponse({ journey }, 201)
-  } catch (prismaError) {
-    console.warn("[LEARNING_POST] DB unavailable, using data store", prismaError)
-    const fallback = getAdminLearning()
-    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
-    const data = addToCollection("learning", newItem, fallback)
-    return apiResponse({ data, item: newItem }, 201)
+  } catch (error) {
+    console.error("[LEARNING_POST] Failed to create learning journey", error)
+    return apiError("Failed to create learning journey", 500)
   }
 }

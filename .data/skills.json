@@ -1,0 +1,296 @@
+[
+  {
+    "id": "programming-languages",
+    "name": "Programming Languages",
+    "technologies": [
+      {
+        "id": "javascript",
+        "name": "JavaScript",
+        "category": "Programming Languages",
+        "proficiency": 92,
+        "order": 6
+      },
+      {
+        "id": "typescript",
+        "name": "TypeScript",
+        "category": "Programming Languages",
+        "proficiency": 85,
+        "order": 4
+      },
+      {
+        "id": "python",
+        "name": "Python",
+        "category": "Programming Languages",
+        "proficiency": 82,
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "frontend",
+    "name": "Frontend",
+    "technologies": [
+      {
+        "id": "react",
+        "name": "React",
+        "category": "Frontend",
+        "proficiency": 90,
+        "order": 5
+      },
+      {
+        "id": "html-css",
+        "name": "HTML & CSS",
+        "category": "Frontend",
+        "proficiency": 95,
+        "order": 7
+      }
+    ]
+  },
+  {
+    "id": "backend",
+    "name": "Backend",
+    "technologies": [
+      {
+        "id": "nodejs",
+        "name": "Node.js",
+        "category": "Backend",
+        "proficiency": 85,
+        "order": 5
+      },
+      {
+        "id": "graphql",
+        "name": "GraphQL",
+        "category": "Backend",
+        "proficiency": 60,
+        "order": 2
+      },
+      {
+        "id": "restapi",
+        "name": "REST API Design",
+        "category": "Backend",
+        "proficiency": 88,
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "frameworks",
+    "name": "Frameworks",
+    "technologies": [
+      {
+        "id": "nextjs",
+        "name": "Next.js",
+        "category": "Frameworks",
+        "proficiency": 88,
+        "order": 4
+      },
+      {
+        "id": "express",
+        "name": "Express.js",
+        "category": "Frameworks",
+        "proficiency": 83,
+        "order": 5
+      },
+      {
+        "id": "django",
+        "name": "Django",
+        "category": "Frameworks",
+        "proficiency": 68,
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "libraries",
+    "name": "Libraries",
+    "technologies": [
+      {
+        "id": "tailwindcss",
+        "name": "Tailwind CSS",
+        "category": "Libraries",
+        "proficiency": 92,
+        "order": 4
+      },
+      {
+        "id": "nextauth",
+        "name": "NextAuth.js",
+        "category": "Libraries",
+        "proficiency": 82,
+        "order": 3
+      },
+      {
+        "id": "framer",
+        "name": "Framer Motion",
+        "category": "Libraries",
+        "proficiency": 80,
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "databases",
+    "name": "Databases",
+    "technologies": [
+      {
+        "id": "mongodb",
+        "name": "MongoDB",
+        "category": "Databases",
+        "proficiency": 80,
+        "order": 4
+      },
+      {
+        "id": "postgresql",
+        "name": "PostgreSQL",
+        "category": "Databases",
+        "proficiency": 82,
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": "cloud",
+    "name": "Cloud & DevOps",
+    "technologies": [
+      {
+        "id": "docker",
+        "name": "Docker",
+        "category": "Cloud & DevOps",
+        "proficiency": 70,
+        "order": 3
+      },
+      {
+        "id": "kubernetes",
+        "name": "Kubernetes",
+        "category": "Cloud & DevOps",
+        "proficiency": 40,
+        "order": 1
+      },
+      {
+        "id": "aws",
+        "name": "AWS",
+        "category": "Cloud & DevOps",
+        "proficiency": 62,
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "devops",
+    "name": "DevOps Tools",
+    "technologies": [
+      {
+        "id": "githubactions",
+        "name": "GitHub Actions",
+        "category": "DevOps Tools",
+        "proficiency": 78,
+        "order": 3
+      },
+      {
+        "id": "git",
+        "name": "Git",
+        "category": "DevOps Tools",
+        "proficiency": 90,
+        "order": 6
+      }
+    ]
+  },
+  {
+    "id": "mobile",
+    "name": "Mobile Development",
+    "technologies": [
+      {
+        "id": "reactnative",
+        "name": "React Native",
+        "category": "Mobile Development",
+        "proficiency": 72,
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "ai",
+    "name": "AI & Machine Learning",
+    "technologies": [
+      {
+        "id": "tensorflow",
+        "name": "TensorFlow",
+        "category": "AI & Machine Learning",
+        "proficiency": 55,
+        "order": 2
+      },
+      {
+        "id": "pytorch",
+        "name": "PyTorch",
+        "category": "AI & Machine Learning",
+        "proficiency": 35,
+        "order": 1
+      }
+    ]
+  },
+  {
+    "id": "blockchain",
+    "name": "Blockchain",
+    "technologies": [
+      {
+        "id": "solidity",
+        "name": "Solidity",
+        "category": "Blockchain",
+        "proficiency": 30,
+        "order": 1
+      }
+    ]
+  },
+  {
+    "id": "tools",
+    "name": "Tools & Utilities",
+    "technologies": [
+      {
+        "id": "prisma",
+        "name": "Prisma",
+        "category": "Tools & Utilities",
+        "proficiency": 85,
+        "order": 3
+      },
+      {
+        "id": "figma",
+        "name": "Figma",
+        "category": "Tools & Utilities",
+        "proficiency": 65,
+        "order": 3
+      },
+      {
+        "id": "linux",
+        "name": "Linux",
+        "category": "Tools & Utilities",
+        "proficiency": 78,
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "business",
+    "name": "Business Skills",
+    "technologies": [
+      {
+        "id": "project-management",
+        "name": "Project Management",
+        "category": "Business Skills",
+        "proficiency": 75,
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": "marketing",
+    "name": "Marketing Skills",
+    "technologies": [
+      {
+        "id": "seo",
+        "name": "SEO & Analytics",
+        "category": "Marketing Skills",
+        "proficiency": 65,
+        "order": 3
+      }
+    ]
+  }
+]

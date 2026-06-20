@@ -5,7 +5,6 @@ import { motion } from "framer-motion"
 import { Plus, Edit3, Trash2, Eye, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
-import { getAdminCaseStudies } from "@/lib/admin-data"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -36,7 +35,7 @@ export default function AdminCaseStudies() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchAdminData<CaseStudy>("/api/case-studies", getAdminCaseStudies()).then((data) => {
+    fetchAdminData<CaseStudy>("/api/case-studies").then((data) => {
       setStudies(data)
       setLoading(false)
     })
@@ -53,7 +52,7 @@ export default function AdminCaseStudies() {
   }
 
   const columns: Column<CaseStudy>[] = [
-    { key: "title", label: "Title", render: (s) => <span className="font-medium text-zinc-900 text-foreground">{s.title}</span> },
+    { key: "title", label: "Title", render: (s) => <span className="font-medium text-foreground">{s.title}</span> },
     { key: "client", label: "Client", render: (s) => <Badge variant="secondary">{s.client}</Badge> },
     {
       key: "status",
@@ -65,12 +64,12 @@ export default function AdminCaseStudies() {
     {
       key: "featured",
       label: "Featured",
-      render: (s) => s.featured ? <Badge variant="info" dot>Featured</Badge> : <span className="text-zinc-400">—</span>,
+      render: (s) => s.featured ? <Badge variant="info" dot>Featured</Badge> : <span className="text-muted-foreground">—</span>,
     },
     {
       key: "completedDate",
       label: "Completed",
-      render: (s) => s.completedDate ? <span className="text-zinc-500">{formatDate(s.completedDate)}</span> : <span className="text-zinc-400">—</span>,
+      render: (s) => s.completedDate ? <span className="text-muted-foreground">{formatDate(s.completedDate)}</span> : <span className="text-muted-foreground">—</span>,
     },
     {
       key: "actions",
@@ -100,8 +99,8 @@ export default function AdminCaseStudies() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900 text-foreground">Case Studies</h1>
-          <p className="text-sm text-zinc-500 text-muted-foreground">Manage portfolio case studies</p>
+          <h1 className="text-xl font-semibold text-foreground">Case Studies</h1>
+          <p className="text-sm text-muted-foreground">Manage portfolio case studies</p>
         </div>
         <Button asChild>
           <Link href="/admin/case-studies/create">

@@ -1,9 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
-import { getAdminCaseStudies } from "@/lib/admin-data"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getCollection, addToCollection } from "@/lib/data-store"
 
 export async function GET(request: Request) {
   try {
@@ -45,10 +43,9 @@ export async function GET(request: Request) {
         totalPages: Math.ceil(total / limit),
       },
     })
-  } catch (prismaError) {
-    console.warn("[CASE_STUDIES_GET] DB unavailable, using data store", prismaError)
-    const data = getCollection("case-studies", getAdminCaseStudies())
-    return apiResponse({ data, total: data.length, fallback: true })
+  } catch (error) {
+    console.error("[CASE_STUDIES_GET] Failed to fetch case studies", error)
+    return apiError("Failed to fetch case studies", 500)
   }
 }
 
@@ -97,11 +94,8 @@ export async function POST(request: Request) {
     })
 
     return apiResponse({ caseStudy }, 201)
-  } catch (prismaError) {
-    console.warn("[CASE_STUDIES_POST] DB unavailable, using data store", prismaError)
-    const fallback = getAdminCaseStudies()
-    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
-    const data = addToCollection("case-studies", newItem, fallback)
-    return apiResponse({ data, item: newItem }, 201)
+  } catch (error) {
+    console.error("[CASE_STUDIES_POST] Failed to create case study", error)
+    return apiError("Failed to create case study", 500)
   }
 }

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Plus, Edit3, Trash2, ExternalLink } from "lucide-react"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
-import { getAdminResources } from "@/lib/admin-data"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -43,7 +42,7 @@ export default function AdminResources() {
   const [form, setForm] = useState({ title: "", description: "", url: "", type: "portfolio" as Resource["type"], category: "", free: true })
 
   useEffect(() => {
-    fetchAdminData<Resource>("/api/resources", getAdminResources()).then((data) => {
+    fetchAdminData<Resource>("/api/resources").then((data) => {
       setResources(data)
       setLoading(false)
     })

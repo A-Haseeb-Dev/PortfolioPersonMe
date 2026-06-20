@@ -2,8 +2,6 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getAdminSkills } from "@/lib/admin-data"
-import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
 
 export async function GET(
   _request: Request,
@@ -27,11 +25,8 @@ export async function GET(
 
     return apiResponse({ category })
   } catch (error) {
-    console.warn("[SKILL_CATEGORY_GET] DB unavailable, using data store", error)
-    const data = getCollection("skills", getAdminSkills())
-    const item = data.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ category: item })
+    console.error("[SKILL_CATEGORY_GET] Failed to fetch skill category", error)
+    return apiError("Failed to fetch skill category", 500)
   }
 }
 
@@ -74,12 +69,8 @@ export async function PUT(
 
     return apiResponse({ category })
   } catch (error) {
-    console.warn("[SKILL_CATEGORY_PUT] DB unavailable, using data store", error)
-    const fallback = getAdminSkills()
-    const collection = updateInCollection("skills", id, body, fallback)
-    const item = collection.find((i: any) => i.id === id)
-    if (!item) return apiError("Not found", 404)
-    return apiResponse({ category: item })
+    console.error("[SKILL_CATEGORY_PUT] Failed to update skill category", error)
+    return apiError("Failed to update skill category", 500)
   }
 }
 
@@ -102,9 +93,7 @@ export async function DELETE(
 
     return apiResponse({ message: "Category deleted successfully" })
   } catch (error) {
-    console.warn("[SKILL_CATEGORY_DELETE] DB unavailable, using data store", error)
-    const fallback = getAdminSkills()
-    removeFromCollection("skills", id, fallback)
-    return apiResponse({ message: "Category deleted successfully" })
+    console.error("[SKILL_CATEGORY_DELETE] Failed to delete skill category", error)
+    return apiError("Failed to delete skill category", 500)
   }
 }

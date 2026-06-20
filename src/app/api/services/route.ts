@@ -1,9 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
-import { getAdminServices } from "@/lib/admin-data"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getCollection, addToCollection } from "@/lib/data-store"
 
 export async function GET(request: Request) {
   try {
@@ -44,10 +42,9 @@ export async function GET(request: Request) {
         totalPages: Math.ceil(total / limit),
       },
     })
-  } catch (prismaError) {
-    console.warn("[SERVICES_GET] DB unavailable, using data store", prismaError)
-    const data = getCollection("services", getAdminServices())
-    return apiResponse({ data, total: data.length, fallback: true })
+  } catch (error) {
+    console.error("[SERVICES_GET] Failed to fetch services", error)
+    return apiError("Failed to fetch services", 500)
   }
 }
 
@@ -81,11 +78,8 @@ export async function POST(request: Request) {
     })
 
     return apiResponse({ service }, 201)
-  } catch (prismaError) {
-    console.warn("[SERVICES_POST] DB unavailable, using data store", prismaError)
-    const fallback = getAdminServices()
-    const newItem = { id: `store_${Date.now()}`, ...body, createdAt: new Date() }
-    const data = addToCollection("services", newItem, fallback)
-    return apiResponse({ data, item: newItem }, 201)
+  } catch (error) {
+    console.error("[SERVICES_POST] Failed to create service", error)
+    return apiError("Failed to create service", 500)
   }
 }

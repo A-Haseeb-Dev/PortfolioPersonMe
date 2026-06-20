@@ -41,10 +41,9 @@ export default function AdminMessages() {
   const [readFilter, setReadFilter] = useState("all")
 
   useEffect(() => {
-    fetchAdminData<Message>("/api/messages", []).then(data => {
+    fetchAdminData<Message>("/api/messages").then(data => {
       setMessages(data)
-      setLoading(false)
-    })
+    }).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const { search, setSearch, filtered: searched } = useTableSearch(messages, ["name", "email", "subject", "message"])

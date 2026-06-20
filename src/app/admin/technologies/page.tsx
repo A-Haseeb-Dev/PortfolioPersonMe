@@ -118,8 +118,8 @@ export default function AdminTechnologies() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900 text-foreground">Technology Graph</h1>
-          <p className="text-sm text-zinc-500 text-muted-foreground">Visualize connections between technologies</p>
+          <h1 className="text-xl font-semibold text-foreground">Technology Graph</h1>
+          <p className="text-sm text-muted-foreground">Visualize connections between technologies</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => setShowNewEdge(true)}>
@@ -134,12 +134,12 @@ export default function AdminTechnologies() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <GlassCard intensity="light" className="p-6 lg:col-span-2">
+        <GlassCard intensity="light" className="p-6 lg:col-span-2 dark:bg-zinc-900/60 dark:border-zinc-800/50">
           <div className="flex items-center gap-2 mb-4">
-            <Network className="h-5 w-5 text-zinc-500" />
-            <h2 className="text-base font-semibold text-zinc-900 text-foreground">Graph View</h2>
+            <Network className="h-5 w-5 text-muted-foreground" />
+            <h2 className="text-base font-semibold text-foreground">Graph View</h2>
           </div>
-          <div className="relative min-h-[500px] rounded-2xl border border-dashed border-zinc-200 bg-zinc-50/50 p-8 border-border bg-[var(--card-bg-30)]">
+          <div className="relative min-h-[500px] rounded-2xl border border-dashed border-border bg-[var(--card-bg-30)] p-8 dark:bg-zinc-900/40 dark:border-zinc-700/50">
             <svg className="absolute inset-0 h-full w-full">
               {edges.map((edge) => {
                 const from = nodeMap.get(edge.from)
@@ -152,7 +152,7 @@ export default function AdminTechnologies() {
                       stroke="currentColor"
                       strokeWidth="1.5"
                       strokeDasharray="4 4"
-                      className="text-zinc-300 text-muted-foreground"
+                      className="text-muted-foreground"
                     />
                   </g>
                 )
@@ -185,16 +185,16 @@ export default function AdminTechnologies() {
               ))}
             </div>
             <div className="mt-6">
-              <p className="text-xs text-zinc-400 mb-3">Connections ({edges.length})</p>
+              <p className="text-xs text-muted-foreground mb-3">Connections ({edges.length})</p>
               <div className="space-y-2">
                 {edges.map((edge) => {
                   const from = nodeMap.get(edge.from)
                   const to = nodeMap.get(edge.to)
                   if (!from || !to) return null
                   return (
-                    <div key={edge.id} className="flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm border-border">
+                    <div key={edge.id} className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm border-border">
                       <Badge variant="secondary">{from.name}</Badge>
-                      <span className="text-xs text-zinc-400">{edge.label}</span>
+                      <span className="text-xs text-muted-foreground">{edge.label}</span>
                       <Badge variant="secondary">{to.name}</Badge>
                       <div className="ml-auto flex gap-1">
                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setDeleteTarget({ type: "edge", id: edge.id })}>
@@ -210,18 +210,18 @@ export default function AdminTechnologies() {
         </GlassCard>
 
         <div className="space-y-4">
-          <GlassCard intensity="light" className="p-5">
-            <h3 className="text-sm font-semibold text-zinc-900 text-foreground mb-3">Legend</h3>
+          <GlassCard intensity="light" className="p-5 dark:bg-zinc-900/60 dark:border-zinc-800/50">
+            <h3 className="text-sm font-semibold text-foreground mb-3">Legend</h3>
             <div className="space-y-2">
               {categories.map((cat) => (
                 <div key={cat} className="flex items-center gap-2 text-sm">
                   <div className={cn(
                     "h-3 w-3 rounded-full border-2",
-                    cat === "Frontend" && "border-blue-500 bg-blue-50 bg-blue-500/10",
-                    cat === "Backend" && "border-emerald-500 bg-emerald-50 bg-emerald-500/10",
-                    cat === "Database" && "border-amber-500 bg-amber-50 bg-amber-500/10",
-                    cat === "DevOps" && "border-violet-500 bg-violet-50 bg-violet-500/10",
-                    cat === "Mobile" && "border-rose-500 bg-rose-50 bg-rose-500/10",
+                    cat === "Frontend" && "border-blue-500 bg-blue-50 bg-blue-500/10 dark:bg-blue-500/20",
+                    cat === "Backend" && "border-emerald-500 bg-emerald-50 bg-emerald-500/10 dark:bg-emerald-500/20",
+                    cat === "Database" && "border-amber-500 bg-amber-50 bg-amber-500/10 dark:bg-amber-500/20",
+                    cat === "DevOps" && "border-violet-500 bg-violet-50 bg-violet-500/10 dark:bg-violet-500/20",
+                    cat === "Mobile" && "border-rose-500 bg-rose-50 bg-rose-500/10 dark:bg-rose-500/20",
                   )} />
                   {cat}
                 </div>
@@ -234,17 +234,17 @@ export default function AdminTechnologies() {
             if (!node) return null
             const conns = connections(selectedNode)
             return (
-              <GlassCard intensity="light" className="p-5">
-                <h3 className="text-sm font-semibold text-zinc-900 text-foreground mb-3">{node.name} Connections</h3>
+              <GlassCard intensity="light" className="p-5 dark:bg-zinc-900/60 dark:border-zinc-800/50">
+                <h3 className="text-sm font-semibold text-foreground mb-3">{node.name} Connections</h3>
                 <div className="space-y-2">
-                  {conns.length === 0 && <p className="text-xs text-zinc-400">No connections</p>}
+                  {conns.length === 0 && <p className="text-xs text-muted-foreground">No connections</p>}
                   {conns.map((conn) => {
                     const connected = nodeMap.get(conn.from === selectedNode ? conn.to : conn.from)
                     if (!connected) return null
                     return (
                       <div key={conn.id} className="flex items-center gap-2 text-sm">
                         <Badge variant="secondary" className="text-xs">{conn.label}</Badge>
-                        <span className="text-zinc-500">{connected.name}</span>
+                        <span className="text-muted-foreground">{connected.name}</span>
                       </div>
                     )
                   })}

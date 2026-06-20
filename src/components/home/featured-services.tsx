@@ -16,8 +16,8 @@ import {
 import { Section } from "@/components/ui/section"
 import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
-import { services } from "@/lib/constants"
 
 const iconMap: Record<string, React.ReactNode> = {
   globe: <Globe className="h-5 w-5" />,
@@ -37,8 +37,53 @@ const accentColors = [
   { bg: "bg-cyan-50 dark:bg-cyan-950/30", text: "text-cyan-600 dark:text-cyan-400", bar: "bg-cyan-500", border: "border-cyan-200 dark:border-cyan-800" },
 ]
 
+interface ServiceItem {
+  id: string
+  title: string
+  description: string
+  icon: string | null
+  features: string[] | Record<string, unknown>
+  price: number | null
+  slug: string
+}
+
 export default function FeaturedServices() {
+  const [services, setServices] = React.useState<ServiceItem[]>([])
   const [selected, setSelected] = React.useState(0)
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    fetch("/api/services?published=true&limit=6")
+      .then((r) => r.json())
+      .then((json) => {
+        const items = json.services || json.data || []
+        if (items.length > 0) {
+          setServices(items.map((s: Record<string, unknown>) => ({
+            id: s.id as string,
+            title: s.title as string,
+            description: s.description as string,
+            icon: s.icon as string | null,
+            features: Array.isArray(s.features) ? s.features : [],
+            price: s.price as number | null,
+            slug: s.slug as string,
+          })))
+        }
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <Section title="Services" subtitle="Loading services...">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-48 rounded-xl" />)}
+        </div>
+      </Section>
+    )
+  }
+
+  if (services.length === 0) return null
 
   return (
     <Section
@@ -55,11 +100,11 @@ export default function FeaturedServices() {
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
         <div className="w-full shrink-0 space-y-1 lg:w-72 xl:w-80 lg:max-h-[600px] lg:overflow-y-auto">
-          {services.slice(0, 6).map((service, index) => {
-            const colors = accentColors[index % accentColors.length]
+          {services.map((service, index) => {
+            const c = accentColors[index % accentColors.length]
             return (
               <button
-                key={service.title}
+                key={service.id}
                 onClick={() => setSelected(index)}
                 className={cn(
                   "group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-200",
@@ -70,15 +115,15 @@ export default function FeaturedServices() {
               >
                 <span className={cn(
                   "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-                  selected === index ? colors.bg : "bg-zinc-100 dark:bg-zinc-800"
+                  selected === index ? c.bg : "bg-zinc-100 dark:bg-zinc-800"
                 )}>
-                  <span className={selected === index ? colors.text : "text-zinc-400 dark:text-zinc-500"}>
-                    {iconMap[service.icon] || <Lightbulb className="h-4 w-4" />}
+                  <span className={selected === index ? c.text : "text-zinc-400 dark:text-zinc-500"}>
+                    {iconMap[service.icon || ""] || <Lightbulb className="h-4 w-4" />}
                   </span>
                 </span>
                 <span className="flex-1 truncate">{service.title}</span>
                 <ChevronRight className={cn(
-                  "h-4 w-4 shrink-0 transition-all duration-200",
+                  "h-4 w-4 shrink-0 transition-all",
                   selected === index ? "translate-x-0 opacity-100" : "-translate-x-1 opacity-0"
                 )} />
               </button>
@@ -96,47 +141,38 @@ export default function FeaturedServices() {
             >
               {(() => {
                 const service = services[selected]
-                const colors = accentColors[selected % accentColors.length]
+                const c = accentColors[selected % accentColors.length]
+                const features = Array.isArray(service.features) ? service.features : []
                 return (
                   <GlassCard intensity="light" hover={false} className="h-full overflow-hidden">
-                    <div className={cn("h-1.5 w-full", colors.bar)} />
+                    <div className={cn("h-1.5 w-full", c.bar)} />
                     <div className="p-6 sm:p-8">
                       <div className="mb-6 flex items-center gap-4">
-                        <div className={cn("flex h-14 w-14 items-center justify-center rounded-2xl", colors.bg)}>
-                          <span className={cn("h-7 w-7", colors.text)}>
-                            {iconMap[service.icon] || <Lightbulb className="h-7 w-7" />}
+                        <div className={cn("flex h-14 w-14 items-center justify-center rounded-2xl", c.bg)}>
+                          <span className={cn("h-7 w-7", c.text)}>
+                            {iconMap[service.icon || ""] || <Lightbulb className="h-7 w-7" />}
                           </span>
                         </div>
                         <div>
-                          <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-                            {service.title}
-                          </h3>
-                          <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                            {service.price}
-                          </p>
+                          <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{service.title}</h3>
+                          {service.price !== null && (
+                            <p className="text-sm text-zinc-400 dark:text-zinc-500">${service.price}</p>
+                          )}
                         </div>
                       </div>
-                      <p className="text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
-                        {service.description}
-                      </p>
-                      <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                        {service.features.map((feature) => (
-                          <div key={feature} className="flex items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50/50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-800/20">
-                            <div className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", colors.bg)}>
-                              <Check className={cn("h-3 w-3", colors.text)} />
+                      <p className="text-base leading-relaxed text-zinc-500 dark:text-zinc-400">{service.description}</p>
+                      {features.length > 0 && (
+                        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                          {features.map((feature, i) => (
+                            <div key={i} className="flex items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50/50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-800/20">
+                              <div className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", c.bg)}>
+                                <Check className={cn("h-3 w-3", c.text)} />
+                              </div>
+                              <span className="text-sm text-zinc-700 dark:text-zinc-300">{feature}</span>
                             </div>
-                            <span className="text-sm text-zinc-700 dark:text-zinc-300">{feature}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-6 flex items-center gap-3 text-sm">
-                        <Button size="sm">
-                          Get Started
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          Learn more &rarr;
-                        </Button>
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </GlassCard>
                 )

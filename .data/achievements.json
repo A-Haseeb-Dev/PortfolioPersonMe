@@ -1,0 +1,122 @@
+[
+  {
+    "id": "hackathon-2026",
+    "title": "1st Place — National Hackathon 2026",
+    "description": "Led a team of 4 to build an AI-powered disaster response system, winning first place among 200+ teams nationwide.",
+    "date": "2026-05-15T00:00:00.000Z",
+    "category": "award",
+    "issuer": "National Tech Summit",
+    "featured": true,
+    "createdAt": "2026-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "nextjs-cert",
+    "title": "Next.js 14 & React Masterclass",
+    "description": "Completed advanced certification covering server components, streaming, caching strategies, and full-stack patterns.",
+    "date": "2026-04-10T00:00:00.000Z",
+    "category": "certification",
+    "issuer": "Academind by Maximilian Schwarzmüller",
+    "featured": true,
+    "createdAt": "2026-04-10T00:00:00.000Z"
+  },
+  {
+    "id": "oss-milestone",
+    "title": "1,000 GitHub Stars Across Repos",
+    "description": "Open source projects collectively crossed 1,000 stars on GitHub, with CLI-AI being the most popular at 634 stars.",
+    "date": "2026-03-20T00:00:00.000Z",
+    "category": "milestone",
+    "issuer": "GitHub Community",
+    "featured": true,
+    "createdAt": "2026-03-20T00:00:00.000Z"
+  },
+  {
+    "id": "aws-cert",
+    "title": "AWS Cloud Practitioner Certified",
+    "description": "Earned foundational AWS certification validating cloud knowledge including architecture, pricing, and security.",
+    "date": "2026-02-28T00:00:00.000Z",
+    "category": "certification",
+    "issuer": "Amazon Web Services",
+    "featured": true,
+    "createdAt": "2026-02-28T00:00:00.000Z"
+  },
+  {
+    "id": "portfolio-launch",
+    "title": "Portfolio Platform v2 Launch",
+    "description": "Launched complete redesign of personal portfolio with Next.js 16, featuring interactive tech graph, dark mode, and CMS.",
+    "date": "2026-01-15T00:00:00.000Z",
+    "category": "project",
+    "issuer": "Personal Project",
+    "featured": true,
+    "createdAt": "2026-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "typescript-cert",
+    "title": "Understanding TypeScript — Advanced",
+    "description": "Comprehensive TypeScript certification covering advanced types, generics, decorators, and enterprise patterns.",
+    "date": "2025-12-05T00:00:00.000Z",
+    "category": "certification",
+    "issuer": "Udemy",
+    "featured": false,
+    "createdAt": "2025-12-05T00:00:00.000Z"
+  },
+  {
+    "id": "open-source-contrib",
+    "title": "Top Contributor — 2025",
+    "description": "Recognized as a top contributor to the Next.js ecosystem with meaningful PRs to core libraries and documentation.",
+    "date": "2025-11-10T00:00:00.000Z",
+    "category": "award",
+    "issuer": "Vercel / Next.js Community",
+    "featured": true,
+    "createdAt": "2025-11-10T00:00:00.000Z"
+  },
+  {
+    "id": "saas-launch",
+    "title": "MentorBridge SaaS Platform Launch",
+    "description": "Designed, built, and launched a mentorship matching platform connecting junior devs with senior engineers — now serving 500+ users.",
+    "date": "2025-10-01T00:00:00.000Z",
+    "category": "project",
+    "issuer": "Indie Project",
+    "featured": true,
+    "createdAt": "2025-10-01T00:00:00.000Z"
+  },
+  {
+    "id": "react-cert",
+    "title": "React — The Complete Guide",
+    "description": "Comprehensive React certification covering hooks, context, Redux, testing, and real-world application architecture.",
+    "date": "2025-08-20T00:00:00.000Z",
+    "category": "certification",
+    "issuer": "Udemy",
+    "featured": false,
+    "createdAt": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "freelance-milestone",
+    "title": "50+ Freelance Projects Delivered",
+    "description": "Reached milestone of 50+ completed freelance projects on Upwork with a 100% satisfaction rating.",
+    "date": "2025-06-15T00:00:00.000Z",
+    "category": "milestone",
+    "issuer": "Upwork",
+    "featured": false,
+    "createdAt": "2025-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "ai-hackathon",
+    "title": "Winner — AI Innovation Challenge",
+    "description": "Built an LLM-powered document analyzer that extracts structured data from unstructured PDFs, winning the AI track.",
+    "date": "2025-04-22T00:00:00.000Z",
+    "category": "award",
+    "issuer": "AI Innovation Labs",
+    "featured": true,
+    "createdAt": "2025-04-22T00:00:00.000Z"
+  },
+  {
+    "id": "first-project",
+    "title": "First Production SaaS — TaskFlow",
+    "description": "Built and launched TaskFlow, a project management app for small teams. First real SaaS with paying customers.",
+    "date": "2024-09-01T00:00:00.000Z",
+    "category": "project",
+    "issuer": "Personal Project",
+    "featured": false,
+    "createdAt": "2024-09-01T00:00:00.000Z"
+  }
+]

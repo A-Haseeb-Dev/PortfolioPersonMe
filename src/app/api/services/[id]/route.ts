@@ -2,8 +2,6 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
-import { getAdminServices } from "@/lib/admin-data"
-import { getCollection, updateInCollection, removeFromCollection } from "@/lib/data-store"
 
 export async function GET(
   _request: Request,
@@ -21,11 +19,8 @@ export async function GET(
 
     return apiResponse({ service })
   } catch (error) {
-    console.warn("[SERVICE_GET] DB unavailable, using data store", error)
-    const data = getCollection("services", getAdminServices())
-    const item = data.find((i: any) => i.id === id)
-    if (!item) return apiError("Service not found", 404)
-    return apiResponse({ service: item })
+    console.error("[SERVICE_GET] Failed to fetch service", error)
+    return apiError("Failed to fetch service", 500)
   }
 }
 
@@ -64,12 +59,8 @@ export async function PUT(
 
     return apiResponse({ service })
   } catch (error) {
-    console.warn("[SERVICE_PUT] DB unavailable, using data store", error)
-    const fallback = getAdminServices()
-    const updatedData = updateInCollection("services", id, body, fallback)
-    const updated = updatedData.find((i: any) => i.id === id)
-    if (!updated) return apiError("Service not found", 404)
-    return apiResponse({ service: updated })
+    console.error("[SERVICE_PUT] Failed to update service", error)
+    return apiError("Failed to update service", 500)
   }
 }
 
@@ -95,9 +86,7 @@ export async function DELETE(
 
     return apiResponse({ message: "Service deleted successfully" })
   } catch (error) {
-    console.warn("[SERVICE_DELETE] DB unavailable, using data store", error)
-    const fallback = getAdminServices()
-    removeFromCollection("services", id, fallback)
-    return apiResponse({ message: "Service deleted successfully" })
+    console.error("[SERVICE_DELETE] Failed to delete service", error)
+    return apiError("Failed to delete service", 500)
   }
 }

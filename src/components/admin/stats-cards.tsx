@@ -46,9 +46,9 @@ export function StatsCards({ stats, className }: StatsCardsProps) {
           className={cn(stat.onClick && "cursor-pointer")}
           onClick={stat.onClick}
         >
-          <GlassCard intensity="light" className="p-5">
+          <GlassCard intensity="light" className="p-5 dark:bg-zinc-900/60 dark:border-zinc-800/50">
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-200/70 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
                 {stat.icon}
               </div>
               {stat.trend && (

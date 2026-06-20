@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -76,6 +76,7 @@ model TechnologyCategory {
   slug        String    @unique
   description String?
   icon        String?
+  color       String?
   order       Int       @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -92,11 +93,17 @@ model Technology {
   slug             String           @unique
   description      String?
   icon             String?
+  color            String?
+  proficiency      Int?
   experienceLevel  String           @default("INTERMEDIATE")
   yearsExperience  Float            @default(0)
   categoryId       String
   projectsUsing    Json?
   learningResources Json?
+  relatedTechnologies Json?
+  certificates     Json?
+  useCases         Json?
+  features         Json?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   deletedAt        DateTime?
@@ -279,12 +286,15 @@ model Achievement {
   description String?
   date        DateTime?
   type        String          @default("MILESTONE")
+  issuer      String?
+  featured    Boolean         @default(false)
   icon        String?
   url         String?
   createdAt   DateTime        @default(now())
 
   @@index([type])
   @@index([date])
+  @@index([featured])
 }
 
 model Resource {
@@ -482,4 +492,94 @@ model Settings {
   updatedAt DateTime @updatedAt
 
   @@index([key])
+}
+
+model KnowledgeCategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  color       String?
+  noteCount   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  notes       KnowledgeNote[]
+
+  @@index([slug])
+}
+
+model KnowledgeNote {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String
+  readingTime Int?
+  categoryId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  category    KnowledgeCategory  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  tags        KnowledgeNoteTag[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([deletedAt])
+}
+
+model KnowledgeTag {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  createdAt DateTime   @default(now())
+
+  notes     KnowledgeNoteTag[]
+
+  @@index([slug])
+}
+
+model KnowledgeNoteTag {
+  noteId String
+  tagId  String
+
+  note   KnowledgeNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  tag    KnowledgeTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([noteId, tagId])
+  @@index([tagId])
+}
+
+model GitHubRepo {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  stars          Int      @default(0)
+  forks          Int      @default(0)
+  issues         Int      @default(0)
+  language       String?
+  languageColor  String?
+  url            String?
+  topics         Json?
+  updatedAt      DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  @@index([stars])
+  @@index([updatedAt])
+}
+
+model GitHubProfile {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  name        String?
+  avatar      String?
+  bio         String?
+  totalStars  Int      @default(0)
+  totalForks  Int      @default(0)
+  totalRepos  Int      @default(0)
+  updatedAt   DateTime @default(now())
+
+  @@index([username])
 }

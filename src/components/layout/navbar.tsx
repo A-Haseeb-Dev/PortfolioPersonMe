@@ -10,41 +10,31 @@ import {
   Sun,
   Moon,
   ChevronDown,
-  BookOpen,
-  BrainCircuit,
-  Building2,
   ChevronRight,
   ArrowUp,
-  Sparkles,
-  FileText,
+  BookOpen,
   Layers,
+  FileText,
   PenLine,
+  Sparkles,
+  Building2,
+  Code2,
+  Award,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useSettings } from "@/contexts/settings-context"
 import MobileNav from "./mobile-nav"
 
-const navItems = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Skills", href: "/skills" },
-  { label: "Projects", href: "/projects" },
-  {
-    label: "Resources",
-    href: "#",
-    children: [
-      { label: "Blog", href: "/blog", icon: PenLine, description: "Articles, insights and tutorials" },
-      { label: "Knowledge", href: "/knowledge", icon: Layers, description: "Documentation and guides" },
-      { label: "Case Studies", href: "/case-studies", icon: FileText, description: "Real-world projects" },
-    ],
-  },
-  {
-    label: "More",
-    href: "#",
-    children: [
-      { label: "Learning", href: "/learning", icon: BookOpen, description: "My learning journey" },
-    ],
-  },
-]
+const iconMap: Record<string, React.ReactNode> = {
+  BookOpen: <BookOpen size={15} />,
+  Layers: <Layers size={15} />,
+  FileText: <FileText size={15} />,
+  PenLine: <PenLine size={15} />,
+  Sparkles: <Sparkles size={15} />,
+  Building2: <Building2 size={15} />,
+  Code2: <Code2 size={15} />,
+  Award: <Award size={15} />,
+}
 
 const linkVariants = {
   rest: { scale: 1 },
@@ -54,7 +44,9 @@ const linkVariants = {
 export default function Navbar() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
+  const { settings } = useSettings()
   const [mounted, setMounted] = useState(false)
+  const navItems = settings.nav_items.length > 0 ? settings.nav_items : []
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [visible, setVisible] = useState(true)
@@ -190,14 +182,14 @@ export default function Navbar() {
                 >
                   <span className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-zinc-900 text-xs font-bold tracking-tight text-white shadow-sm transition-transform duration-200 group-hover:scale-105 dark:bg-white dark:text-zinc-900">
                     <span className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/10 to-transparent" />
-                    H
+                    {settings.site_config.name.charAt(0).toUpperCase()}
                   </span>
                   <div className="hidden sm:block">
                     <span className="text-sm font-semibold tracking-tight text-zinc-900 transition-colors group-hover:text-zinc-600 dark:text-zinc-50 dark:group-hover:text-zinc-300">
-                      Muhammad Haseeb
+                      {settings.site_config.name}
                     </span>
                     <span className="block text-[10px] font-medium tracking-wider text-zinc-400 uppercase dark:text-zinc-500">
-                      Full-Stack Developer
+                      {settings.site_config.title}
                     </span>
                   </div>
                 </Link>
@@ -262,7 +254,7 @@ export default function Navbar() {
                             >
                               <div className="p-1.5">
                                 {item.children?.map((child) => {
-                                  const Icon = child.icon
+                                  const IconComponent = iconMap[child.icon as string]
                                   const childActive = isActive(child.href)
                                   return (
                                     <Link
@@ -283,7 +275,7 @@ export default function Navbar() {
                                             : "border-zinc-200 bg-white text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400"
                                         )}
                                       >
-                                        <Icon size={15} />
+                                        {IconComponent}
                                       </div>
                                       <div className="flex flex-col">
                                         <span className="text-sm font-medium">{child.label}</span>
