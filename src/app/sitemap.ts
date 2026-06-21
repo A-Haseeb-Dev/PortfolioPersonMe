@@ -20,7 +20,13 @@ const staticRoutes = [
 
 async function fetchData(url: string): Promise<any[]> {
   try {
-    const res = await fetch(`${siteConfig.url}${url}`, { next: { revalidate: 3600 } })
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 5000)
+    const res = await fetch(`${siteConfig.url}${url}`, {
+      signal: controller.signal,
+      next: { revalidate: 3600 },
+    })
+    clearTimeout(timeout)
     if (!res.ok) return []
     const json = await res.json()
     return json.data || []

@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: portfolio-pdb
+  namespace: portfolio
+  labels:
+    app: portfolio
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: portfolio

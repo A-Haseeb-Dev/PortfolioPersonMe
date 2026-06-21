@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import AdminLayoutClient from "@/components/layout/admin-layout"
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: {
     default: "Admin Dashboard",
