@@ -1,13 +1,14 @@
 "use client"
 
 import { useRef } from "react"
+import { useSettings } from "@/contexts/settings-context"
 import { motion, useInView } from "framer-motion"
 import { GraduationCap, Calendar, MapPin } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
-const education = [
+const defaultEducation = [
   {
     degree: "Bachelor of Science in Computer Science",
     institution: "University of Karachi",
@@ -35,6 +36,9 @@ const education = [
 ]
 
 export default function Education() {
+  const { settings } = useSettings()
+  const education = settings.about?.education ?? defaultEducation
+
   return (
     <Section title="Education" subtitle="The academic foundation that shaped my journey.">
       <div className="mt-10 space-y-0">
@@ -51,7 +55,7 @@ function EducationEntry({
   index,
   isLast,
 }: {
-  item: (typeof education)[number]
+  item: { degree: string; institution: string; location: string; year: string; description: string }
   index: number
   isLast: boolean
 }) {

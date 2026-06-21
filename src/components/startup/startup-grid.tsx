@@ -2,8 +2,21 @@
 
 import { motion } from "framer-motion"
 import { useData } from "@/hooks/use-data"
-import { startupIdeas as staticIdeas } from "@/data/startup-ideas"
 import StartupCard from "./startup-card"
+
+interface StartupIdea {
+  id: string
+  title: string
+  slug: string
+  problem: string
+  solution: string
+  market: string
+  revenueModel: string
+  status: string
+  published: boolean
+  createdAt: string
+  updatedAt: string
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -14,7 +27,7 @@ const containerVariants = {
 }
 
 export default function StartupGrid() {
-  const startupIdeas = useData("/api/startup-ideas", staticIdeas)
+  const startupIdeas = useData<StartupIdea>("/api/startup-ideas", [])
   return (
     <motion.div
       variants={containerVariants}

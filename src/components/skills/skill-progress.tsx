@@ -7,13 +7,36 @@ import { cn } from "@/lib/utils"
 import { GlassCard } from "@/components/ui/glass-card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
-import { skillCategories, technologies } from "@/data/skills"
+interface Technology {
+  id: string
+  name: string
+  categoryId: string
+  icon: string
+  description: string
+  experienceLevel: string
+  yearsExperience: number
+  proficiency: number
+  color: string
+}
 
-export default function SkillProgress() {
+interface SkillCategory {
+  id: string
+  name: string
+  icon: React.ComponentType<{ size?: number }>
+  color: string
+  description: string
+}
+
+interface SkillProgressProps {
+  categories: SkillCategory[]
+  technologies: Technology[]
+}
+
+export default function SkillProgress({ categories, technologies }: SkillProgressProps) {
   const [expandedCategory, setExpandedCategory] = useState<string | null>("frontend")
   const [searchQuery, setSearchQuery] = useState("")
 
-  const filteredCategories = skillCategories.filter((cat) => {
+  const filteredCategories = categories.filter((cat) => {
     if (searchQuery) {
       return technologies.some(
         (t) =>

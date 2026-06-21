@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
-import type { SiteSettings } from "@/app/api/settings/route"
+import type { SiteSettings } from "@/types"
 
 export interface SettingsContextValue {
   settings: SiteSettings
@@ -18,10 +18,27 @@ const defaultSettings: SiteSettings = {
   stats: [],
   seo: { title: "", description: "", keywords: "", ogImage: "" },
   theme: { mode: "system", accentColor: "zinc", animationsEnabled: true },
-  footer: { tagline: "", quickLinks: [], copyright: "" },
+  footer: { tagline: "", quickLinks: [], resourceLinks: [], copyright: "" },
   tech_categories: [],
   tech_radar_categories: [],
   technology_graph_nodes: [],
+  about: {
+    name: "",
+    title: "",
+    subtitle: "",
+    bio: "",
+    location: "",
+    availability: "",
+    resumeUrl: "",
+    avatar: "",
+    stats: [],
+    story: [],
+    mission: { text: "", bullets: [] },
+    vision: { text: "", bullets: [] },
+    education: [],
+    career: [],
+    goals: [],
+  },
 }
 
 const SettingsContext = createContext<SettingsContextValue>({

@@ -7,26 +7,49 @@ import { cn } from "@/lib/utils"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { skillCategories, technologies, type Technology } from "@/data/skills"
+import type { LucideIcon } from "lucide-react"
+
+interface Technology {
+  id: string
+  name: string
+  categoryId: string
+  icon: string
+  description: string
+  experienceLevel: string
+  yearsExperience: number
+  proficiency: number
+  color: string
+}
+
+interface SkillCategory {
+  id: string
+  name: string
+  icon: LucideIcon
+  color: string
+  description: string
+}
 
 interface TechCategoriesProps {
   searchQuery: string
   activeCategory: string | null
   onTechSelect: (tech: Technology) => void
   selectedTech: Technology | null
+  technologies: Technology[]
+  skillCategories: SkillCategory[]
 }
-
-const categoryCounts = technologies.reduce<Record<string, number>>((acc, t) => {
-  acc[t.categoryId] = (acc[t.categoryId] || 0) + 1
-  return acc
-}, {})
 
 export default function TechCategories({
   searchQuery,
   activeCategory,
   onTechSelect,
   selectedTech,
+  technologies,
+  skillCategories,
 }: TechCategoriesProps) {
+  const categoryCounts = technologies.reduce<Record<string, number>>((acc, t) => {
+    acc[t.categoryId] = (acc[t.categoryId] || 0) + 1
+    return acc
+  }, {})
   const [expandedCategory, setExpandedCategory] = useState<string | null>("frontend")
   const [expandedTechs, setExpandedTechs] = useState<Set<string>>(new Set())
 

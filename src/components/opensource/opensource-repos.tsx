@@ -4,8 +4,19 @@ import { motion } from "framer-motion"
 import { Star, GitFork, AlertCircle, ExternalLink } from "lucide-react"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
-import { repos } from "@/data/opensource"
-import { cn } from "@/lib/utils"
+
+interface Repo {
+  id: string
+  name: string
+  description: string | null
+  stars: number
+  forks: number
+  issues: number
+  language: string | null
+  languageColor: string | null
+  url: string | null
+  topics: string[] | null
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -24,7 +35,7 @@ const cardVariants = {
   },
 }
 
-export default function OpensourceRepos() {
+export default function OpensourceRepos({ repos }: { repos: Repo[] }) {
   return (
     <section className="py-16 sm:py-24">
       <motion.div
@@ -46,7 +57,7 @@ export default function OpensourceRepos() {
           {repos.map((repo, index) => (
             <motion.div key={repo.id} variants={cardVariants}>
               <a
-                href={repo.url}
+                href={repo.url || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block"
@@ -72,14 +83,14 @@ export default function OpensourceRepos() {
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-1.5">
-                      {repo.topics.slice(0, 4).map((topic) => (
+                      {(repo.topics || []).slice(0, 4).map((topic) => (
                         <Badge key={topic} variant="secondary" className="text-[10px]">
                           {topic}
                         </Badge>
                       ))}
-                      {repo.topics.length > 4 && (
+                      {(repo.topics || []).length > 4 && (
                         <Badge variant="outline" className="text-[10px]">
-                          +{repo.topics.length - 4}
+                          +{(repo.topics || []).length - 4}
                         </Badge>
                       )}
                     </div>
@@ -88,7 +99,7 @@ export default function OpensourceRepos() {
                       <span className="flex items-center gap-1">
                         <span
                           className="h-2.5 w-2.5 rounded-full"
-                          style={{ backgroundColor: repo.languageColor }}
+                          style={{ backgroundColor: repo.languageColor || "#888" }}
                         />
                         {repo.language}
                       </span>

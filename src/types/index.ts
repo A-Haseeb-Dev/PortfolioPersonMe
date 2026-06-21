@@ -316,3 +316,35 @@ export interface SiteConfig {
   ogImage: string
   links: Record<string, string>
 }
+
+export interface SiteSettings {
+  site_config: { name: string; title: string; description: string; logo: string; url: string }
+  hero: { name: string; titles: string[]; subtitle: string; availability: string; showStats: boolean; showSocialLinks: boolean }
+  social_links: { platform: string; url: string; icon: string; label: string }[]
+  nav_items: { label: string; href: string; children?: { label: string; href: string; icon: string; description: string }[] }[]
+  stats: { label: string; value: string; description: string }[]
+  seo: { title: string; description: string; keywords: string; ogImage: string }
+  theme: { mode: string; accentColor: string; animationsEnabled: boolean }
+  footer: { tagline: string; quickLinks: { label: string; href: string }[]; resourceLinks: { label: string; href: string }[]; copyright: string }
+  tech_categories: { name: string; icon: string; technologies: string[] }[]
+  tech_radar_categories: { name: string; ring: string; description: string; items: { name: string; description?: string; category: string }[] }[]
+  technology_graph_nodes: { id: string; name: string; category: string; proficiency: number; color: string; connections: string[] }[]
+  about: {
+    name: string
+    title: string
+    subtitle: string
+    bio: string
+    location: string
+    availability: string
+    resumeUrl: string
+    avatar: string
+    stats: { label: string; value: number; suffix: string }[]
+    story: { year: string; title: string; description: string }[]
+    mission: { text: string; bullets: string[] }
+    vision: { text: string; bullets: string[] }
+    education: { degree: string; institution: string; location: string; year: string; description: string }[]
+    career: { role: string; company: string; location: string; period: string; description: string; tags: string[] }[]
+    goals: { title: string; description: string; icon: string }[]
+  }
+  [key: string]: unknown
+}

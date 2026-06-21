@@ -56,7 +56,6 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={``}
     >
       <head>
         <script

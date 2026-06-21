@@ -1,13 +1,37 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useSettings } from "@/contexts/settings-context"
 import { Target, Eye, Sparkles } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { GlassCard } from "@/components/ui/glass-card"
 import { FadeIn } from "@/components/ui/animated-text"
 import { IconBox } from "@/components/ui/icon-box"
 
+const defaultMission = {
+  text: "To craft digital experiences that are not just functional but delightful — bridging the gap between aesthetic design and robust engineering. I believe great software should feel invisible, intuitive, and leave users better off than they were before.",
+  bullets: [
+    "Ship clean, maintainable code that stands the test of time",
+    "Champion accessibility and inclusive design in every project",
+    "Share knowledge openly and lift the next generation of developers",
+  ],
+}
+
+const defaultVision = {
+  text: "To build a future where technology amplifies human potential. I envision a world where software adapts to people — not the other way around — and where developers have the tools and community support to create meaningful impact.",
+  bullets: [
+    "Create tools that empower creators and solve real-world problems",
+    "Build a legacy of open-source contributions that outlast any single project",
+    "Inspire a culture of craftsmanship, curiosity, and kindness in tech",
+  ],
+}
+
 export default function MissionVision() {
+  const { settings } = useSettings()
+  const about = settings.about
+  const mission = about?.mission ?? defaultMission
+  const vision = about?.vision ?? defaultVision
+
   return (
     <Section title="Mission & Vision" subtitle="What drives me and where I'm headed.">
       <div className="mt-10 grid gap-8 md:grid-cols-2">
@@ -20,17 +44,10 @@ export default function MissionVision() {
                 Mission
               </h3>
               <p className="mt-3 leading-relaxed text-zinc-600 dark:text-zinc-300">
-                To craft digital experiences that are not just functional but delightful —
-                bridging the gap between aesthetic design and robust engineering. I believe
-                great software should feel invisible, intuitive, and leave users better off
-                than they were before.
+                {mission.text}
               </p>
               <ul className="mt-6 space-y-3">
-                {[
-                  "Ship clean, maintainable code that stands the test of time",
-                  "Champion accessibility and inclusive design in every project",
-                  "Share knowledge openly and lift the next generation of developers",
-                ].map((item, i) => (
+                {mission.bullets.map((item, i) => (
                   <motion.li
                     key={i}
                     initial={{ opacity: 0, x: -10 }}
@@ -57,16 +74,10 @@ export default function MissionVision() {
                 Vision
               </h3>
               <p className="mt-3 leading-relaxed text-zinc-600 dark:text-zinc-300">
-                To build a future where technology amplifies human potential. I envision a
-                world where software adapts to people — not the other way around — and where
-                developers have the tools and community support to create meaningful impact.
+                {vision.text}
               </p>
               <ul className="mt-6 space-y-3">
-                {[
-                  "Create tools that empower creators and solve real-world problems",
-                  "Build a legacy of open-source contributions that outlast any single project",
-                  "Inspire a culture of craftsmanship, curiosity, and kindness in tech",
-                ].map((item, i) => (
+                {vision.bullets.map((item, i) => (
                   <motion.li
                     key={i}
                     initial={{ opacity: 0, x: -10 }}

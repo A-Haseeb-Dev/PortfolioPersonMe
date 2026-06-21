@@ -1,32 +1,93 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { currentCourses as staticCourses, timelineMilestones as staticMilestones, roadmapTracks as staticTracks } from "@/data/learning"
-import { useState, useEffect } from "react"
+import { useMemo } from "react"
+import { useData } from "@/hooks/use-data"
 import LearningHeader from "@/components/learning/learning-header"
 import LearningOverview from "@/components/learning/learning-overview"
 import CurrentLearning from "@/components/learning/current-learning"
 import LearningTimeline from "@/components/learning/learning-timeline"
 import LearningRoadmap from "@/components/learning/learning-roadmap"
 
-export default function LearningPage() {
-  const [courses, setCourses] = useState(staticCourses)
-  const [milestones, setMilestones] = useState(staticMilestones)
-  const [tracks, setTracks] = useState(staticTracks)
+interface ApiMilestone {
+  id: string
+  title: string
+  description: string | null
+  date: string
+  journeyId: string
+  completed: boolean
+}
 
-  useEffect(() => {
-    fetch("/api/learning")
-      .then(r => r.json())
-      .then(res => {
-        const learning = res.learning || res.data || []
-        if (learning.length > 0) {
-          setCourses(learning.filter((l: any) => l.status === "CURRENT" || l.status === "current" || l.status === "in-progress"))
-          setMilestones(learning.filter((l: any) => l.status === "COMPLETED" || l.status === "completed"))
-          setTracks(learning.filter((l: any) => l.status === "PLANNED" || l.status === "planned"))
-        }
-      })
-      .catch(() => {})
-  }, [])
+interface LearningJourney {
+  id: string
+  title: string
+  description: string | null
+  status: string
+  category: string | null
+  resource: string | null
+  startDate: string | null
+  endDate: string | null
+  certificate: string | null
+  notes: string | null
+  createdAt: string
+  updatedAt: string
+  milestones: ApiMilestone[]
+}
+
+export default function LearningPage() {
+  const learning = useData<LearningJourney>("/api/learning", [])
+
+  const courses = useMemo(
+    () =>
+      learning
+        .filter((l) => l.status === "CURRENT")
+        .map((l) => ({
+          id: l.id,
+          title: l.title,
+          description: l.description || "",
+          platform: l.resource || "",
+          url: "",
+          startDate: new Date(l.startDate || l.createdAt),
+          estimatedEnd: new Date(l.endDate || l.startDate || l.createdAt),
+          progress: 0,
+          category: l.category || "",
+        })),
+    [learning],
+  )
+
+  const milestones = useMemo(
+    () =>
+      learning
+        .filter((l) => l.status === "COMPLETED")
+        .map((l) => ({
+          id: l.id,
+          title: l.title,
+          description: l.description || "",
+          date: new Date(l.endDate || l.createdAt),
+          category: l.category || "",
+          certificate: l.certificate || undefined,
+        })),
+    [learning],
+  )
+
+  const tracks = useMemo(
+    () =>
+      learning
+        .filter((l) => l.status === "PLANNED")
+        .map((l) => ({
+          id: l.id,
+          title: l.title,
+          description: l.description || "",
+          color: "#3b82f6",
+          steps: l.milestones.map((m) => ({
+            id: m.id,
+            title: m.title,
+            description: m.description || "",
+            status: (m.completed ? "completed" : "future") as "completed" | "future",
+          })),
+        })),
+    [learning],
+  )
 
   const totalCompleted = milestones.length
   const totalInProgress = courses.length

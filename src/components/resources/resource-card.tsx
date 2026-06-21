@@ -4,9 +4,24 @@ import { motion } from "framer-motion"
 import { FileText, Award, BookOpen, Code2, FileJson, Download, Calendar, Eye } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { Resource } from "@/data/resources"
+interface Resource {
+  id: string
+  title: string
+  slug?: string
+  description: string
+  type: string
+  fileUrl: string
+  downloadCount: number
+  published?: boolean
+  createdAt?: string
+  updatedAt?: string
+  tags?: string[]
+  fileSize?: string
+  lastUpdated?: string
+  category?: string
+}
 
-const typeIcons: Record<Resource["type"], LucideIcon> = {
+const typeIcons: Record<string, LucideIcon> = {
   resume: FileText,
   certificate: Award,
   portfolio: BookOpen,
@@ -14,7 +29,7 @@ const typeIcons: Record<Resource["type"], LucideIcon> = {
   guide: FileJson,
 }
 
-const typeGradients: Record<Resource["type"], string> = {
+const typeGradients: Record<string, string> = {
   resume: "from-blue-500 to-cyan-400",
   certificate: "from-amber-500 to-orange-400",
   portfolio: "from-purple-500 to-pink-400",
@@ -22,7 +37,7 @@ const typeGradients: Record<Resource["type"], string> = {
   guide: "from-violet-500 to-indigo-400",
 }
 
-const typeLabels: Record<Resource["type"], string> = {
+const typeLabels: Record<string, string> = {
   resume: "Resume",
   certificate: "Certificate",
   portfolio: "Portfolio",
@@ -36,7 +51,8 @@ interface ResourceCardProps {
 }
 
 export default function ResourceCard({ resource, index }: ResourceCardProps) {
-  const Icon = typeIcons[resource.type]
+  const resourceType = resource.type.toLowerCase()
+  const Icon = typeIcons[resourceType]
 
   return (
     <motion.a
@@ -60,7 +76,7 @@ export default function ResourceCard({ resource, index }: ResourceCardProps) {
           className={cn(
             "absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100",
             "bg-gradient-to-br",
-            typeGradients[resource.type]
+            typeGradients[resourceType]
           )}
           style={{ maskImage: "radial-gradient(circle at 0% 0%, black, transparent 70%)" }}
         />
@@ -69,7 +85,7 @@ export default function ResourceCard({ resource, index }: ResourceCardProps) {
           <div
             className={cn(
               "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:shadow-md",
-              typeGradients[resource.type],
+              typeGradients[resourceType],
               "text-white"
             )}
           >
@@ -82,7 +98,7 @@ export default function ResourceCard({ resource, index }: ResourceCardProps) {
                 {resource.title}
               </h3>
               <span className="shrink-0 rounded-md border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
-                {typeLabels[resource.type]}
+                {typeLabels[resourceType]}
               </span>
             </div>
             <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
@@ -92,7 +108,7 @@ export default function ResourceCard({ resource, index }: ResourceCardProps) {
         </div>
 
         <div className="relative mt-3 flex flex-wrap gap-1.5">
-          {resource.tags.slice(0, 3).map((tag) => (
+          {(resource.tags ?? []).slice(0, 3).map((tag) => (
             <span
               key={tag}
               className="inline-flex items-center rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"

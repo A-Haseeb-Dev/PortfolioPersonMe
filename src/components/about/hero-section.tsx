@@ -1,6 +1,7 @@
 "use client"
 
-import { Download, Code2, Link, Hash, Globe, Mail, MapPin } from "lucide-react"
+import { useSettings } from "@/contexts/settings-context"
+import { Download, Code2, Link, Hash, Globe, Mail, MapPin, type LucideIcon } from "lucide-react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,7 +10,11 @@ import { GradientText } from "@/components/ui/gradient-text"
 import { FadeIn } from "@/components/ui/animated-text"
 import { cn } from "@/lib/utils"
 
-const socialLinks = [
+const iconMap: Record<string, LucideIcon> = {
+  Code2, Link, Hash, Globe, Mail,
+}
+
+const defaultSocialLinks = [
   { label: "GitHub", href: "https://github.com/abdulhaseeb", icon: Code2 },
   { label: "LinkedIn", href: "https://linkedin.com/in/abdulhaseeb", icon: Link },
   { label: "Twitter", href: "https://twitter.com/abdulhaseeb", icon: Hash },
@@ -17,7 +22,33 @@ const socialLinks = [
   { label: "Email", href: "mailto:hello@abdulhaseeb.dev", icon: Mail },
 ]
 
+const defaultAbout = {
+  name: "Abdul Haseeb",
+  title: "Full-Stack Developer & Creative Technologist — building elegant digital experiences that live at the intersection of design and engineering.",
+  bio: "I craft high-performance web applications with modern frameworks, turning complex problems into intuitive user experiences. Passionate about open-source, design systems, and developer tooling.",
+  location: "Karachi, Pakistan",
+  availability: "Available for work",
+  resumeUrl: "#",
+  avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+}
+
 export default function HeroSection() {
+  const { settings } = useSettings()
+  const about = settings.about ?? defaultAbout
+  const socialLinksData = settings.social_links?.length
+    ? settings.social_links.map((sl) => ({
+        label: sl.label,
+        href: sl.url,
+        icon: iconMap[sl.icon] ?? Globe,
+      }))
+    : defaultSocialLinks
+  const initials = about.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
+
   return (
     <section className="relative overflow-hidden py-20 sm:py-28">
       <div className="absolute inset-0 -z-10">
@@ -31,9 +62,9 @@ export default function HeroSection() {
             <div className="relative mb-8">
               <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-zinc-200 to-zinc-400 opacity-50 blur-sm dark:from-zinc-600 dark:to-zinc-400" />
               <Avatar className="relative h-32 w-32 border-2 border-white shadow-xl dark:border-zinc-800 sm:h-40 sm:w-40">
-                <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" alt="Abdul Haseeb" />
+                <AvatarImage src={about.avatar} alt={about.name} />
                 <AvatarFallback className="text-4xl font-bold bg-gradient-to-br from-zinc-900 to-zinc-700 text-white dark:from-zinc-50 dark:to-zinc-300 dark:text-zinc-900">
-                  AH
+                  {initials}
                 </AvatarFallback>
               </Avatar>
             </div>
@@ -42,15 +73,14 @@ export default function HeroSection() {
           <FadeIn delay={0.2}>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               <GradientText from="from-zinc-900" to="to-zinc-500" animate>
-                Abdul Haseeb
+                {about.name}
               </GradientText>
             </h1>
           </FadeIn>
 
           <FadeIn delay={0.3}>
             <p className="mt-4 max-w-2xl text-lg text-zinc-500 dark:text-zinc-400 sm:text-xl">
-              Full-Stack Developer & Creative Technologist — building elegant digital experiences
-              that live at the intersection of design and engineering.
+              {about.title}
             </p>
           </FadeIn>
 
@@ -58,27 +88,27 @@ export default function HeroSection() {
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <Badge variant="secondary" className="gap-1.5 px-3 py-1.5 text-sm">
                 <MapPin size={14} />
-                Karachi, Pakistan
+                {about.location}
               </Badge>
               <Badge variant="secondary" className="px-3 py-1.5 text-sm">
-                Available for work
+                {about.availability}
               </Badge>
             </div>
           </FadeIn>
 
           <FadeIn delay={0.5}>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
-              I craft high-performance web applications with modern frameworks, turning complex
-              problems into intuitive user experiences. Passionate about open-source, design
-              systems, and developer tooling.
+              {about.bio}
             </p>
           </FadeIn>
 
           <FadeIn delay={0.6}>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Button size="lg" className="gap-2">
-                <Download size={16} />
-                Download Resume
+              <Button size="lg" className="gap-2" asChild>
+                <a href={about.resumeUrl} target="_blank" rel="noopener noreferrer">
+                  <Download size={16} />
+                  Download Resume
+                </a>
               </Button>
               <Button size="lg" variant="outline">
                 Get in Touch
@@ -88,7 +118,7 @@ export default function HeroSection() {
 
           <FadeIn delay={0.7}>
             <div className="mt-10 flex items-center gap-2.5">
-              {socialLinks.map((link) => {
+              {socialLinksData.map((link) => {
                 const Icon = link.icon
                 return (
                   <a

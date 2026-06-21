@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import type { SiteSettings } from "@/types"
 
 const DEFAULT_SETTINGS = {
   site_config: {
@@ -80,6 +81,9 @@ const DEFAULT_SETTINGS = {
       { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
     ],
+    resourceLinks: [
+      { label: "Knowledge Base", href: "/knowledge" },
+    ],
     copyright: "All rights reserved.",
   },
   tech_categories: [
@@ -108,9 +112,69 @@ const DEFAULT_SETTINGS = {
     { id: "docker", name: "Docker", category: "devops", proficiency: 75, color: "#2496ED", connections: ["node", "postgres"] },
     { id: "redux", name: "Redux", category: "frontend", proficiency: 80, color: "#764ABC", connections: ["react", "typescript"] },
   ],
+  about: {
+    name: "Muhammad Anas Siddiqui",
+    title: "Full Stack Developer & Creative Technologist",
+    subtitle: "Crafting digital experiences that live at the intersection of design and engineering.",
+    bio: "I craft high-performance web applications with modern frameworks, turning complex problems into intuitive user experiences. Passionate about open-source, design systems, and developer tooling.",
+    location: "Karachi, Pakistan",
+    availability: "Available for work",
+    resumeUrl: "",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+    stats: [
+      { label: "Years of Experience", value: 6, suffix: "+" },
+      { label: "Projects Delivered", value: 50, suffix: "+" },
+      { label: "Happy Clients", value: 20, suffix: "+" },
+      { label: "Open Source Contributions", value: 5, suffix: "+" },
+    ],
+    story: [
+      { year: "2018", title: "First Line of Code", description: "Wrote my first HTML page and fell in love with the web." },
+      { year: "2019", title: "First Freelance Project", description: "Built a landing page for a local business." },
+      { year: "2020", title: "Open Source Contribution", description: "Made my first open source contribution during the pandemic." },
+      { year: "2021", title: "Professional Leap", description: "Joined a fast-growing startup as a junior developer." },
+      { year: "2022", title: "Full-Stack Mastery", description: "Led the frontend architecture of a major product rewrite." },
+      { year: "2023", title: "Tech Lead", description: "Stepped into a tech lead role, mentoring junior developers." },
+      { year: "2024", title: "Building in Public", description: "Started documenting my journey publicly." },
+    ],
+    mission: {
+      text: "To craft digital experiences that are not just functional but delightful — bridging the gap between aesthetic design and robust engineering.",
+      bullets: [
+        "Ship clean, maintainable code that stands the test of time",
+        "Champion accessibility and inclusive design in every project",
+        "Share knowledge openly and lift the next generation of developers",
+      ],
+    },
+    vision: {
+      text: "To build a future where technology amplifies human potential. I envision a world where software adapts to people — not the other way around.",
+      bullets: [
+        "Create tools that empower creators and solve real-world problems",
+        "Build a legacy of open-source contributions that outlast any single project",
+        "Inspire a culture of craftsmanship, curiosity, and kindness in tech",
+      ],
+    },
+    education: [
+      { degree: "Bachelor of Science in Computer Science", institution: "University of Karachi", location: "Karachi, Pakistan", year: "2020 — 2024", description: "Focused on software engineering, data structures, and human-computer interaction." },
+      { degree: "Intermediate in Computer Science", institution: "Government College", location: "Karachi, Pakistan", year: "2018 — 2020", description: "Completed pre-engineering with a focus on mathematics and computer fundamentals." },
+      { degree: "Matriculation in Computer Science", institution: "The Educators School", location: "Karachi, Pakistan", year: "2016 — 2018", description: "Foundation in programming basics, HTML, and CSS." },
+    ],
+    career: [
+      { role: "Senior Frontend Engineer", company: "TechCorp", location: "Remote", period: "2024 — Present", description: "Leading the frontend architecture for a SaaS platform serving 50K+ users.", tags: ["React", "Next.js", "TypeScript", "Tailwind"] },
+      { role: "Full-Stack Developer", company: "StartupXYZ", location: "Karachi, Pakistan", period: "2022 — 2024", description: "Built and shipped 3 major product features end-to-end.", tags: ["React", "Node.js", "PostgreSQL", "Docker"] },
+      { role: "Junior Developer", company: "DevAgency", location: "Karachi, Pakistan", period: "2021 — 2022", description: "Developed responsive web applications for 10+ clients.", tags: ["JavaScript", "React", "SCSS", "Firebase"] },
+      { role: "Freelance Web Developer", company: "Self-Employed", location: "Remote", period: "2019 — 2021", description: "Delivered 20+ freelance projects for small businesses and startups.", tags: ["HTML/CSS", "JavaScript", "WordPress", "PHP"] },
+    ],
+    goals: [
+      { title: "Open Source Impact", description: "Build and maintain a widely adopted open-source library.", icon: "Globe" },
+      { title: "Design System Authority", description: "Create a comprehensive design system that empowers teams.", icon: "Layout" },
+      { title: "Technical Writing", description: "Write a book or extensive documentation series.", icon: "BookOpen" },
+      { title: "Community Building", description: "Launch a developer community focused on mentorship.", icon: "Users" },
+      { title: "Startup Founder", description: "Found a product company that solves a meaningful problem.", icon: "Rocket" },
+      { title: "Continuous Learning", description: "Deep-dive into new technologies — staying a perpetual student.", icon: "Lightbulb" },
+    ],
+  },
 }
 
-export type SiteSettings = typeof DEFAULT_SETTINGS
+// SiteSettings type is defined in @/types
 
 async function getOrCreateSettings(key: string) {
   let setting = await db.settings.findUnique({ where: { key } })
@@ -155,6 +219,16 @@ export async function PUT(request: Request) {
 
     if (!(key in DEFAULT_SETTINGS)) {
       return apiError(`Invalid setting key: ${key}`, 400)
+    }
+
+    if (value === undefined || value === null) {
+      return apiError("Setting value is required", 400)
+    }
+
+    const defaults = DEFAULT_SETTINGS as Record<string, unknown>
+    const expected = defaults[key]
+    if (typeof value !== typeof expected) {
+      return apiError(`Invalid type for setting "${key}": expected ${typeof expected}`, 400)
     }
 
     const updated = await db.settings.upsert({

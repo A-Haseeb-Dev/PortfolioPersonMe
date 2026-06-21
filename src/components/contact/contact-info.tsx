@@ -5,75 +5,57 @@ import {
   MessageCircle,
   Briefcase,
   Code2,
-  Share2,
+  Globe,
   Camera,
   Mail,
-  Send,
   ArrowUpRight,
   type LucideIcon,
 } from "lucide-react"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Button } from "@/components/ui/button"
+import { useSettings } from "@/contexts/settings-context"
 
-interface ContactLink {
-  name: string
-  icon: LucideIcon
-  url: string
-  label: string
-  color: string
-  gradient: string
+const iconMap: Record<string, LucideIcon> = {
+  whatsapp: MessageCircle,
+  linkedin: Briefcase,
+  github: Code2,
+  facebook: Globe,
+  instagram: Camera,
+  email: Mail,
+  "message-circle": MessageCircle,
+  briefcase: Briefcase,
+  code2: Code2,
+  globe: Globe,
+  camera: Camera,
+  mail: Mail,
+  share2: Globe,
+  send: Mail,
 }
 
-const contactLinks: ContactLink[] = [
-  {
-    name: "WhatsApp",
-    icon: MessageCircle,
-    url: "https://wa.me/923XXXXXXXXX",
-    label: "Chat on WhatsApp",
-    color: "text-emerald-500",
-    gradient: "from-emerald-500 to-emerald-400",
-  },
-  {
-    name: "LinkedIn",
-    icon: Briefcase,
-    url: "https://linkedin.com/in/abdul-haseeb",
-    label: "Connect on LinkedIn",
-    color: "text-blue-600",
-    gradient: "from-blue-500 to-blue-400",
-  },
-  {
-    name: "GitHub",
-    icon: Code2,
-    url: "https://github.com/abdulhaseeb",
-    label: "Follow on GitHub",
-    color: "text-zinc-900 dark:text-zinc-50",
-    gradient: "from-zinc-700 to-zinc-500",
-  },
-  {
-    name: "Facebook",
-    icon: Share2,
-    url: "https://facebook.com/abdul.haseeb",
-    label: "Friend on Facebook",
-    color: "text-blue-600",
-    gradient: "from-blue-600 to-blue-500",
-  },
-  {
-    name: "Instagram",
-    icon: Camera,
-    url: "https://instagram.com/abdul.haseeb",
-    label: "Follow on Instagram",
-    color: "text-pink-600",
-    gradient: "from-pink-500 to-rose-400",
-  },
-  {
-    name: "Email",
-    icon: Mail,
-    url: "mailto:haseeb@example.com",
-    label: "Send an email",
-    color: "text-amber-600",
-    gradient: "from-amber-500 to-orange-400",
-  },
-]
+const colorMap: Record<string, string> = {
+  whatsapp: "text-emerald-500",
+  linkedin: "text-blue-600",
+  github: "text-zinc-900 dark:text-zinc-50",
+  facebook: "text-blue-600",
+  instagram: "text-pink-600",
+  email: "text-amber-600",
+}
+
+const gradientMap: Record<string, string> = {
+  whatsapp: "from-emerald-500 to-emerald-400",
+  linkedin: "from-blue-500 to-blue-400",
+  github: "from-zinc-700 to-zinc-500",
+  facebook: "from-blue-600 to-blue-500",
+  instagram: "from-pink-500 to-rose-400",
+  email: "from-amber-500 to-orange-400",
+}
+
+interface SocialLink {
+  platform: string
+  url: string
+  label: string
+  icon: string
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -93,6 +75,18 @@ const itemVariants = {
 }
 
 export default function ContactInfo() {
+  const { settings } = useSettings()
+  const contactLinks: SocialLink[] = settings.social_links.length > 0
+    ? settings.social_links
+    : [
+        { platform: "whatsapp", url: "https://wa.me/923XXXXXXXXX", label: "Chat on WhatsApp", icon: "whatsapp" },
+        { platform: "linkedin", url: "https://linkedin.com/in/abdul-haseeb", label: "Connect on LinkedIn", icon: "linkedin" },
+        { platform: "github", url: "https://github.com/abdulhaseeb", label: "Follow on GitHub", icon: "github" },
+        { platform: "facebook", url: "https://facebook.com/abdul.haseeb", label: "Friend on Facebook", icon: "facebook" },
+        { platform: "instagram", url: "https://instagram.com/abdul.haseeb", label: "Follow on Instagram", icon: "instagram" },
+        { platform: "email", url: "mailto:haseeb@example.com", label: "Send an email", icon: "email" },
+      ]
+
   return (
     <motion.div
       variants={containerVariants}
@@ -110,9 +104,11 @@ export default function ContactInfo() {
       </div>
 
       {contactLinks.map((link) => {
-        const Icon = link.icon
+        const Icon = iconMap[link.icon?.toLowerCase()] || Mail
+        const colorClass = colorMap[link.platform?.toLowerCase()] || "text-zinc-500"
+        const gradient = gradientMap[link.platform?.toLowerCase()] || "from-zinc-500 to-zinc-400"
         return (
-          <motion.div key={link.name} variants={itemVariants}>
+          <motion.div key={link.platform || link.label} variants={itemVariants}>
             <a
               href={link.url}
               target="_blank"
@@ -126,7 +122,7 @@ export default function ContactInfo() {
                 <div
                   className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   style={{
-                    background: `linear-gradient(135deg, ${link.gradient.replace("from-", "").split(" to")[0].trim()}, ${link.gradient.replace("to-", "").split(" ")[1]?.trim() || "transparent"})`,
+                    background: `linear-gradient(135deg, transparent, transparent)`,
                     opacity: 0.08,
                   }}
                 />
@@ -140,7 +136,7 @@ export default function ContactInfo() {
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                        {link.name}
+                        {link.label || link.platform}
                       </h3>
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">
                         {link.label}

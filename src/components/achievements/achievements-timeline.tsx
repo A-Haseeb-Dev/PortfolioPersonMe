@@ -14,23 +14,34 @@ import { cn } from "@/lib/utils"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
 import { useData } from "@/hooks/use-data"
-import { achievements as staticAchievements, type Achievement } from "@/data/achievements"
 
-const categoryIcons: Record<Achievement["category"], LucideIcon> = {
+interface Achievement {
+  id: string
+  title: string
+  description: string
+  date: string
+  type: string
+  issuer: string
+  icon?: string
+  url?: string
+  featured: boolean
+}
+
+const categoryIcons: Record<string, LucideIcon> = {
   award: Trophy,
   certification: Award,
   milestone: Star,
   project: Code2,
 }
 
-const categoryColors: Record<Achievement["category"], string> = {
+const categoryColors: Record<string, string> = {
   award: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
   certification: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
   milestone: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
   project: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
 }
 
-const categoryBorderColors: Record<Achievement["category"], string> = {
+const categoryBorderColors: Record<string, string> = {
   award: "border-amber-300 dark:border-amber-700",
   certification: "border-blue-300 dark:border-blue-700",
   milestone: "border-emerald-300 dark:border-emerald-700",
@@ -54,7 +65,7 @@ function formatDate(dateStr: string) {
 }
 
 export default function AchievementsTimeline() {
-  const achievements = useData("/api/achievements", staticAchievements)
+  const achievements = useData<Achievement>("/api/achievements", [])
   const grouped = useMemo(() => groupByYear(achievements), [achievements])
 
   return (
@@ -77,7 +88,7 @@ export default function AchievementsTimeline() {
             </motion.div>
 
             {items.map((achievement, itemIndex) => {
-              const Icon = categoryIcons[achievement.category]
+              const Icon = categoryIcons[achievement.type.toLowerCase()]
               const isLeft = itemIndex % 2 === 0
 
               return (
@@ -95,7 +106,7 @@ export default function AchievementsTimeline() {
                   <div
                     className={cn(
                       "absolute left-[14px] top-1 z-10 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 bg-white dark:bg-zinc-900 sm:left-auto",
-                      categoryBorderColors[achievement.category],
+                      categoryBorderColors[achievement.type.toLowerCase()],
                       isLeft ? "sm:right-[-9px]" : "sm:left-[-9px]"
                     )}
                   >
@@ -107,7 +118,7 @@ export default function AchievementsTimeline() {
                     className={cn(
                       "relative overflow-hidden p-5 transition-all duration-300 hover:shadow-xl sm:p-6",
                       "border-l-2",
-                      categoryBorderColors[achievement.category]
+                      categoryBorderColors[achievement.type.toLowerCase()]
                     )}
                   >
                     <div className="relative">
@@ -115,7 +126,7 @@ export default function AchievementsTimeline() {
                         <div
                           className={cn(
                             "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm",
-                            categoryColors[achievement.category]
+                            categoryColors[achievement.type.toLowerCase()]
                           )}
                         >
                           <Icon size={18} />
@@ -138,11 +149,11 @@ export default function AchievementsTimeline() {
                             <span>{formatDate(achievement.date)}</span>
                             <span className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-600" />
                             <span>{achievement.issuer}</span>
-                            {achievement.credentialUrl && (
+                            {achievement.url && (
                               <>
                                 <span className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-600" />
                                 <a
-                                  href={achievement.credentialUrl}
+                                  href={achievement.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center gap-1 font-medium text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"

@@ -29,9 +29,9 @@ export default function Footer() {
     ? footer.quickLinks
     : [{ label: "Home", href: "/" }, { label: "About", href: "/about" }, { label: "Skills", href: "/skills" }, { label: "Projects", href: "/projects" }, { label: "Contact", href: "/contact" }]
 
-  const resourceLinks = [
-    { label: "Knowledge Base", href: "/knowledge" },
-  ]
+  const resourceLinks = footer.resourceLinks.length > 0
+    ? footer.resourceLinks
+    : [{ label: "Knowledge Base", href: "/knowledge" }]
 
   return (
     <footer className="footer-bg relative border-t" style={{ borderColor: "var(--footer-border)" }}>

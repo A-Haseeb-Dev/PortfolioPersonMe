@@ -41,12 +41,12 @@ export async function handleServerAction<T>(action: () => Promise<T>): Promise<{
   }
 }
 
-export async function handleServerActionWithValidation<T>(
-  action: () => Promise<T>,
-  schema: { safeParse: (data: unknown) => { success: boolean; data?: T; error?: { format: () => Record<string, string[]> } } },
+export async function handleServerActionWithValidation<TInput, TOutput>(
+  action: (validatedData: TInput) => Promise<TOutput>,
+  schema: { safeParse: (data: unknown) => { success: boolean; data?: TInput; error?: { format: () => Record<string, string[]> } } },
   formData: unknown,
 ): Promise<{
-  data?: T
+  data?: TOutput
   error?: string
   errors?: Record<string, string[]>
 }> {
@@ -54,16 +54,19 @@ export async function handleServerActionWithValidation<T>(
   if (!result.success) {
     return { error: "Validation failed", errors: result.error?.format() }
   }
-  return handleServerAction(action)
+  return handleServerAction(() => action(result.data as TInput))
 }
 
 export async function fetcher<T>(url: string, options?: RequestInit): Promise<T> {
+  const { headers, ...rest } = options || {}
+  const isFormData = rest.body instanceof FormData
+
   const res = await fetch(url, {
+    ...rest,
     headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+      ...(headers as Record<string, string>),
     },
-    ...options,
   })
 
   if (!res.ok) {

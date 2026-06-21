@@ -6,18 +6,60 @@ import { Section } from "@/components/ui/section"
 import { FadeIn } from "@/components/ui/animated-text"
 import { cn } from "@/lib/utils"
 
-const clients = [
-  { name: "TechFlow Inc.", industry: "SaaS" },
-  { name: "ShopGlobal", industry: "E-Commerce" },
-  { name: "DataVue Analytics", industry: "Analytics" },
-  { name: "NextGen Solutions", industry: "Enterprise" },
-  { name: "CloudPeak Systems", industry: "Infrastructure" },
-  { name: "InnovateAI Labs", industry: "AI/ML" },
-  { name: "PixelPerfect Studio", industry: "Design" },
-  { name: "QuantumLeap Ventures", industry: "Startups" },
-]
+interface Client {
+  id: string
+  name: string
+  industry: string | null
+  logo: string | null
+  url: string | null
+  featured: boolean
+  order: number
+}
 
 export default function ClientsSection() {
+  const [clients, setClients] = React.useState<Client[]>([])
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    let cancelled = false
+    fetch("/api/clients?featured=true")
+      .then((res) => res.ok ? res.json() : null)
+      .then((json) => {
+        if (cancelled) return
+        if (json && Array.isArray(json.clients)) {
+          setClients(json.clients)
+        }
+        setLoading(false)
+      })
+      .catch(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [])
+
+  if (loading) {
+    return (
+      <Section title="Trusted By" subtitle="Organizations I&apos;ve had the privilege of working with.">
+        <FadeIn direction="none">
+          <div className="relative overflow-hidden">
+            <motion.div className="flex gap-16">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="flex shrink-0 flex-col items-center gap-2">
+                  <div className="flex h-16 w-32 items-center justify-center rounded-xl border border-zinc-200 bg-white/50 backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-900/50">
+                    <div className="h-3 w-16 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                  </div>
+                  <div className="h-2 w-12 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </FadeIn>
+      </Section>
+    )
+  }
+
+  if (!clients.length) return null
+
   const duplicatedClients = [...clients, ...clients]
 
   return (
@@ -41,7 +83,7 @@ export default function ClientsSection() {
           >
             {duplicatedClients.map((client, i) => (
               <div
-                key={`${client.name}-${i}`}
+                key={`${client.id}-${i}`}
                 className="flex shrink-0 flex-col items-center gap-2"
               >
                 <div

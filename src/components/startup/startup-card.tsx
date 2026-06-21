@@ -16,9 +16,25 @@ import {
 import { cn } from "@/lib/utils"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
-import type { StartupIdea } from "@/data/startup-ideas"
+interface StartupIdea {
+  id: string
+  title: string
+  slug?: string
+  problem: string
+  solution: string
+  market: string
+  revenueModel: string
+  status: string
+  published?: boolean
+  createdAt?: string
+  updatedAt?: string
+  tagline?: string
+  techStack?: string[]
+  tags?: string[]
+  color?: string
+}
 
-const statusConfig: Record<StartupIdea["status"], { label: string; icon: typeof Lightbulb; variant: "warning" | "info" | "success" | "default" | "danger" }> = {
+const statusConfig: Record<string, { label: string; icon: typeof Lightbulb; variant: "warning" | "info" | "success" | "default" | "danger" }> = {
   idea: { label: "Idea", icon: Lightbulb, variant: "warning" },
   validating: { label: "Validating", icon: Search, variant: "info" },
   building: { label: "Building", icon: Construction, variant: "success" },
@@ -32,7 +48,7 @@ interface StartupCardProps {
 }
 
 export default function StartupCard({ idea, index }: StartupCardProps) {
-  const status = statusConfig[idea.status]
+  const status = statusConfig[idea.status.toLowerCase()] ?? statusConfig.idea
   const StatusIcon = status.icon
 
   return (
@@ -107,7 +123,7 @@ export default function StartupCard({ idea, index }: StartupCardProps) {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-1.5">
-            {idea.techStack.map((tech) => (
+            {(idea.techStack ?? []).map((tech) => (
               <Badge key={tech} variant="secondary" className="text-xs">
                 {tech}
               </Badge>
@@ -116,7 +132,7 @@ export default function StartupCard({ idea, index }: StartupCardProps) {
 
           <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
             <div className="flex flex-wrap gap-1">
-              {idea.tags.map((tag) => (
+              {(idea.tags ?? []).map((tag) => (
                 <Badge key={tag} variant="outline" className="text-[10px]">
                   {tag}
                 </Badge>

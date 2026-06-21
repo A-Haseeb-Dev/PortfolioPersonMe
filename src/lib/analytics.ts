@@ -7,22 +7,29 @@ type BatchItem = {
   timestamp: Date
 }
 
-let batchQueue: BatchItem[] = []
+const batchQueue: BatchItem[] = []
 let batchTimeout: ReturnType<typeof setTimeout> | null = null
+let flushing = false
 
 const BATCH_INTERVAL = 5000
 const BATCH_MAX_SIZE = 25
 
-function flushBatch() {
-  if (batchTimeout) {
-    clearTimeout(batchTimeout)
-    batchTimeout = null
-  }
-  const items = batchQueue.splice(0, BATCH_MAX_SIZE)
-  if (items.length === 0) return
+async function flushBatch() {
+  if (flushing) return
+  flushing = true
+  try {
+    if (batchTimeout) {
+      clearTimeout(batchTimeout)
+      batchTimeout = null
+    }
+    const items = batchQueue.splice(0, BATCH_MAX_SIZE)
+    if (items.length === 0) return
 
-  processBatch(items).catch(() => {})
-  if (batchQueue.length > 0) scheduleBatch()
+    await processBatch(items).catch(() => {})
+    if (batchQueue.length > 0) scheduleBatch()
+  } finally {
+    flushing = false
+  }
 }
 
 function scheduleBatch() {

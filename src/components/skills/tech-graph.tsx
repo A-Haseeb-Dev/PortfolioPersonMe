@@ -5,7 +5,39 @@ import { motion } from "framer-motion"
 import { ZoomIn, ZoomOut, Maximize2, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
-import { buildGraphData, technologies, type Technology, type GraphNode, type GraphLink } from "@/data/skills"
+import { useData } from "@/hooks/use-data"
+
+interface GraphNode {
+  id: string
+  name: string
+  category: string
+  experienceLevel?: string
+  icon?: string | null
+  x?: number
+  y?: number
+  vx?: number
+  vy?: number
+}
+
+interface GraphEdge {
+  id?: string
+  source: string
+  target: string
+  sourceName?: string
+  targetName?: string
+  relationType?: string | null
+}
+
+interface GraphLink {
+  source: string
+  target: string
+  strength: number
+}
+
+interface Technology {
+  id: string
+  name: string
+}
 
 interface TechGraphProps {
   onTechSelect: (tech: Technology) => void
@@ -30,8 +62,30 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
   const [hoveredNode, setHoveredNode] = useState<string | null>(null)
   const animRef = useRef<number>(0)
 
+  const apiNodes = useData<Record<string, unknown>>(
+    "/api/technologies/graph",
+    [],
+    (data) => (data.nodes || []) as Record<string, unknown>[]
+  )
+  const apiEdges = useData<Record<string, unknown>>(
+    "/api/technologies/graph",
+    [],
+    (data) => (data.edges || []) as Record<string, unknown>[]
+  )
+
   useEffect(() => {
-    const { nodes: graphNodes, links: graphLinks } = buildGraphData()
+    const graphNodes: GraphNode[] = apiNodes.map((n) => ({
+      id: String(n.id || ""),
+      name: String(n.name || ""),
+      category: String(n.category || ""),
+      icon: n.icon ? String(n.icon) : null,
+    }))
+    const graphLinks: GraphLink[] = apiEdges.map((e) => ({
+      source: String(e.source || ""),
+      target: String(e.target || ""),
+      strength: 0.5,
+    }))
+
     const w = 800
     const h = 500
     const centerX = w / 2
@@ -49,7 +103,7 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
     setNodes(initialized)
     setLinks(graphLinks)
     setDimensions({ width: w, height: h })
-  }, [])
+  }, [apiNodes, apiEdges])
 
   useEffect(() => {
     if (nodes.length === 0) return
@@ -124,10 +178,6 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
       cancelAnimationFrame(animRef.current)
     }
   }, [nodes.length, links, dimensions])
-
-  const getNode = useCallback((id: string) => {
-    return technologies.find((t) => t.id === id)
-  }, [])
 
   const handleMouseDown = useCallback((nodeId: string) => {
     setDragging(nodeId)
@@ -205,19 +255,29 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
           size="icon"
           className="h-8 w-8"
           onClick={() => {
-            const { nodes: gn, links: gl } = buildGraphData()
+            const graphNodes: GraphNode[] = apiNodes.map((n) => ({
+              id: String(n.id || ""),
+              name: String(n.name || ""),
+              category: String(n.category || ""),
+              icon: n.icon ? String(n.icon) : null,
+            }))
+            const graphLinks: GraphLink[] = apiEdges.map((e) => ({
+              source: String(e.source || ""),
+              target: String(e.target || ""),
+              strength: 0.5,
+            }))
             const w = dimensions.width
             const h = dimensions.height
             const radius = Math.min(w, h) * 0.35
-            const initialized = gn.map((node, i) => ({
+            const initialized = graphNodes.map((node, i) => ({
               ...node,
-              x: w / 2 + radius * Math.cos((2 * Math.PI * i) / gn.length),
-              y: h / 2 + radius * Math.sin((2 * Math.PI * i) / gn.length),
+              x: w / 2 + radius * Math.cos((2 * Math.PI * i) / graphNodes.length),
+              y: h / 2 + radius * Math.sin((2 * Math.PI * i) / graphNodes.length),
               vx: 0,
               vy: 0,
             }))
             setNodes(initialized)
-            setLinks(gl)
+            setLinks(graphLinks)
           }}
         >
           <RefreshCw size={14} />
@@ -263,8 +323,7 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
           <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
             <defs>
               {nodes.map((node) => {
-                const tech = getNode(node.id)
-                const color = tech?.color || categoryColors[node.category] || "#888"
+                const color = categoryColors[node.category] || "#888"
                 return (
                   <radialGradient key={`grad-${node.id}`} id={`grad-${node.id}`} cx="30%" cy="30%" r="70%">
                     <stop offset="0%" stopColor={color} stopOpacity={0.8} />
@@ -298,8 +357,7 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
             })}
 
             {nodes.map((node) => {
-              const tech = getNode(node.id)
-              const color = tech?.color || categoryColors[node.category] || "#888"
+              const color = categoryColors[node.category] || "#888"
               const isSelected = selectedTech?.id === node.id
               const isHighlighted = highlightTech === node.id
               const isHovered = hoveredNode === node.id
@@ -314,7 +372,7 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => setHoveredNode(null)}
                   onClick={() => {
-                    if (tech) onTechSelect(tech)
+                    onTechSelect({ id: node.id, name: node.name })
                   }}
                   style={{ cursor: "pointer" }}
                 >
@@ -360,7 +418,7 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
                     fontWeight={600}
                     style={{ pointerEvents: "none", fontFamily: "system-ui" }}
                   >
-                    {tech?.icon || "?"}
+                    {node.icon || "?"}
                   </text>
 
                   <text
@@ -387,16 +445,12 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
 
       <div className="flex flex-wrap gap-3 border-t border-zinc-100 px-6 py-3 dark:border-zinc-800">
         <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Legend:</span>
-        {Object.entries(categoryColors).map(([key, color]) => {
-          const cat = technologies.find((t) => t.categoryId === key)
-          const techsInCat = technologies.filter((t) => t.categoryId === key)
-          return (
-            <div key={key} className="flex items-center gap-1.5 text-[11px] text-zinc-500">
-              <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-              {techsInCat.length > 0 ? techsInCat[0].categoryId : key}
-            </div>
-          )
-        }).slice(0, 6)}
+        {Object.entries(categoryColors).slice(0, 6).map(([key, color]) => (
+          <div key={key} className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
+            {key}
+          </div>
+        ))}
         <span className="text-[11px] text-zinc-400">...</span>
       </div>
     </GlassCard>

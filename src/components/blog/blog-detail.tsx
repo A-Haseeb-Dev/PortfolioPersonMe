@@ -25,7 +25,24 @@ import { GlassCard } from "@/components/ui/glass-card"
 import { Button } from "@/components/ui/button"
 import BlogTableOfContents from "./blog-table-of-contents"
 import BlogCard from "./blog-card"
-import type { BlogPost } from "@/data/blog"
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  coverImage?: string | null
+  category: string
+  tags: string[]
+  readingTime: string
+  date: string
+  featured: boolean
+  author: {
+    name: string
+    avatar: string | null
+    role: string
+  }
+}
 
 interface BlogDetailProps {
   post: BlogPost

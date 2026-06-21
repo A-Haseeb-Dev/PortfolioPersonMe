@@ -2,12 +2,55 @@
 
 import { useState, useMemo, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Command, Sparkles, X, Calendar, BarChart3, Award, BookOpen, ExternalLink, GraduationCap, Layers, MonitorPlay, FileText, FileJson, FileType, Terminal, Atom, Globe, Server, Zap, Palette, Database, Box, Smartphone, Code2, GitBranch, PenTool, Brain, Flame, Link, Share2, Cloud, Shield, Move, ClipboardList, Plug, Wrench, Cpu } from "lucide-react"
+import { Search, Command, Sparkles, X, Calendar, BarChart3, Award, BookOpen, ExternalLink, GraduationCap, Layers, MonitorPlay, FileText, FileJson, FileType, Terminal, Atom, Globe, Server, Zap, Palette, Database, Box, Smartphone, Code2, GitBranch, PenTool, Brain, Flame, Link, Share2, Cloud, Shield, Move, ClipboardList, Plug, Wrench, Cpu, Layout, Briefcase } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { skillCategories as staticCategories, technologies as staticTechnologies, type Technology } from "@/data/skills"
+import { useData } from "@/hooks/use-data"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
+
+interface Technology {
+  id: string
+  name: string
+  categoryId: string
+  icon: string
+  description: string
+  experienceLevel: string
+  yearsExperience: number
+  proficiency: number
+  color: string
+  relatedTechnologies: string[]
+  projects: string[]
+  certificates: { name: string; issuer: string; url?: string }[]
+  learningResources: { name: string; type: string; url: string }[]
+  useCases: string[]
+  features: string[]
+}
+
+interface SkillCategory {
+  id: string
+  name: string
+  description: string
+  icon: LucideIcon
+  color: string
+}
+
+const categoryIconMap: Record<string, LucideIcon> = {
+  "programming-languages": Code2,
+  frontend: Layout,
+  backend: Server,
+  frameworks: Box,
+  libraries: Box,
+  databases: Database,
+  cloud: Cloud,
+  devops: GitBranch,
+  mobile: Smartphone,
+  ai: Brain,
+  blockchain: Link,
+  tools: Wrench,
+  business: Briefcase,
+  marketing: BarChart3,
+}
 
 const techIconMap: Record<string, LucideIcon> = {
   javascript: FileJson,
@@ -254,18 +297,52 @@ export default function SkillsPage() {
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const [liveCategories, setLiveCategories] = useState(staticCategories)
-  const [liveTechnologies, setLiveTechnologies] = useState(staticTechnologies)
+  const rawCategories = useData<Record<string, unknown>>(
+    "/api/skills",
+    [],
+    (data) => (data.categories || []) as Record<string, unknown>[]
+  )
+  const rawTechnologies = useData<Record<string, unknown>>(
+    "/api/skills",
+    [],
+    (data) => (data.technologies || []) as Record<string, unknown>[]
+  )
 
-  useEffect(() => {
-    fetch("/api/skills")
-      .then(r => r.json())
-      .then(res => {
-        if (res.categories?.length) setLiveCategories(res.categories)
-        if (res.technologies?.length) setLiveTechnologies(res.technologies)
-      })
-      .catch(() => {})
-  }, [])
+  const liveTechnologies = useMemo<Technology[]>(
+    () =>
+      rawTechnologies.map((t) => ({
+        id: String(t.id || ""),
+        name: String(t.name || ""),
+        categoryId: String(t.categoryId || ""),
+        icon: String(t.icon || ""),
+        description: String(t.description || ""),
+        experienceLevel: String(t.experienceLevel || "beginner").toLowerCase(),
+        yearsExperience: Number(t.yearsExperience || 0),
+        proficiency: Number(t.proficiency || 0),
+        color: String(t.color || "#888"),
+        relatedTechnologies: Array.isArray(t.relatedTechnologies)
+          ? t.relatedTechnologies.map(String)
+          : [],
+        projects: Array.isArray(t.projectsUsing) ? t.projectsUsing.map(String) : [],
+        certificates: Array.isArray(t.certificates) ? t.certificates : [],
+        learningResources: Array.isArray(t.learningResources) ? t.learningResources : [],
+        useCases: Array.isArray(t.useCases) ? t.useCases.map(String) : [],
+        features: Array.isArray(t.features) ? t.features.map(String) : [],
+      })),
+    [rawTechnologies]
+  )
+
+  const liveCategories = useMemo<SkillCategory[]>(
+    () =>
+      rawCategories.map((c) => ({
+        id: String(c.id || ""),
+        name: String(c.name || ""),
+        description: String(c.description || ""),
+        color: String(c.color || "#888"),
+        icon: categoryIconMap[String(c.id || "")] || Code2,
+      })),
+    [rawCategories]
+  )
 
   const categoryCounts = useMemo(() => {
     return liveTechnologies.reduce<Record<string, number>>((acc, t) => {

@@ -10,22 +10,33 @@ export function useData<T>(
   const [data, setData] = useState<T[]>(fallback)
 
   useEffect(() => {
+    let cancelled = false
+
     fetch(apiUrl)
-      .then((r) => r.json())
-      .then((res) => {
+      .then((r) => {
+        if (!r.ok) throw new Error(`API error: ${r.status}`)
+        return r.json()
+      })
+      .then((res: Record<string, unknown>) => {
+        if (cancelled) return
         if (transform) {
-          const transformed = transform(res as Record<string, unknown>)
+          const transformed = transform(res)
           if (transformed.length > 0) setData(transformed)
         } else {
-          const key = Object.keys(res as Record<string, unknown>).find(
-            (k) => k !== "pagination" && k !== "total" && k !== "fallback",
-          )
-          const items = key ? (res as any)[key] : (res as any).data
-          if (Array.isArray(items) && items.length > 0) setData(items)
+          const items: unknown[] = res.data as unknown[] ||
+            (res[Object.keys(res).find(
+              (k) => k !== "pagination" && k !== "total" && k !== "fallback",
+            ) || ""] as unknown[]) ||
+            []
+          if (Array.isArray(items) && items.length > 0) setData(items as T[])
         }
       })
-      .catch(() => {})
-  }, [apiUrl])
+      .catch((err: Error) => {
+        if (!cancelled) console.error(`[useData] Failed to fetch ${apiUrl}:`, err)
+      })
+
+    return () => { cancelled = true }
+  }, [apiUrl, transform])
 
   return data
 }

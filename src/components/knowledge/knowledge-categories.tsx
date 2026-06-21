@@ -3,7 +3,14 @@
 import { motion } from "framer-motion"
 import { Zap, Atom, ChevronUp, Palette, Brain, Briefcase, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { KnowledgeCategory } from "@/data/knowledge"
+interface KnowledgeCategory {
+  id: string
+  name: string
+  description: string
+  icon: string
+  noteCount: number
+  color: string
+}
 
 const categoryIconMap: Record<string, LucideIcon> = {
   javascript: Zap,

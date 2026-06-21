@@ -10,19 +10,29 @@ import { ArrowLeft, Clock, Calendar, Tag, BookOpen } from "lucide-react"
 import { Container } from "@/components/ui/container"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/utils"
-import type { KnowledgeNote } from "@/data/knowledge"
-import { getRelatedNotes } from "@/data/knowledge"
+interface KnowledgeNote {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  category: string
+  categoryId: string
+  tags: string[]
+  readingTime: number
+  lastUpdated: Date
+  createdAt: Date
+}
 
 interface KnowledgeDetailProps {
   note: KnowledgeNote
   onBack: () => void
+  relatedNotes: KnowledgeNote[]
 }
 
-export default function KnowledgeDetail({ note, onBack }: KnowledgeDetailProps) {
+export default function KnowledgeDetail({ note, onBack, relatedNotes }: KnowledgeDetailProps) {
   const [activeHeading, setActiveHeading] = React.useState<string>("")
   const headingsRef = React.useRef<Map<string, IntersectionObserverEntry>>(new Map())
-
-  const relatedNotes = getRelatedNotes(note)
 
   const tocItems = React.useMemo(() => {
     const lines = note.content.split("\n")

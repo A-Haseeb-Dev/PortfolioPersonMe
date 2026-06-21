@@ -6,7 +6,37 @@ import { Radar } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
-import { radarData, skillCategories, type RadarItem } from "@/data/skills"
+interface RadarItem {
+  name: string
+  ring: "mastered" | "advanced" | "learning" | "future"
+  category: string
+  description?: string
+}
+
+interface Technology {
+  id: string
+  name: string
+  categoryId: string
+  icon: string
+  description: string
+  experienceLevel: string
+  yearsExperience: number
+  proficiency: number
+  color: string
+}
+
+interface SkillCategory {
+  id: string
+  name: string
+  icon: React.ComponentType<{ size?: number }>
+  color: string
+  description: string
+}
+
+interface TechRadarProps {
+  technologies: Technology[]
+  skillCategories: SkillCategory[]
+}
 
 const rings = [
   { key: "mastered", label: "Mastered", radius: 0.25, color: "#22c55e", description: "Expert-level proficiency" },
@@ -15,13 +45,31 @@ const rings = [
   { key: "future", label: "Future Learning", radius: 1, color: "#ef4444", description: "Planned for future" },
 ]
 
-export default function TechRadar() {
+export default function TechRadar({ technologies, skillCategories }: TechRadarProps) {
   const [hoveredItem, setHoveredItem] = useState<RadarItem | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   const cx = 250
   const cy = 250
   const maxRadius = 200
+
+  const radarData = useMemo<RadarItem[]>(
+    () => [
+      ...technologies
+        .filter((t) => t.experienceLevel === "expert")
+        .map((t) => ({ name: t.name, ring: "mastered" as const, category: t.categoryId, description: t.description })),
+      ...technologies
+        .filter((t) => t.experienceLevel === "advanced")
+        .map((t) => ({ name: t.name, ring: "advanced" as const, category: t.categoryId, description: t.description })),
+      ...technologies
+        .filter((t) => t.experienceLevel === "intermediate")
+        .map((t) => ({ name: t.name, ring: "learning" as const, category: t.categoryId, description: t.description })),
+      ...technologies
+        .filter((t) => t.experienceLevel === "beginner")
+        .map((t) => ({ name: t.name, ring: "future" as const, category: t.categoryId, description: t.description })),
+    ],
+    [technologies]
+  )
 
   const categorizedData = useMemo(() => {
     const cats = skillCategories.map((c) => ({
@@ -46,7 +94,7 @@ export default function TechRadar() {
       })
 
     return items
-  }, [selectedCategory])
+  }, [selectedCategory, radarData, skillCategories])
 
   return (
     <GlassCard intensity="light" className="overflow-hidden">

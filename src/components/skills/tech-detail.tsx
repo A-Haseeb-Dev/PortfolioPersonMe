@@ -18,12 +18,29 @@ import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
-import { technologies, type Technology } from "@/data/skills"
+interface Technology {
+  id: string
+  name: string
+  categoryId: string
+  icon: string
+  description: string
+  experienceLevel: string
+  yearsExperience: number
+  proficiency: number
+  color: string
+  relatedTechnologies: string[]
+  projects: string[]
+  certificates: { name: string; issuer: string; url?: string }[]
+  learningResources: { name: string; type: string; url: string }[]
+  useCases: string[]
+  features: string[]
+}
 
 interface TechDetailProps {
   tech: Technology | null
   onClose: () => void
   onTechSelect: (tech: Technology) => void
+  technologies: Technology[]
 }
 
 const experienceColors: Record<string, string> = {
@@ -41,7 +58,7 @@ const resourceIcons: Record<string, React.ReactNode> = {
   Guide: <FileText size={14} />,
 }
 
-export default function TechDetail({ tech, onClose, onTechSelect }: TechDetailProps) {
+export default function TechDetail({ tech, onClose, onTechSelect, technologies }: TechDetailProps) {
   if (!tech) return null
 
   const relatedTechs = technologies.filter((t) => tech.relatedTechnologies.includes(t.id))

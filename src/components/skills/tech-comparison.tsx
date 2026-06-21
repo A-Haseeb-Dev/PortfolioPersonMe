@@ -13,9 +13,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { technologies, type Technology } from "@/data/skills"
+interface Technology {
+  id: string
+  name: string
+  icon: string
+  color: string
+  experienceLevel: string
+  yearsExperience: number
+  proficiency: number
+  useCases: string[]
+  features: string[]
+  projects: string[]
+  categoryId: string
+}
 
-export default function TechComparison() {
+interface TechComparisonProps {
+  technologies: Technology[]
+}
+
+export default function TechComparison({ technologies }: TechComparisonProps) {
   const [techA, setTechA] = useState<string>(technologies[2]?.id || "")
   const [techB, setTechB] = useState<string>(technologies[3]?.id || "")
 

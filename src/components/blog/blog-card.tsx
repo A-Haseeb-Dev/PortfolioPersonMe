@@ -8,7 +8,24 @@ import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import type { BlogPost } from "@/data/blog"
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  coverImage?: string | null
+  category: string
+  tags: string[]
+  readingTime: string
+  date: string
+  featured: boolean
+  author: {
+    name: string
+    avatar: string | null
+    role: string
+  }
+}
 
 const categoryMeta: Record<string, { icon: LucideIcon; gradient: string; badge: "info" | "success" | "warning" | "danger" | "default" | "secondary" }> = {
   JavaScript: { icon: FileJson, gradient: "from-yellow-500 to-amber-400", badge: "warning" },

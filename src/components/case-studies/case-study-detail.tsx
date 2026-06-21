@@ -20,10 +20,39 @@ import {
 import { cn } from "@/lib/utils"
 import { Container } from "@/components/ui/container"
 import { Badge } from "@/components/ui/badge"
-import type { CaseStudyDetailData } from "@/data/case-studies"
+
+interface CaseStudy {
+  id: string
+  title: string
+  slug: string
+  client: string
+  overview: string
+  challenge: string
+  approach: string
+  solution: string
+  results: string
+  techStack: string[]
+  image: string | null
+  images: string[]
+  testimonial: string | null
+  metrics: { label: string; value: string }[]
+  featured: boolean
+  completedDate: string | null
+  duration: string | null
+  createdAt: string
+  updatedAt: string
+  research?: string
+  planning?: string
+  design?: string
+  architecture?: string
+  development?: string
+  testing?: string
+  deployment?: string
+  technologies?: string[]
+}
 
 interface CaseStudyDetailProps {
-  study: CaseStudyDetailData
+  study: CaseStudy
 }
 
 const defaultSections = [
@@ -50,7 +79,7 @@ export function CaseStudyDetail({ study }: CaseStudyDetailProps) {
   const [activeSection, setActiveSection] = React.useState<string>("overview")
   const sectionRefs = React.useRef<Record<string, HTMLDivElement | null>>({})
 
-  const sections = defaultSections.filter((s) => study[s.id as keyof CaseStudyDetailData])
+  const sections = defaultSections.filter((s) => study[s.id as keyof CaseStudy])
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(

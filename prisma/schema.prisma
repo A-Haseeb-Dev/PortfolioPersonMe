@@ -570,6 +570,21 @@ model GitHubRepo {
   @@index([updatedAt])
 }
 
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  industry  String?
+  logo      String?
+  url       String?
+  featured  Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([featured])
+  @@index([order])
+}
+
 model GitHubProfile {
   id          String   @id @default(cuid())
   username    String   @unique

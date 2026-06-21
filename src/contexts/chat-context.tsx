@@ -5,7 +5,6 @@ import {
   useContext,
   useCallback,
   useState,
-  useRef,
   type ReactNode,
 } from "react"
 import type { ChatMessage } from "@/types"
@@ -37,8 +36,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   ])
   const [unreadCount, setUnreadCount] = useState(1)
   const [isProcessing, setIsProcessing] = useState(false)
-  const messagesRef = useRef<ChatMessage[]>(messages)
-  messagesRef.current = messages
 
   const openChat = useCallback(() => {
     setIsOpen(true)
@@ -47,6 +44,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const closeChat = useCallback(() => {
     setIsOpen(false)
+    setUnreadCount(0)
   }, [])
 
   const toggleChat = useCallback(() => {

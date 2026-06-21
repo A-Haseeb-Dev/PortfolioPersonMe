@@ -3,7 +3,16 @@
 import { motion } from "framer-motion"
 import { GitBranch } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { githubProfile } from "@/data/opensource"
+
+interface Profile {
+  username: string
+  name: string | null
+  avatar: string | null
+  bio: string | null
+  totalStars: number
+  totalForks: number
+  totalRepos: number
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -22,7 +31,7 @@ const itemVariants = {
   },
 }
 
-export default function OpensourceHeader() {
+export default function OpensourceHeader({ profile }: { profile: Profile | null }) {
   return (
     <motion.div
       variants={containerVariants}
@@ -47,13 +56,13 @@ export default function OpensourceHeader() {
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-zinc-500 dark:text-zinc-400 sm:text-xl">
           Tools, libraries, and projects I&apos;ve built for the community.
-          {githubProfile.totalStars}+ stars across {githubProfile.totalRepos} repositories.
+          {profile ? `${profile.totalStars}+ stars across ${profile.totalRepos} repositories.` : ""}
         </p>
         <motion.div variants={itemVariants} className="mt-8 flex flex-wrap justify-center gap-4">
           <Button variant="outline" size="lg" asChild>
-            <a href={`https://github.com/${githubProfile.username}`} target="_blank" rel="noopener noreferrer">
+            <a href={`https://github.com/${profile?.username || "github"}`} target="_blank" rel="noopener noreferrer">
               <GitBranch size={18} />
-              @{githubProfile.username}
+              @{profile?.username || "github"}
             </a>
           </Button>
         </motion.div>

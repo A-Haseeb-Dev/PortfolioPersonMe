@@ -6,31 +6,34 @@ import { Search, Command, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Container } from "@/components/ui/container"
 import { GradientText } from "@/components/ui/gradient-text"
-import { skillCategories, technologies } from "@/data/skills"
+import type { LucideIcon } from "lucide-react"
 
 interface SkillsHeaderProps {
   searchQuery: string
   onSearchChange: (query: string) => void
   activeCategory: string | null
   onCategoryChange: (categoryId: string | null) => void
+  skillCategories: { id: string; name: string; icon: LucideIcon; color: string }[]
+  technologies: { categoryId: string }[]
 }
-
-const categoryCounts = technologies.reduce<Record<string, number>>((acc, t) => {
-  acc[t.categoryId] = (acc[t.categoryId] || 0) + 1
-  return acc
-}, {})
-
-const filterTabs = [
-  { id: null as string | null, name: "All", icon: Sparkles },
-  ...skillCategories.map((c) => ({ id: c.id, name: c.name, icon: c.icon })),
-]
 
 export default function SkillsHeader({
   searchQuery,
   onSearchChange,
   activeCategory,
   onCategoryChange,
+  skillCategories,
+  technologies,
 }: SkillsHeaderProps) {
+  const categoryCounts = technologies.reduce<Record<string, number>>((acc, t) => {
+    acc[t.categoryId] = (acc[t.categoryId] || 0) + 1
+    return acc
+  }, {})
+
+  const filterTabs = [
+    { id: null as string | null, name: "All", icon: Sparkles },
+    ...skillCategories.map((c) => ({ id: c.id, name: c.name, icon: c.icon })),
+  ]
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 

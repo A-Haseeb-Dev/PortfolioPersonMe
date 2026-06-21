@@ -3,7 +3,19 @@
 import { motion } from "framer-motion"
 import { Clock, Calendar, ArrowUpRight, BookOpen } from "lucide-react"
 import { formatDateShort } from "@/lib/utils"
-import type { KnowledgeNote } from "@/data/knowledge"
+interface KnowledgeNote {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  category: string
+  categoryId: string
+  tags: string[]
+  readingTime: number
+  lastUpdated: Date
+  createdAt: Date
+}
 
 interface KnowledgeCardProps {
   note: KnowledgeNote

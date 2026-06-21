@@ -7,7 +7,24 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import type { BlogPost } from "@/data/blog"
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  coverImage?: string | null
+  category: string
+  tags: string[]
+  readingTime: string
+  date: string
+  featured: boolean
+  author: {
+    name: string
+    avatar: string | null
+    role: string
+  }
+}
 
 interface BlogSidebarProps {
   posts: BlogPost[]

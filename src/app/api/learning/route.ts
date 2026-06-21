@@ -15,6 +15,12 @@ function mapStatus(status?: string): "CURRENT" | "COMPLETED" | "PLANNED" {
   return statusMap[status.toLowerCase()] ?? "PLANNED"
 }
 
+function safeDate(value: unknown): Date | undefined {
+  if (!value) return undefined
+  const d = new Date(value as string)
+  return isNaN(d.getTime()) ? undefined : d
+}
+
 export async function GET() {
   try {
     const learning = await db.learningJourney.findMany({
@@ -29,7 +35,6 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  await requireRole(["ADMIN", "SUPER_ADMIN"])
   const body = await req.json()
   const {
     title,
@@ -44,6 +49,7 @@ export async function POST(req: Request) {
   } = body
 
   try {
+    await requireRole(["ADMIN", "SUPER_ADMIN"])
     if (!title) {
       return apiError("Title is required", 400)
     }
@@ -55,8 +61,8 @@ export async function POST(req: Request) {
         status: mapStatus(status ?? "planned"),
         category,
         resource,
-        startDate: startDate ? new Date(startDate) : undefined,
-        endDate: endDate ? new Date(endDate) : undefined,
+        startDate: safeDate(startDate),
+        endDate: safeDate(endDate),
         certificate,
         notes,
       },

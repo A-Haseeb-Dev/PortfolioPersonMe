@@ -3,7 +3,15 @@
 import { motion } from "framer-motion"
 import { CheckCircle2, Award, ExternalLink } from "lucide-react"
 import { formatDate } from "@/lib/utils"
-import type { Milestone } from "@/data/learning"
+interface Milestone {
+  id: string
+  title: string
+  description: string
+  date: Date
+  category: string
+  certificate?: string
+  certificateUrl?: string
+}
 
 interface LearningTimelineProps {
   milestones: Milestone[]

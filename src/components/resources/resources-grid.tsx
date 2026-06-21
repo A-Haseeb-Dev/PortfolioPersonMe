@@ -6,9 +6,24 @@ import { Search, FileText, Award, BookOpen, Code2, FileJson } from "lucide-react
 import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/hooks/use-data"
-import { resources as staticResources } from "@/data/resources"
 import ResourceCard from "./resource-card"
-import type { Resource } from "@/data/resources"
+
+interface Resource {
+  id: string
+  title: string
+  slug: string
+  description: string
+  type: string
+  fileUrl: string
+  downloadCount: number
+  published: boolean
+  createdAt: string
+  updatedAt: string
+  tags?: string[]
+  fileSize?: string
+  lastUpdated?: string
+  category?: string
+}
 
 const categories = [
   { id: "all", label: "All Resources" },
@@ -28,18 +43,19 @@ const sectionIcons: Record<string, LucideIcon> = {
 }
 
 function groupByType(items: Resource[]) {
-  const groups: [Resource["type"], Resource[]][] = [
-    ["resume", []],
-    ["portfolio", []],
-    ["certificate", []],
-    ["cheatsheet", []],
-    ["guide", []],
-  ]
-  const map = new Map<Resource["type"], Resource[]>()
+  const groups = [
+    ["resume", [] as Resource[]],
+    ["portfolio", [] as Resource[]],
+    ["certificate", [] as Resource[]],
+    ["cheatsheet", [] as Resource[]],
+    ["guide", [] as Resource[]],
+  ] as const
+  const map = new Map<string, Resource[]>()
   for (const r of items) {
-    const arr = map.get(r.type) ?? []
+    const key = r.type.toLowerCase()
+    const arr = map.get(key) ?? []
     arr.push(r)
-    map.set(r.type, arr)
+    map.set(key, arr)
   }
   return groups.filter(([type]) => (map.get(type)?.length ?? 0) > 0).map(([type]) => [type, map.get(type)!] as const)
 }
@@ -53,7 +69,7 @@ const sectionNames: Record<string, string> = {
 }
 
 export default function ResourcesGrid() {
-  const resources = useData("/api/resources", staticResources)
+  const resources = useData<Resource>("/api/resources", [])
   const [activeCategory, setActiveCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -63,11 +79,11 @@ export default function ResourcesGrid() {
     !query ||
     r.title.toLowerCase().includes(query) ||
     r.description.toLowerCase().includes(query) ||
-    r.tags.some((t) => t.toLowerCase().includes(query))
+    (r.tags ?? []).some((t) => t.toLowerCase().includes(query))
 
   const filtered = useMemo(() => {
     const categoryFiltered =
-      activeCategory === "all" ? resources : resources.filter((r) => r.type === activeCategory)
+      activeCategory === "all" ? resources : resources.filter((r) => r.type.toLowerCase() === activeCategory)
     return categoryFiltered.filter(matchesSearch)
   }, [activeCategory, query, resources])
 

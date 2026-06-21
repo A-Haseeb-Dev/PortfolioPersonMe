@@ -29,6 +29,41 @@ interface StatItem {
   description?: string
 }
 
+interface AboutStat {
+  label: string
+  value: string
+  suffix: string
+}
+
+interface StoryMilestone {
+  year: string
+  title: string
+  description: string
+}
+
+interface Education {
+  degree: string
+  institution: string
+  location: string
+  year: string
+  description: string
+}
+
+interface CareerItem {
+  role: string
+  company: string
+  location: string
+  period: string
+  description: string
+  tags: string
+}
+
+interface Goal {
+  title: string
+  description: string
+  icon: string
+}
+
 export default function AdminSettings() {
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -63,6 +98,24 @@ export default function AdminSettings() {
   const [footerTagline, setFooterTagline] = useState("")
   const [footerCopyright, setFooterCopyright] = useState("")
 
+  const [aboutName, setAboutName] = useState("")
+  const [aboutTitle, setAboutTitle] = useState("")
+  const [aboutSubtitle, setAboutSubtitle] = useState("")
+  const [aboutBio, setAboutBio] = useState("")
+  const [aboutLocation, setAboutLocation] = useState("")
+  const [aboutAvailability, setAboutAvailability] = useState("")
+  const [aboutResumeUrl, setAboutResumeUrl] = useState("")
+  const [aboutAvatar, setAboutAvatar] = useState("")
+  const [aboutStats, setAboutStats] = useState<AboutStat[]>([])
+  const [aboutStory, setAboutStory] = useState<StoryMilestone[]>([])
+  const [aboutMissionText, setAboutMissionText] = useState("")
+  const [aboutMissionBullets, setAboutMissionBullets] = useState("")
+  const [aboutVisionText, setAboutVisionText] = useState("")
+  const [aboutVisionBullets, setAboutVisionBullets] = useState("")
+  const [aboutEducation, setAboutEducation] = useState<Education[]>([])
+  const [aboutCareer, setAboutCareer] = useState<CareerItem[]>([])
+  const [aboutGoals, setAboutGoals] = useState<Goal[]>([])
+
   useEffect(() => {
     fetch("/api/settings")
       .then((r) => r.json())
@@ -94,6 +147,25 @@ export default function AdminSettings() {
         setAnimationsEnabled(theme.animationsEnabled ?? true)
         setFooterTagline(footer.tagline || "")
         setFooterCopyright(footer.copyright || "")
+
+        const about = s.about || {}
+        setAboutName(about.name || "")
+        setAboutTitle(about.title || "")
+        setAboutSubtitle(about.subtitle || "")
+        setAboutBio(about.bio || "")
+        setAboutLocation(about.location || "")
+        setAboutAvailability(about.availability || "")
+        setAboutResumeUrl(about.resumeUrl || "")
+        setAboutAvatar(about.avatar || "")
+        setAboutStats((about.stats || []).map((s: any) => ({ ...s, value: String(s.value) })))
+        setAboutStory(about.story || [])
+        setAboutMissionText(about.mission?.text || "")
+        setAboutMissionBullets((about.mission?.bullets || []).join("\n"))
+        setAboutVisionText(about.vision?.text || "")
+        setAboutVisionBullets((about.vision?.bullets || []).join("\n"))
+        setAboutEducation(about.education || [])
+        setAboutCareer((about.career || []).map((c: any) => ({ ...c, tags: Array.isArray(c.tags) ? c.tags.join("\n") : c.tags || "" })))
+        setAboutGoals(about.goals || [])
       })
       .catch(() => setNotify({ type: "error", message: "Failed to load settings" }))
       .finally(() => setLoading(false))
@@ -143,6 +215,30 @@ export default function AdminSettings() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ key: "footer", value: { tagline: footerTagline, quickLinks: navItems.filter((i) => !i.children).slice(0, 6), copyright: footerCopyright } }),
         }),
+        fetch("/api/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            key: "about",
+            value: {
+              name: aboutName,
+              title: aboutTitle,
+              subtitle: aboutSubtitle,
+              bio: aboutBio,
+              location: aboutLocation,
+              availability: aboutAvailability,
+              resumeUrl: aboutResumeUrl,
+              avatar: aboutAvatar,
+              stats: aboutStats.map((s) => ({ ...s, value: Number(s.value) })),
+              story: aboutStory,
+              mission: { text: aboutMissionText, bullets: aboutMissionBullets.split("\n").filter(Boolean) },
+              vision: { text: aboutVisionText, bullets: aboutVisionBullets.split("\n").filter(Boolean) },
+              education: aboutEducation,
+              career: aboutCareer.map((c) => ({ ...c, tags: c.tags.split("\n").filter(Boolean) })),
+              goals: aboutGoals,
+            },
+          }),
+        }),
       ]
       await Promise.all(promises)
       setNotify({ type: "success", message: "Settings saved successfully" })
@@ -191,6 +287,7 @@ export default function AdminSettings() {
           <TabsTrigger value="seo">SEO</TabsTrigger>
           <TabsTrigger value="theme">Theme</TabsTrigger>
           <TabsTrigger value="footer">Footer</TabsTrigger>
+          <TabsTrigger value="about">About</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="mt-6 space-y-6">
@@ -352,6 +449,200 @@ export default function AdminSettings() {
             <div className="space-y-4">
               <Input label="Tagline" value={footerTagline} onChange={(e) => setFooterTagline(e.target.value)} />
               <Input label="Copyright" value={footerCopyright} onChange={(e) => setFooterCopyright(e.target.value)} />
+            </div>
+          </GlassCard>
+        </TabsContent>
+
+        <TabsContent value="about" className="mt-6 space-y-6">
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Basic Information</h3>
+            <div className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Input label="Name" value={aboutName} onChange={(e) => setAboutName(e.target.value)} />
+                <Input label="Title" value={aboutTitle} onChange={(e) => setAboutTitle(e.target.value)} />
+              </div>
+              <Input label="Subtitle" value={aboutSubtitle} onChange={(e) => setAboutSubtitle(e.target.value)} />
+              <Textarea label="Bio" value={aboutBio} onChange={(e) => setAboutBio(e.target.value)} rows={4} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Input label="Location" value={aboutLocation} onChange={(e) => setAboutLocation(e.target.value)} />
+                <Input label="Availability" value={aboutAvailability} onChange={(e) => setAboutAvailability(e.target.value)} />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Input label="Resume URL" value={aboutResumeUrl} onChange={(e) => setAboutResumeUrl(e.target.value)} placeholder="https://..." />
+                <Input label="Avatar URL" value={aboutAvatar} onChange={(e) => setAboutAvatar(e.target.value)} placeholder="https://..." icon={<ImageIcon size={16} />} />
+              </div>
+            </div>
+          </GlassCard>
+
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">About Stats</h3>
+            <div className="space-y-3">
+              {aboutStats.map((stat, i) => (
+                <div key={i} className="flex items-end gap-3">
+                  <Input label="Label" value={stat.label} onChange={(e) => {
+                    const updated = [...aboutStats]; updated[i] = { ...updated[i], label: e.target.value }; setAboutStats(updated)
+                  }} placeholder="e.g. Experience" className="w-40" />
+                  <Input label="Value" value={stat.value} onChange={(e) => {
+                    const updated = [...aboutStats]; updated[i] = { ...updated[i], value: e.target.value }; setAboutStats(updated)
+                  }} placeholder="e.g. 5+" className="w-24" />
+                  <Input label="Suffix" value={stat.suffix} onChange={(e) => {
+                    const updated = [...aboutStats]; updated[i] = { ...updated[i], suffix: e.target.value }; setAboutStats(updated)
+                  }} placeholder="e.g. Years" className="w-32" />
+                  {aboutStats.length > 1 && (
+                    <Button variant="ghost" size="sm" className="mb-0.5" onClick={() => setAboutStats(aboutStats.filter((_, j) => j !== i))}>
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={() => setAboutStats([...aboutStats, { label: "", value: "", suffix: "" }])}>
+                Add Stat
+              </Button>
+            </div>
+          </GlassCard>
+
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Story Milestones</h3>
+            <div className="space-y-3">
+              {aboutStory.map((milestone, i) => (
+                <div key={i} className="flex items-end gap-3">
+                  <Input label="Year" value={milestone.year} onChange={(e) => {
+                    const updated = [...aboutStory]; updated[i] = { ...updated[i], year: e.target.value }; setAboutStory(updated)
+                  }} placeholder="e.g. 2024" className="w-24" />
+                  <Input label="Title" value={milestone.title} onChange={(e) => {
+                    const updated = [...aboutStory]; updated[i] = { ...updated[i], title: e.target.value }; setAboutStory(updated)
+                  }} placeholder="Milestone title" className="w-40" />
+                  <Input label="Description" value={milestone.description} onChange={(e) => {
+                    const updated = [...aboutStory]; updated[i] = { ...updated[i], description: e.target.value }; setAboutStory(updated)
+                  }} placeholder="Description" className="flex-1" />
+                  {aboutStory.length > 1 && (
+                    <Button variant="ghost" size="sm" className="mb-0.5" onClick={() => setAboutStory(aboutStory.filter((_, j) => j !== i))}>
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={() => setAboutStory([...aboutStory, { year: "", title: "", description: "" }])}>
+                Add Milestone
+              </Button>
+            </div>
+          </GlassCard>
+
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Mission</h3>
+            <div className="space-y-4">
+              <Textarea label="Mission Text" value={aboutMissionText} onChange={(e) => setAboutMissionText(e.target.value)} rows={3} />
+              <Textarea label="Mission Bullets (one per line)" value={aboutMissionBullets} onChange={(e) => setAboutMissionBullets(e.target.value)} rows={4} />
+            </div>
+          </GlassCard>
+
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Vision</h3>
+            <div className="space-y-4">
+              <Textarea label="Vision Text" value={aboutVisionText} onChange={(e) => setAboutVisionText(e.target.value)} rows={3} />
+              <Textarea label="Vision Bullets (one per line)" value={aboutVisionBullets} onChange={(e) => setAboutVisionBullets(e.target.value)} rows={4} />
+            </div>
+          </GlassCard>
+
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Education</h3>
+            <div className="space-y-3">
+              {aboutEducation.map((item, i) => (
+                <div key={i} className="flex items-end gap-3">
+                  <Input label="Degree" value={item.degree} onChange={(e) => {
+                    const updated = [...aboutEducation]; updated[i] = { ...updated[i], degree: e.target.value }; setAboutEducation(updated)
+                  }} placeholder="e.g. B.Sc." className="w-28" />
+                  <Input label="Institution" value={item.institution} onChange={(e) => {
+                    const updated = [...aboutEducation]; updated[i] = { ...updated[i], institution: e.target.value }; setAboutEducation(updated)
+                  }} placeholder="University" className="w-36" />
+                  <Input label="Location" value={item.location} onChange={(e) => {
+                    const updated = [...aboutEducation]; updated[i] = { ...updated[i], location: e.target.value }; setAboutEducation(updated)
+                  }} placeholder="City" className="w-28" />
+                  <Input label="Year" value={item.year} onChange={(e) => {
+                    const updated = [...aboutEducation]; updated[i] = { ...updated[i], year: e.target.value }; setAboutEducation(updated)
+                  }} placeholder="e.g. 2024" className="w-20" />
+                  <Input label="Description" value={item.description} onChange={(e) => {
+                    const updated = [...aboutEducation]; updated[i] = { ...updated[i], description: e.target.value }; setAboutEducation(updated)
+                  }} placeholder="Optional" className="flex-1" />
+                  {aboutEducation.length > 1 && (
+                    <Button variant="ghost" size="sm" className="mb-0.5" onClick={() => setAboutEducation(aboutEducation.filter((_, j) => j !== i))}>
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={() => setAboutEducation([...aboutEducation, { degree: "", institution: "", location: "", year: "", description: "" }])}>
+                Add Education
+              </Button>
+            </div>
+          </GlassCard>
+
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Career</h3>
+            <div className="space-y-3">
+              {aboutCareer.map((item, i) => (
+                <div key={i} className="space-y-3 rounded-lg border border-border/20 p-4">
+                  <div className="flex items-end gap-3">
+                    <Input label="Role" value={item.role} onChange={(e) => {
+                      const updated = [...aboutCareer]; updated[i] = { ...updated[i], role: e.target.value }; setAboutCareer(updated)
+                    }} placeholder="e.g. Software Engineer" className="flex-1" />
+                    <Input label="Company" value={item.company} onChange={(e) => {
+                      const updated = [...aboutCareer]; updated[i] = { ...updated[i], company: e.target.value }; setAboutCareer(updated)
+                    }} placeholder="Company name" className="flex-1" />
+                    <Input label="Location" value={item.location} onChange={(e) => {
+                      const updated = [...aboutCareer]; updated[i] = { ...updated[i], location: e.target.value }; setAboutCareer(updated)
+                    }} placeholder="City" className="w-28" />
+                    {aboutCareer.length > 1 && (
+                      <Button variant="ghost" size="sm" className="mb-0.5" onClick={() => setAboutCareer(aboutCareer.filter((_, j) => j !== i))}>
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                  <div className="flex items-end gap-3">
+                    <Input label="Period" value={item.period} onChange={(e) => {
+                      const updated = [...aboutCareer]; updated[i] = { ...updated[i], period: e.target.value }; setAboutCareer(updated)
+                    }} placeholder="e.g. Jan 2022 - Present" className="w-48" />
+                    <Textarea label="Description" value={item.description} onChange={(e) => {
+                      const updated = [...aboutCareer]; updated[i] = { ...updated[i], description: e.target.value }; setAboutCareer(updated)
+                    }} rows={2} className="flex-1" />
+                  </div>
+                  <div>
+                    <Textarea label="Tags (one per line)" value={item.tags} onChange={(e) => {
+                      const updated = [...aboutCareer]; updated[i] = { ...updated[i], tags: e.target.value }; setAboutCareer(updated)
+                    }} rows={2} />
+                  </div>
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={() => setAboutCareer([...aboutCareer, { role: "", company: "", location: "", period: "", description: "", tags: "" }])}>
+                Add Career
+              </Button>
+            </div>
+          </GlassCard>
+
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Goals</h3>
+            <div className="space-y-3">
+              {aboutGoals.map((goal, i) => (
+                <div key={i} className="flex items-end gap-3">
+                  <Input label="Title" value={goal.title} onChange={(e) => {
+                    const updated = [...aboutGoals]; updated[i] = { ...updated[i], title: e.target.value }; setAboutGoals(updated)
+                  }} placeholder="Goal title" className="w-40" />
+                  <Input label="Description" value={goal.description} onChange={(e) => {
+                    const updated = [...aboutGoals]; updated[i] = { ...updated[i], description: e.target.value }; setAboutGoals(updated)
+                  }} placeholder="Description" className="flex-1" />
+                  <Input label="Icon" value={goal.icon} onChange={(e) => {
+                    const updated = [...aboutGoals]; updated[i] = { ...updated[i], icon: e.target.value }; setAboutGoals(updated)
+                  }} placeholder="Icon name" className="w-28" />
+                  {aboutGoals.length > 1 && (
+                    <Button variant="ghost" size="sm" className="mb-0.5" onClick={() => setAboutGoals(aboutGoals.filter((_, j) => j !== i))}>
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={() => setAboutGoals([...aboutGoals, { title: "", description: "", icon: "" }])}>
+                Add Goal
+              </Button>
             </div>
           </GlassCard>
         </TabsContent>

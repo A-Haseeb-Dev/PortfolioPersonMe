@@ -3,7 +3,20 @@
 import { motion } from "framer-motion"
 import { CheckCircle2, Circle, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { Track } from "@/data/learning"
+interface RoadmapStep {
+  id: string
+  title: string
+  description: string
+  status: "completed" | "current" | "future"
+}
+
+interface Track {
+  id: string
+  title: string
+  description: string
+  color: string
+  steps: RoadmapStep[]
+}
 
 interface LearningRoadmapProps {
   tracks: Track[]

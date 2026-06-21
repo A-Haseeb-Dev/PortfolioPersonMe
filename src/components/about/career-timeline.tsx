@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef } from "react"
+import { useSettings } from "@/contexts/settings-context"
 import { motion, useInView } from "framer-motion"
 import { Briefcase, Calendar, ArrowUpRight } from "lucide-react"
 import { Section } from "@/components/ui/section"
@@ -8,7 +9,7 @@ import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
-const experiences = [
+const defaultExperiences = [
   {
     role: "Senior Frontend Engineer",
     company: "TechCorp",
@@ -48,6 +49,9 @@ const experiences = [
 ]
 
 export default function CareerTimeline() {
+  const { settings } = useSettings()
+  const experiences = settings.about?.career ?? defaultExperiences
+
   return (
     <Section
       title="Career Timeline"
@@ -70,7 +74,7 @@ function CareerEntry({
   experience,
   index,
 }: {
-  experience: (typeof experiences)[number]
+  experience: { role: string; company: string; location: string; period: string; description: string; tags: string[] }
   index: number
 }) {
   const ref = useRef<HTMLDivElement>(null)

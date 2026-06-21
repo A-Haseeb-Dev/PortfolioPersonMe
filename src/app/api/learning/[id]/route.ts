@@ -15,6 +15,12 @@ function mapStatus(status?: string): "CURRENT" | "COMPLETED" | "PLANNED" {
   return statusMap[status.toLowerCase()] ?? "PLANNED"
 }
 
+function safeDate(value: unknown): Date | undefined {
+  if (!value) return undefined
+  const d = new Date(value as string)
+  return isNaN(d.getTime()) ? undefined : d
+}
+
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -41,11 +47,11 @@ export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  await requireRole(["ADMIN", "SUPER_ADMIN"])
   const { id } = await params
   const body = await req.json()
 
   try {
+    await requireRole(["ADMIN", "SUPER_ADMIN"])
     const existing = await db.learningJourney.findUnique({
       where: { id },
     })
@@ -61,8 +67,8 @@ export async function PUT(
     if (body.status !== undefined) data.status = mapStatus(body.status)
     if (body.category !== undefined) data.category = body.category
     if (body.resource !== undefined) data.resource = body.resource
-    if (body.startDate !== undefined) data.startDate = new Date(body.startDate)
-    if (body.endDate !== undefined) data.endDate = new Date(body.endDate)
+    if (body.startDate !== undefined) data.startDate = safeDate(body.startDate)
+    if (body.endDate !== undefined) data.endDate = safeDate(body.endDate)
     if (body.certificate !== undefined) data.certificate = body.certificate
     if (body.notes !== undefined) data.notes = body.notes
 
@@ -82,10 +88,10 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  await requireRole(["ADMIN", "SUPER_ADMIN"])
   const { id } = await params
 
   try {
+    await requireRole(["ADMIN", "SUPER_ADMIN"])
     const existing = await db.learningJourney.findUnique({
       where: { id },
     })

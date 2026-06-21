@@ -34,28 +34,52 @@ export default function FeaturedProjects() {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
+    let cancelled = false
+
     fetch("/api/projects?featured=true&published=true&limit=6")
-      .then((r) => r.json())
-      .then((json) => {
-        const items = json.projects || []
-        if (items.length > 0) {
-          setProjects(items.map((p: Record<string, unknown>) => ({
-            id: p.id as string,
-            title: p.title as string,
-            description: p.description as string,
-            techStack: Array.isArray(p.technologies) ? p.technologies.map((t: Record<string, unknown>) => {
-              const tech = t.technology as Record<string, unknown> | undefined
-              return (tech?.name as string) || (t.name as string) || ""
-            }) : [],
-            githubUrl: p.githubUrl as string | null,
-            liveUrl: p.liveUrl as string | null,
-            category: (p as Record<string, string>).category || "Project",
-            details: p.solution as string || p.description as string,
-          })))
-        }
+      .then((r) => {
+        if (!r.ok) throw new Error(`API error: ${r.status}`)
+        return r.json()
       })
-      .catch(() => {})
-      .finally(() => setLoading(false))
+      .then((json: Record<string, unknown>) => {
+        if (cancelled) return
+        const rawItems = json.projects
+        if (!Array.isArray(rawItems)) {
+          setLoading(false)
+          return
+        }
+        const mapped: Project[] = rawItems.map((p: Record<string, unknown>) => {
+          const rawTechs = p.technologies
+          const techStack: string[] = Array.isArray(rawTechs)
+            ? rawTechs.map((t: Record<string, unknown>) => {
+                const tech = typeof t.technology === "object" && t.technology !== null
+                  ? t.technology as Record<string, unknown>
+                  : null
+                return String(tech?.name ?? t.name ?? "")
+              }).filter(Boolean)
+            : []
+
+          return {
+            id: String(p.id ?? ""),
+            title: String(p.title ?? ""),
+            description: String(p.description ?? ""),
+            techStack,
+            githubUrl: typeof p.githubUrl === "string" ? p.githubUrl : null,
+            liveUrl: typeof p.liveUrl === "string" ? p.liveUrl : null,
+            category: String(p.category ?? "Project"),
+            details: String(p.solution ?? p.description ?? ""),
+          }
+        })
+        if (mapped.length > 0) setProjects(mapped)
+      })
+      .catch((err: Error) => {
+        if (!cancelled) console.error("[FeaturedProjects] Failed to fetch:", err)
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => { cancelled = true }
   }, [])
 
   if (loading) {

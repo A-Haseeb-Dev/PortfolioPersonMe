@@ -1,15 +1,25 @@
 "use client"
 
+const ADMIN_DATA_KEYS = [
+  "data", "posts", "projects", "caseStudies", "services",
+  "testimonials", "achievements", "resources", "startupIdeas",
+  "learning", "categories", "items", "messages", "skills",
+] as const
+
 export async function fetchAdminData<T>(endpoint: string): Promise<T[]> {
   try {
     const res = await fetch(endpoint)
     if (!res.ok) throw new Error(`API error: ${res.status}`)
-    const json = await res.json()
-    const data = json.data || json.posts || json.projects || json.caseStudies || json.services || json.testimonials || json.achievements || json.resources || json.startupIdeas || json.learning || json.categories || json.items || json.messages || json.skills || []
-    return data as T[]
+    const json: Record<string, unknown> = await res.json()
+    if (!json || typeof json !== "object") return []
+    for (const key of ADMIN_DATA_KEYS) {
+      const value = json[key]
+      if (Array.isArray(value)) return value as T[]
+    }
+    return []
   } catch (error) {
     console.error(`[fetchAdminData] Failed to fetch ${endpoint}:`, error)
-    throw error
+    return []
   }
 }
 

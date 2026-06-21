@@ -1,12 +1,13 @@
 "use client"
 
 import { useRef } from "react"
+import { useSettings } from "@/contexts/settings-context"
 import { motion, useInView } from "framer-motion"
 import { Quote } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { GlassCard } from "@/components/ui/glass-card"
 
-const milestones = [
+const defaultMilestones = [
   {
     year: "2018",
     title: "First Line of Code",
@@ -52,6 +53,9 @@ const milestones = [
 ]
 
 export default function StorySection() {
+  const { settings } = useSettings()
+  const milestones = settings.about?.story ?? defaultMilestones
+
   return (
     <Section
       title="The Story So Far"
@@ -78,7 +82,7 @@ function TimelineEntry({
   milestone,
   index,
 }: {
-  milestone: (typeof milestones)[number]
+  milestone: { year: string; title: string; description: string }
   index: number
 }) {
   const ref = useRef<HTMLDivElement>(null)

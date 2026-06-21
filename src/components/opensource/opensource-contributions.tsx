@@ -1,9 +1,14 @@
 "use client"
 
-import { useMemo, useRef, useState, useEffect } from "react"
+import { useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import { GlassCard } from "@/components/ui/glass-card"
-import { contributions, totalContributions } from "@/data/opensource"
+
+interface Contribution {
+  date: string
+  count: number
+  level: 0 | 1 | 2 | 3 | 4
+}
 
 const levelColors = [
   "bg-zinc-100 dark:bg-zinc-800",
@@ -20,10 +25,44 @@ interface TooltipData {
   y: number
 }
 
+function generateContributions(): Contribution[] {
+  const data: Contribution[] = []
+  const now = new Date()
+  for (let i = 364; i >= 0; i--) {
+    const d = new Date(now)
+    d.setDate(d.getDate() - i)
+    const dateStr = d.toISOString().split("T")[0]
+    const rand = Math.random()
+    let count = 0
+    let level: 0 | 1 | 2 | 3 | 4 = 0
+    if (rand > 0.6) {
+      count = Math.floor(Math.random() * 5) + 1
+      level = 1
+    }
+    if (rand > 0.8) {
+      count = Math.floor(Math.random() * 10) + 5
+      level = 2
+    }
+    if (rand > 0.93) {
+      count = Math.floor(Math.random() * 15) + 10
+      level = 3
+    }
+    if (rand > 0.98) {
+      count = Math.floor(Math.random() * 20) + 15
+      level = 4
+    }
+    data.push({ date: dateStr, count, level })
+  }
+  return data
+}
+
+const contributions = generateContributions()
+const totalContributions = contributions.reduce((sum, c) => sum + c.count, 0)
+
 export default function OpensourceContributions() {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null)
   const weeks = useMemo(() => {
-    const w: (typeof contributions)[] = []
+    const w: Contribution[][] = []
     for (let i = 0; i < contributions.length; i += 7) {
       w.push(contributions.slice(i, i + 7))
     }
