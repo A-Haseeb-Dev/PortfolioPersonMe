@@ -5,14 +5,14 @@ import type { SiteSettings } from "@/types"
 
 const DEFAULT_SETTINGS = {
   site_config: {
-    name: "Muhammad Anas Siddiqui",
+    name: "Muhammad Haseeb Khalid",
     title: "Full Stack Developer & Tech Innovator",
     description: "Full Stack Developer specializing in Next.js, TypeScript, and modern web technologies. Building innovative solutions for complex problems with cutting-edge tools.",
     logo: "",
-    url: "https://anas-portfolio.vercel.app",
+    url: "https://muhammadhaseebkhalid.vercel.app",
   },
   hero: {
-    name: "Muhammad Anas Siddiqui",
+    name: "Muhammad Haseeb Khalid",
     titles: ["Full Stack Developer", "Software Engineer", "Tech Entrepreneur", "AI Enthusiast"],
     subtitle: "Crafting digital experiences with modern technologies. Passionate about building products that make a difference and solving complex problems with elegant solutions.",
     availability: "Available for opportunities",
@@ -61,7 +61,7 @@ const DEFAULT_SETTINGS = {
     { label: "Happy Clients", value: "20+", description: "Satisfied clients worldwide" },
   ],
   seo: {
-    title: "Muhammad Anas Siddiqui — Full Stack Developer",
+    title: "Muhammad Haseeb Khalid — Full Stack Developer",
     description: "Full Stack Developer specializing in Next.js, TypeScript, React, and modern web technologies. Building innovative solutions for complex problems.",
     keywords: "full-stack developer, portfolio, web development, react, next.js, typescript",
     ogImage: "/og-image.png",
@@ -113,7 +113,7 @@ const DEFAULT_SETTINGS = {
     { id: "redux", name: "Redux", category: "frontend", proficiency: 80, color: "#764ABC", connections: ["react", "typescript"] },
   ],
   about: {
-    name: "Muhammad Anas Siddiqui",
+    name: "Muhammad Haseeb Khalid",
     title: "Full Stack Developer & Creative Technologist",
     subtitle: "Crafting digital experiences that live at the intersection of design and engineering.",
     bio: "I craft high-performance web applications with modern frameworks, turning complex problems into intuitive user experiences. Passionate about open-source, design systems, and developer tooling.",
@@ -172,6 +172,18 @@ const DEFAULT_SETTINGS = {
       { title: "Continuous Learning", description: "Deep-dive into new technologies — staying a perpetual student.", icon: "Lightbulb" },
     ],
   },
+  home_sections: [
+    { id: "hero", label: "Hero Section", enabled: true },
+    { id: "featured-projects", label: "Featured Projects", enabled: true },
+    { id: "featured-services", label: "Featured Services", enabled: true },
+    { id: "featured-case-studies", label: "Featured Case Studies", enabled: true },
+    { id: "tech-stack", label: "Tech Stack Preview", enabled: true },
+    { id: "certifications", label: "Certifications", enabled: true },
+    { id: "testimonials", label: "Testimonials", enabled: true },
+    { id: "clients", label: "Clients Section", enabled: true },
+    { id: "featured-blogs", label: "Featured Blogs", enabled: true },
+    { id: "contact-cta", label: "Contact CTA", enabled: true },
+  ],
 }
 
 // SiteSettings type is defined in @/types

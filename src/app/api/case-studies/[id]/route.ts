@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(
   _request: Request,
@@ -70,6 +71,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "case-study", id, existing.title)
+
     return apiResponse({ caseStudy })
   } catch (error) {
     console.error("[CASE_STUDY_PUT] Failed to update case study", error)
@@ -96,6 +99,8 @@ export async function DELETE(
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    logActivity("delete", "case-study", id, existing.title)
 
     return apiResponse({ message: "Case study deleted successfully" })
   } catch (error) {

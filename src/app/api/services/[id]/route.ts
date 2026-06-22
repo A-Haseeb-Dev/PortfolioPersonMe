@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(
   _request: Request,
@@ -57,6 +58,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "service", id, existing.title)
+
     return apiResponse({ service })
   } catch (error) {
     console.error("[SERVICE_PUT] Failed to update service", error)
@@ -83,6 +86,8 @@ export async function DELETE(
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    logActivity("delete", "service", id, existing.title)
 
     return apiResponse({ message: "Service deleted successfully" })
   } catch (error) {

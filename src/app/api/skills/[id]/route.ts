@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(
   _request: Request,
@@ -67,6 +68,8 @@ export async function PUT(
       },
     })
 
+    logActivity("update", "skill", id, existing.name)
+
     return apiResponse({ category })
   } catch (error) {
     console.error("[SKILL_CATEGORY_PUT] Failed to update skill category", error)
@@ -90,6 +93,8 @@ export async function DELETE(
     }
 
     await db.technologyCategory.delete({ where: { id } })
+
+    logActivity("delete", "skill", id, existing.name)
 
     return apiResponse({ message: "Category deleted successfully" })
   } catch (error) {

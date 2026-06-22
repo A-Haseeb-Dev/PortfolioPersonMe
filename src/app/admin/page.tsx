@@ -3,19 +3,15 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import {
-  Users,
   FolderGit2,
   FileText,
   MessageSquare,
-  Download,
   Eye,
-  TrendingUp,
   Plus,
   ExternalLink,
   Sparkles,
   Activity,
   ArrowRight,
-  BookOpen,
   Code2,
   Lightbulb,
   Trophy,
@@ -25,15 +21,14 @@ import {
   BookMarked,
   Network,
   GraduationCap,
-  Settings,
-  BarChart3,
   ShieldCheck,
   PenSquare,
+  Trash2,
 } from "lucide-react"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 import { StatsCards } from "@/components/admin/stats-cards"
 import { GlassCard } from "@/components/ui/glass-card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
@@ -44,6 +39,7 @@ interface Activity {
   type: "create" | "update" | "delete" | "message"
   entity: string
   entityType: string
+  entityLabel: string
   timestamp: Date
   user: string
 }
@@ -57,9 +53,24 @@ interface SiteSection {
   label: string
   description: string
   href: string
-  icon: typeof BookOpen
+  icon: typeof FileText
   color: string
   bgColor: string
+}
+
+const entityLabels: Record<string, string> = {
+  project: "Project",
+  blog: "Blog Post",
+  "case-study": "Case Study",
+  message: "Message",
+  service: "Service",
+  skill: "Skill",
+  achievement: "Achievement",
+  testimonial: "Testimonial",
+  resource: "Resource",
+  "startup-idea": "Startup Idea",
+  learning: "Learning",
+  client: "Client",
 }
 
 const siteSections: SiteSection[] = [
@@ -78,6 +89,7 @@ const siteSections: SiteSection[] = [
 ]
 
 export default function AdminDashboard() {
+  const { data: session } = useSession()
   const [greeting, setGreeting] = useState("Welcome back")
   const [stats, setStats] = useState({ posts: 0, projects: 0, caseStudies: 0, services: 0, skills: 0, learning: 0, achievements: 0, resources: 0, startupIdeas: 0, testimonials: 0, messages: 0, loading: true })
   const [recentActivity, setRecentActivity] = useState<Activity[]>([])
@@ -110,53 +122,30 @@ export default function AdminDashboard() {
         messages: counts[10],
         loading: false,
       })
-
-      const recentItems: Activity[] = []
-      const entityTypeMap: Array<{ index: number; type: "project" | "blog" | "case-study" | "message" }> = [
-        { index: 1, type: "project" },
-        { index: 0, type: "blog" },
-        { index: 2, type: "case-study" },
-        { index: 10, type: "message" },
-      ]
-      for (const { index, type } of entityTypeMap) {
-        const r = results[index]
-        if (r?.status === "fulfilled" && Array.isArray(r.value)) {
-          for (const item of r.value.slice(0, 3)) {
-            recentItems.push({
-              id: `${type}-${(item as any).id || Math.random()}`,
-              type: type === "message" ? "message" : "create",
-              entity: (item as any).title || (item as any).subject || (item as any).name || "Untitled",
-              entityType: type,
-              timestamp: (item as any).createdAt ? new Date((item as any).createdAt) : new Date(),
-              user: (item as any).name || (item as any).author?.name || "You",
-            })
-          }
-        }
-      }
-      recentItems.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      setRecentActivity(recentItems.slice(0, 5))
     }
     loadStats()
   }, [])
 
   useEffect(() => {
-    async function loadAnalytics() {
+    async function loadActivity() {
       try {
-        const res = await fetch("/api/analytics/data?days=7")
-        if (res.ok) {
-          const data = await res.json()
-          if (data.pageViewsChart?.length) {
-            const chartData: SparklineDatum[] = data.pageViewsChart.map((d: any) => ({
-              value: d.views || 0,
-              label: new Date(d.date).toLocaleDateString("en", { weekday: "short" }),
-            }))
-            setPageViews(chartData)
-            setTotalPageViews(data.totalPageViews || 0)
-          }
+        const res = await fetch("/api/admin/activity?limit=15")
+        if (!res.ok) return
+        const data = await res.json()
+        if (data.activities?.length) {
+          setRecentActivity(data.activities.map((a: any) => ({
+            id: a.id,
+            type: a.action,
+            entity: a.entity,
+            entityType: a.entityType,
+            entityLabel: entityLabels[a.entityType] || a.entityType,
+            timestamp: new Date(a.createdAt),
+            user: a.user?.name || "You",
+          })))
         }
       } catch {}
     }
-    loadAnalytics()
+    loadActivity()
   }, [])
 
   const statsData = [
@@ -182,7 +171,7 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="text-2xl font-bold text-foreground"
           >
-            {greeting}, Abdul Haseeb
+            {greeting}, {session?.user?.name?.split(" ")[0] || "Admin"}
           </motion.h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Here&apos;s what&apos;s happening with your portfolio today.
@@ -264,7 +253,7 @@ export default function AdminDashboard() {
                 )}>
                   {activity.type === "create" && <Plus size={14} />}
                   {activity.type === "update" && <Sparkles size={14} />}
-                  {activity.type === "delete" && <TrendingUp size={14} />}
+                  {activity.type === "delete" && <Trash2 size={14} />}
                   {activity.type === "message" && <MessageSquare size={14} />}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -272,7 +261,7 @@ export default function AdminDashboard() {
                     {activity.entity}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {activity.entityType} &middot; {activity.user}
+                    {activity.entityLabel} &middot; {activity.user}
                   </p>
                 </div>
                 <span className="shrink-0 text-xs text-muted-foreground">

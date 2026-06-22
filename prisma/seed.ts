@@ -468,15 +468,15 @@ async function main() {
 
   // ── Settings ────────────────────────────────────────────────
   const defaultSettings: Record<string, unknown> = {
-    site_config: { name: "Muhammad Anas Siddiqui", title: "Full Stack Developer & Tech Innovator", description: "Full Stack Developer specializing in Next.js, TypeScript, and modern web technologies. Building innovative solutions for complex problems with cutting-edge tools.", logo: "", url: "https://anas-portfolio.vercel.app" },
-    hero: { name: "Muhammad Anas Siddiqui", titles: ["Full Stack Developer", "Software Engineer", "Tech Entrepreneur", "AI Enthusiast"], subtitle: "Crafting digital experiences with modern technologies. Passionate about building products that make a difference and solving complex problems with elegant solutions.", availability: "Available for opportunities", showStats: true, showSocialLinks: true },
+    site_config: { name: "Muhammad Haseeb Khalid", title: "Full Stack Developer & Tech Innovator", description: "Full Stack Developer specializing in Next.js, TypeScript, and modern web technologies. Building innovative solutions for complex problems with cutting-edge tools.", logo: "", url: "https://muhammadhaseebkhalid.vercel.app" },
+    hero: { name: "Muhammad Haseeb Khalid", titles: ["Full Stack Developer", "Software Engineer", "Tech Entrepreneur", "AI Enthusiast"], subtitle: "Crafting digital experiences with modern technologies. Passionate about building products that make a difference and solving complex problems with elegant solutions.", availability: "Available for opportunities", showStats: true, showSocialLinks: true },
     social_links: [
       { platform: "WhatsApp", url: "https://wa.me/923XXXXXXXXX", icon: "message-circle", label: "Chat on WhatsApp" },
       { platform: "LinkedIn", url: "https://linkedin.com", icon: "linkedin", label: "Connect on LinkedIn" },
       { platform: "GitHub", url: "https://github.com", icon: "github", label: "Follow on GitHub" },
       { platform: "Facebook", url: "https://facebook.com", icon: "facebook", label: "Friend on Facebook" },
       { platform: "Instagram", url: "https://instagram.com", icon: "instagram", label: "Follow on Instagram" },
-      { platform: "Email", url: "mailto:anas@example.com", icon: "mail", label: "Send an email" },
+      { platform: "Email", url: "mailto:admin@muhammadhaseebkhalid.com", icon: "mail", label: "Send an email" },
     ],
     nav_items: [
       { label: "Home", href: "/" },
@@ -492,7 +492,7 @@ async function main() {
       { label: "Years Experience", value: "5+", description: "Professional software development" },
       { label: "Happy Clients", value: "20+", description: "Satisfied clients worldwide" },
     ],
-    seo: { title: "Muhammad Anas Siddiqui — Full Stack Developer", description: "Full Stack Developer specializing in Next.js, TypeScript, and modern web technologies.", keywords: "full-stack developer, portfolio, web development, react, next.js, typescript", ogImage: "/og-image.png" },
+    seo: { title: "Muhammad Haseeb Khalid — Full Stack Developer", description: "Full Stack Developer specializing in Next.js, TypeScript, and modern web technologies.", keywords: "full-stack developer, portfolio, web development, react, next.js, typescript", ogImage: "/og-image.png" },
     theme: { mode: "system", accentColor: "zinc", animationsEnabled: true },
     footer: { tagline: "Building premium digital experiences with modern technologies.", quickLinks: [{ label: "Home", href: "/" }, { label: "About", href: "/about" }, { label: "Skills", href: "/skills" }, { label: "Projects", href: "/projects" }, { label: "Blog", href: "/blog" }, { label: "Contact", href: "/contact" }], copyright: "All rights reserved." },
     tech_categories: [
@@ -508,6 +508,18 @@ async function main() {
       { name: "Backend", ring: "trial", description: "Technologies we're exploring with confidence", items: [{ name: "tRPC", description: "End-to-end typesafe APIs", category: "backend" }, { name: "Hono", description: "Lightweight web framework", category: "backend" }, { name: "Bun", description: "All-in-one JavaScript runtime", category: "backend" }] },
       { name: "Infrastructure", ring: "assess", description: "Technologies worth investigating", items: [{ name: "Kubernetes", description: "Container orchestration", category: "infrastructure" }, { name: "Terraform", description: "Infrastructure as code", category: "infrastructure" }] },
       { name: "Legacy", ring: "hold", description: "Technologies to avoid or phase out", items: [{ name: "jQuery", description: "Legacy DOM manipulation", category: "legacy" }, { name: "PHP", description: "Server-side scripting", category: "legacy" }] },
+    ],
+    home_sections: [
+      { id: "hero", label: "Hero Section", enabled: true },
+      { id: "featured-projects", label: "Featured Projects", enabled: true },
+      { id: "featured-services", label: "Featured Services", enabled: true },
+      { id: "featured-case-studies", label: "Featured Case Studies", enabled: true },
+      { id: "tech-stack", label: "Tech Stack Preview", enabled: true },
+      { id: "certifications", label: "Certifications", enabled: true },
+      { id: "testimonials", label: "Testimonials", enabled: true },
+      { id: "clients", label: "Clients Section", enabled: true },
+      { id: "featured-blogs", label: "Featured Blogs", enabled: true },
+      { id: "contact-cta", label: "Contact CTA", enabled: true },
     ],
     technology_graph_nodes: [
       { id: "nextjs", name: "Next.js", category: "frontend", proficiency: 92, color: "#000000", connections: ["react", "typescript", "tailwind", "node"] },

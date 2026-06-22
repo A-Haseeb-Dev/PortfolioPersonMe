@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(
   _request: Request,
@@ -56,6 +57,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "testimonial", id, existing.name)
+
     return apiResponse({ testimonial })
   } catch (error) {
     console.error("[TESTIMONIAL_PUT] Failed to update testimonial", error)
@@ -80,6 +83,8 @@ export async function DELETE(
     }
 
     await db.testimonial.delete({ where: { id } })
+
+    logActivity("delete", "testimonial", id, existing.name)
 
     return apiResponse({ message: "Testimonial deleted successfully" })
   } catch (error) {

@@ -12,7 +12,7 @@ declare module "next-auth" {
   }
 }
 
-export type Role = "admin" | "editor" | "user"
+export type Role = "SUPER_ADMIN" | "ADMIN" | "EDITOR"
 
 export interface User {
   id: string
@@ -346,5 +346,6 @@ export interface SiteSettings {
     career: { role: string; company: string; location: string; period: string; description: string; tags: string[] }[]
     goals: { title: string; description: string; icon: string }[]
   }
+  home_sections: { id: string; label: string; enabled: boolean }[]
   [key: string]: unknown
 }

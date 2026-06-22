@@ -1,5 +1,3 @@
-"use client"
-
 const ADMIN_DATA_KEYS = [
   "data", "posts", "projects", "caseStudies", "services",
   "testimonials", "achievements", "resources", "startupIdeas",

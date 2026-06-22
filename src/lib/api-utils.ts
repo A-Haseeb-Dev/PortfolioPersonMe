@@ -16,7 +16,7 @@ export async function requireAuth() {
   return session
 }
 
-export async function requireRole(roles: (Role | "SUPER_ADMIN" | "ADMIN" | "EDITOR")[]) {
+export async function requireRole(roles: Role[]) {
   const session = await requireAuth()
   const userRole = String(session.user.role).toUpperCase()
   if (!roles.some((r) => r.toUpperCase() === userRole)) {

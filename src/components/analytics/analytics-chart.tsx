@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useTheme } from "next-themes"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
@@ -29,7 +30,7 @@ export function AnalyticsChart({
   data,
   type = "bar",
   height = 200,
-  color = "#18181b",
+  color: colorProp,
   secondaryColor = "#a1a1aa",
   showGrid = true,
   showLabels = true,
@@ -38,15 +39,15 @@ export function AnalyticsChart({
   formatValue = (v) => v.toString(),
 }: AnalyticsChartProps) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
-  const [isDark, setIsDark] = React.useState(false)
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)")
-    setIsDark(mq.matches)
-    const handler = (e: MediaQueryListEvent) => setIsDark(e.matches)
-    mq.addEventListener("change", handler)
-    return () => mq.removeEventListener("change", handler)
+    setMounted(true)
   }, [])
+
+  const isDark = mounted && resolvedTheme === "dark"
+  const color = colorProp ?? (isDark ? "#f4f4f5" : "#18181b")
 
   const maxValue = Math.max(...data.map((d) => d.value), 1)
   const lineColor = isDark ? "#f4f4f5" : "#18181b"

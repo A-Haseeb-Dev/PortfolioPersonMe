@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(
   _request: Request,
@@ -54,6 +55,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "client", id, existing.name)
+
     return apiResponse({ client })
   } catch (error) {
     console.error("[CLIENT_PUT] Failed to update client", error)
@@ -78,6 +81,8 @@ export async function DELETE(
     }
 
     await db.client.delete({ where: { id } })
+
+    logActivity("delete", "client", id, existing.name)
 
     return apiResponse({ message: "Client deleted successfully" })
   } catch (error) {

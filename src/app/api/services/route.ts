@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(request: Request) {
   try {
@@ -76,6 +77,8 @@ export async function POST(request: Request) {
         published: published || false,
       },
     })
+
+    logActivity("create", "service", service.id, service.title)
 
     return apiResponse({ service }, 201)
   } catch (error) {

@@ -3,6 +3,7 @@ import { blogSchema } from "@/lib/validations"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(request: Request) {
   try {
@@ -122,6 +123,8 @@ export async function POST(request: Request) {
         await db.blogTags.create({ data: { blogId: post.id, tagId: tag.id } }).catch(() => {})
       }
     }
+
+    logActivity("create", "blog", post.id, post.title)
 
     return apiResponse({ post }, 201)
   } catch (error) {

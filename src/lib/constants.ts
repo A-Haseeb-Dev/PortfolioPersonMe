@@ -1,11 +1,11 @@
 import type { SiteConfig } from "@/types"
 
 export const siteConfig: SiteConfig = {
-  name: "Muhammad Anas Siddiqui",
+  name: "Muhammad Haseeb Khalid",
   title: "Full Stack Developer & Tech Innovator",
   description:
     "Full Stack Developer specializing in Next.js, TypeScript, and modern web technologies. Building innovative solutions for complex problems with cutting-edge tools.",
-  url: "https://anas-portfolio.vercel.app",
+  url: "https://muhammadhaseebkhalid.vercel.app",
   ogImage: "/og-image.png",
   links: {
     github: "https://github.com",

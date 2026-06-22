@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 type ResourceType = "RESUME" | "CERTIFICATE" | "PORTFOLIO" | "CHEAT_SHEET" | "GUIDE"
 
@@ -90,6 +91,8 @@ export async function POST(request: Request) {
         published: rawPublished === true,
       },
     })
+
+    logActivity("create", "resource", resource.id, resource.title)
 
     return apiResponse({ resource }, 201)
   } catch (error) {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -18,24 +18,23 @@ import {
   Building2,
   Mail,
   Phone,
+  MessageCircle,
+  Users,
+  Globe,
+  Camera,
+  Award,
+  FileText,
+  Layers,
+  PenLine,
+  Sparkles,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useSettings } from "@/contexts/settings-context"
 
-const navItems = [
-  { label: "Home", href: "/", icon: Home },
-  { label: "About", href: "/about", icon: User },
-  { label: "Skills", href: "/skills", icon: Code2 },
-  { label: "Projects", href: "/projects", icon: FolderGit2 },
-  { label: "Blog", href: "/blog", icon: BookOpen },
-  { label: "Knowledge", href: "/knowledge", icon: BrainCircuit },
-  { label: "Contact", href: "/contact", icon: Phone },
-]
-
-const socialLinks = [
-  { label: "WhatsApp", href: "https://wa.me/your-number", icon: Phone },
-  { label: "LinkedIn", href: "https://linkedin.com/in/your-profile", icon: Building2 },
-  { label: "GitHub", href: "https://github.com/your-username", icon: FolderGit2 },
-]
+const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  Home, User, Code2, FolderGit2, BookOpen, BrainCircuit, Mail, Phone,
+  MessageCircle, Users, Globe, Camera, Award, FileText, Layers, PenLine, Sparkles, Building2,
+}
 
 const sidebarVariants = {
   hidden: { x: "100%", opacity: 0 },
@@ -68,6 +67,30 @@ interface MobileNavProps {
 export default function MobileNav({ open, onClose }: MobileNavProps) {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
+  const { settings } = useSettings()
+
+  const navItems = useMemo(() => {
+    const items = settings.nav_items || []
+    return items.filter((i) => !i.children).map((item) => {
+      const iconName = item.label === "Home" ? "Home"
+        : item.label === "About" ? "User"
+        : item.label === "Skills" ? "Code2"
+        : item.label === "Projects" ? "FolderGit2"
+        : item.label === "Blog" ? "BookOpen"
+        : item.label === "Knowledge" ? "BrainCircuit"
+        : item.label === "Contact" ? "Phone"
+        : "FolderGit2"
+      return { label: item.label, href: item.href, icon: iconName }
+    })
+  }, [settings.nav_items])
+
+  const socialLinks = useMemo(() => {
+    return (settings.social_links || []).map((link: { platform: string; url: string; icon: string; label: string }) => ({
+      label: link.label || link.platform,
+      href: link.url,
+      icon: (link.icon || link.platform || "").toLowerCase(),
+    }))
+  }, [settings.social_links])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -130,7 +153,7 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
               <ul className="flex flex-col gap-1">
                 {navItems.map((item, i) => {
                   const isActive = pathname === item.href
-                  const Icon = item.icon
+                  const IconComponent = iconMap[item.icon]
                   return (
                     <motion.li
                       key={item.href}
@@ -148,7 +171,7 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
                             : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
                         )}
                       >
-                        <Icon
+                        <IconComponent
                           size={18}
                           className={cn(
                             "shrink-0 transition-colors",
@@ -168,17 +191,20 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
             <div className="border-t border-zinc-200/50 px-5 py-4 dark:border-zinc-800/50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {socialLinks.map((link) => (
+                  {socialLinks.map((link, i) => {
+                    const SocialIcon = iconMap[link.icon] || Globe
+                    return (
                     <a
-                      key={link.label}
+                      key={link.label + i}
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
                     >
-                      <link.icon size={16} />
+                      <SocialIcon size={16} />
                     </a>
-                  ))}
+                    )
+                  })}
                 </div>
                 <button
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

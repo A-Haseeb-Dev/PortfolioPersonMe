@@ -3,6 +3,7 @@ import { technologySchema } from "@/lib/validations"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET() {
   try {
@@ -69,6 +70,8 @@ export async function POST(request: Request) {
         categoryId,
       },
     })
+
+    logActivity("create", "technology", tech.id, tech.name)
 
     return apiResponse({ technology: tech }, 201)
   } catch (error) {

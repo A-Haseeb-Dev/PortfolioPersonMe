@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(request: Request) {
   try {
@@ -67,6 +68,8 @@ export async function PUT(request: Request) {
       where: { id },
       data,
     })
+
+    logActivity("update", "message", id, existing.subject || existing.name)
 
     return apiResponse({ message })
   } catch (error) {

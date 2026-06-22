@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 const statusMap: Record<string, "IDEA" | "VALIDATING" | "BUILDING" | "LAUNCHED" | "FAILED"> = {
   idea: "IDEA",
@@ -88,6 +89,8 @@ export async function POST(request: Request) {
         published: published === true,
       },
     })
+
+    logActivity("create", "startup-idea", startupIdea.id, startupIdea.title)
 
     return apiResponse({ startupIdea }, 201)
   } catch (error) {

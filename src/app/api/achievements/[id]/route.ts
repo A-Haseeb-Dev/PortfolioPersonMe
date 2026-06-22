@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import { logActivity } from "@/lib/activity"
 type AchievementType = "AWARD" | "CERTIFICATION" | "MILESTONE" | "PROJECT"
 
 const TYPE_MAP: Record<string, AchievementType> = {
@@ -67,6 +68,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "achievement", id, existing.title)
+
     return apiResponse({ achievement })
   } catch (error) {
     console.error("[ACHIEVEMENT_PUT] Failed to update achievement", error)
@@ -91,6 +94,8 @@ export async function DELETE(
     }
 
     await db.achievement.delete({ where: { id } })
+
+    logActivity("delete", "achievement", id, existing.title)
 
     return apiResponse({ message: "Achievement deleted successfully" })
   } catch (error) {

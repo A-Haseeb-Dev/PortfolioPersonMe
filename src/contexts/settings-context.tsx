@@ -39,6 +39,7 @@ const defaultSettings: SiteSettings = {
     career: [],
     goals: [],
   },
+  home_sections: [],
 }
 
 const SettingsContext = createContext<SettingsContextValue>({

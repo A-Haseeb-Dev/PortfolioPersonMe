@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import { logActivity } from "@/lib/activity"
 
 const statusMap: Record<string, "CURRENT" | "COMPLETED" | "PLANNED"> = {
   "in-progress": "CURRENT",
@@ -67,6 +68,8 @@ export async function POST(req: Request) {
         notes,
       },
     })
+
+    logActivity("create", "learning", journey.id, journey.title)
 
     return apiResponse({ journey }, 201)
   } catch (error) {

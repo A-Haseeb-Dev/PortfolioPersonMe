@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import { logActivity } from "@/lib/activity"
 type AchievementType = "AWARD" | "CERTIFICATION" | "MILESTONE" | "PROJECT"
 
 const TYPE_MAP: Record<string, AchievementType> = {
@@ -48,6 +49,8 @@ export async function POST(request: Request) {
         url: url || null,
       },
     })
+
+    logActivity("create", "achievement", achievement.id, achievement.title)
 
     return apiResponse({ achievement }, 201)
   } catch (error) {

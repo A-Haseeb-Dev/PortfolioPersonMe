@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import { logActivity } from "@/lib/activity"
 
 const statusMap: Record<string, "CURRENT" | "COMPLETED" | "PLANNED"> = {
   "in-progress": "CURRENT",
@@ -77,6 +78,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "learning", id, existing.title)
+
     return apiResponse({ journey })
   } catch (error) {
     console.error("[LEARNING_PUT] Failed to update learning journey", error)
@@ -103,6 +106,8 @@ export async function DELETE(
     await db.learningJourney.delete({
       where: { id },
     })
+
+    logActivity("delete", "learning", id, existing.title)
 
     return apiResponse({ message: "Learning journey deleted" })
   } catch (error) {

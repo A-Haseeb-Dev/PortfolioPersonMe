@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(
   _request: Request,
@@ -58,6 +59,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "knowledge", id, existing.title)
+
     return apiResponse({ note })
   } catch (error) {
     console.error("[KNOWLEDGE_NOTE_PUT] Failed to update note", error)
@@ -85,6 +88,8 @@ export async function DELETE(
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    logActivity("delete", "knowledge", id, existing.title)
 
     return apiResponse({ message: "Knowledge note deleted successfully" })
   } catch (error) {

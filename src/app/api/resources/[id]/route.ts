@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 const typeMap: Record<string, string> = {
   resume: "RESUME",
@@ -67,6 +68,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "resource", id, existing.title)
+
     return apiResponse({ resource })
   } catch (error) {
     console.error("[RESOURCE_PUT] Failed to update resource", error)
@@ -93,6 +96,8 @@ export async function DELETE(
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    logActivity("delete", "resource", id, existing.title)
 
     return apiResponse({ message: "Resource deleted successfully" })
   } catch (error) {

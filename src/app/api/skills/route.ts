@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET() {
   try {
@@ -56,6 +57,8 @@ export async function POST(request: Request) {
         order: typeof order === "number" ? order : 0,
       },
     })
+
+    logActivity("create", "skill", category.id, category.name)
 
     return apiResponse({ category }, 201)
   } catch (error) {

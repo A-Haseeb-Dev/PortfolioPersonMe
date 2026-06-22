@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 const statusMap: Record<string, "IDEA" | "VALIDATING" | "BUILDING" | "LAUNCHED" | "FAILED"> = {
   idea: "IDEA",
@@ -68,6 +69,8 @@ export async function PUT(
       data,
     })
 
+    logActivity("update", "startup-idea", id, existing.title)
+
     return apiResponse({ startupIdea })
   } catch (error) {
     console.error("[STARTUP_IDEA_PUT] Failed to update startup idea", error)
@@ -94,6 +97,8 @@ export async function DELETE(
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    logActivity("delete", "startup-idea", id, existing.title)
 
     return apiResponse({ message: "Startup idea deleted successfully" })
   } catch (error) {

@@ -3,6 +3,7 @@ import { technologySchema } from "@/lib/validations"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(
   _request: Request,
@@ -80,6 +81,8 @@ export async function PUT(
       include: { category: true },
     })
 
+    logActivity("update", "technology", id, existing.name)
+
     return apiResponse({ technology: tech })
   } catch (error) {
     console.error("[TECHNOLOGY_PUT]", error)
@@ -106,6 +109,8 @@ export async function DELETE(
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    logActivity("delete", "technology", id, existing.name)
 
     return apiResponse({ message: "Technology deleted successfully" })
   } catch (error) {

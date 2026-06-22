@@ -3,6 +3,7 @@ import { projectSchema } from "@/lib/validations"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(request: Request) {
   try {
@@ -99,6 +100,8 @@ export async function POST(request: Request) {
         }).catch(() => {})
       }
     }
+
+    logActivity("create", "project", project.id, project.title)
 
     return apiResponse({ project }, 201)
   } catch (error) {

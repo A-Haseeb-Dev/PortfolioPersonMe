@@ -3,6 +3,7 @@ import { projectSchema } from "@/lib/validations"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(
   _request: Request,
@@ -89,6 +90,8 @@ export async function PUT(
       }
     }
 
+    logActivity("update", "project", id, existing.title)
+
     return apiResponse({ project })
   } catch (error) {
     console.error("[PROJECT_PUT]", error)
@@ -115,6 +118,8 @@ export async function DELETE(
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    logActivity("delete", "project", id, existing.title)
 
     return apiResponse({ message: "Project deleted successfully" })
   } catch (error) {

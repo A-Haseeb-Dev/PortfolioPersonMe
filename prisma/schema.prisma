@@ -21,6 +21,7 @@ model User {
 
   blogs        Blog[]
   downloads    Download[]
+  activities   Activity[]
 
   @@index([role])
   @@index([deletedAt])
@@ -597,4 +598,20 @@ model GitHubProfile {
   updatedAt   DateTime @default(now())
 
   @@index([username])
+}
+
+model Activity {
+  id         String   @id @default(cuid())
+  action     String
+  entity     String
+  entityType String
+  entityId   String?
+  userId     String?
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([entityType])
+  @@index([userId])
 }

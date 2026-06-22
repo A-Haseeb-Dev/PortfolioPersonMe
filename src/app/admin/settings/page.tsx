@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Save, Loader2, Image as ImageIcon } from "lucide-react"
+import { Save, Loader2, GripVertical, Image as ImageIcon } from "lucide-react"
 import { FormWrapper, FormSection, FormGrid } from "@/components/admin/form-wrapper"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -115,6 +115,7 @@ export default function AdminSettings() {
   const [aboutEducation, setAboutEducation] = useState<Education[]>([])
   const [aboutCareer, setAboutCareer] = useState<CareerItem[]>([])
   const [aboutGoals, setAboutGoals] = useState<Goal[]>([])
+  const [homeSections, setHomeSections] = useState<{ id: string; label: string; enabled: boolean }[]>([])
 
   useEffect(() => {
     fetch("/api/settings")
@@ -166,6 +167,18 @@ export default function AdminSettings() {
         setAboutEducation(about.education || [])
         setAboutCareer((about.career || []).map((c: any) => ({ ...c, tags: Array.isArray(c.tags) ? c.tags.join("\n") : c.tags || "" })))
         setAboutGoals(about.goals || [])
+        setHomeSections(s.home_sections || [
+          { id: "hero", label: "Hero Section", enabled: true },
+          { id: "featured-projects", label: "Featured Projects", enabled: true },
+          { id: "featured-services", label: "Featured Services", enabled: true },
+          { id: "featured-case-studies", label: "Featured Case Studies", enabled: true },
+          { id: "tech-stack", label: "Tech Stack Preview", enabled: true },
+          { id: "certifications", label: "Certifications", enabled: true },
+          { id: "testimonials", label: "Testimonials", enabled: true },
+          { id: "clients", label: "Clients Section", enabled: true },
+          { id: "featured-blogs", label: "Featured Blogs", enabled: true },
+          { id: "contact-cta", label: "Contact CTA", enabled: true },
+        ])
       })
       .catch(() => setNotify({ type: "error", message: "Failed to load settings" }))
       .finally(() => setLoading(false))
@@ -237,8 +250,12 @@ export default function AdminSettings() {
               career: aboutCareer.map((c) => ({ ...c, tags: c.tags.split("\n").filter(Boolean) })),
               goals: aboutGoals,
             },
+          })}),
+          fetch("/api/settings", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: "home_sections", value: homeSections }),
           }),
-        }),
       ]
       await Promise.all(promises)
       setNotify({ type: "success", message: "Settings saved successfully" })
@@ -288,6 +305,7 @@ export default function AdminSettings() {
           <TabsTrigger value="theme">Theme</TabsTrigger>
           <TabsTrigger value="footer">Footer</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="home">Home Sections</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="mt-6 space-y-6">
@@ -643,6 +661,56 @@ export default function AdminSettings() {
               <Button variant="outline" size="sm" onClick={() => setAboutGoals([...aboutGoals, { title: "", description: "", icon: "" }])}>
                 Add Goal
               </Button>
+            </div>
+          </GlassCard>
+        </TabsContent>
+
+        <TabsContent value="home" className="mt-6 space-y-6">
+          <GlassCard intensity="light" className="p-6">
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Home Page Sections</h3>
+            <p className="mb-4 text-xs text-muted-foreground">Toggle sections on/off and reorder them by dragging.</p>
+            <div className="space-y-2">
+              {homeSections.map((section, i) => (
+                <div
+                  key={section.id}
+                  className="flex items-center gap-3 rounded-lg border border-border/20 bg-background px-4 py-3"
+                >
+                  <GripVertical size={16} className="shrink-0 cursor-grab text-muted-foreground" />
+                  <label className="flex items-center gap-3 flex-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={section.enabled}
+                      onChange={() => {
+                        const updated = [...homeSections]
+                        updated[i] = { ...updated[i], enabled: !updated[i].enabled }
+                        setHomeSections(updated)
+                      }}
+                      className="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 border-border"
+                    />
+                    <span className="text-sm font-medium">{section.label}</span>
+                  </label>
+                  <div className="flex items-center gap-1">
+                    {i > 0 && (
+                      <Button variant="ghost" size="sm" onClick={() => {
+                        const updated = [...homeSections]
+                        ;[updated[i - 1], updated[i]] = [updated[i], updated[i - 1]]
+                        setHomeSections(updated)
+                      }}>
+                        Up
+                      </Button>
+                    )}
+                    {i < homeSections.length - 1 && (
+                      <Button variant="ghost" size="sm" onClick={() => {
+                        const updated = [...homeSections]
+                        ;[updated[i], updated[i + 1]] = [updated[i + 1], updated[i]]
+                        setHomeSections(updated)
+                      }}>
+                        Down
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </GlassCard>
         </TabsContent>

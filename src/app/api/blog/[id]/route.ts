@@ -3,6 +3,7 @@ import { blogSchema } from "@/lib/validations"
 import { apiResponse, apiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
+import { logActivity } from "@/lib/activity"
 
 const postIncludes = {
   tags: { include: { tag: true } },
@@ -93,6 +94,8 @@ export async function PUT(
       }
     }
 
+    logActivity("update", "blog", id, existing.title)
+
     return apiResponse({ post })
   } catch (error) {
     console.error("[BLOG_PUT] Failed to update blog post", error)
@@ -119,6 +122,8 @@ export async function DELETE(
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    logActivity("delete", "blog", id, existing.title)
 
     return apiResponse({ message: "Post deleted successfully" })
   } catch (error) {
