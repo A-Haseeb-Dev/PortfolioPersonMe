@@ -5,6 +5,10 @@ import { SessionProvider } from "@/components/layout/session-provider"
 import { ChatProvider } from "@/contexts/chat-context"
 import { SettingsProvider } from "@/contexts/settings-context"
 import { Toaster } from "@/components/ui/toast"
+import {
+  SitePreloader,
+  RouteProgressBar,
+} from "@/components/layout/preloader"
 
 export async function generateMetadata(): Promise<Metadata> {
   let title = "Haseeb"
@@ -67,6 +71,8 @@ export default function RootLayout({
         >
           <SettingsProvider>
             <ChatProvider>
+              <SitePreloader />
+              <RouteProgressBar />
               {children}
               <Toaster />
             </ChatProvider>

@@ -16,14 +16,14 @@ export function PreloaderVisual({ name, title }: { name?: string; title?: string
 
   return (
     <div className="relative flex flex-col items-center gap-8 px-6">
-      <div className="pointer-events-none absolute -z-10 h-64 w-64 rounded-full bg-accent/25 blur-3xl" />
+      <div className="pointer-events-none absolute -z-10 h-64 w-64 rounded-full bg-foreground/10 blur-3xl" />
 
       <div className="relative flex h-24 w-24 items-center justify-center">
         <motion.span
           className="absolute inset-0 rounded-3xl"
           style={{
             background:
-              "conic-gradient(from 0deg, transparent 0deg, var(--accent) 100deg, transparent 220deg)",
+              "conic-gradient(from 0deg, transparent 0deg, var(--foreground) 100deg, transparent 220deg)",
           }}
           animate={{ rotate: 360 }}
           transition={{ duration: 1.6, ease: "linear", repeat: Infinity }}
@@ -57,7 +57,7 @@ export function PreloaderVisual({ name, title }: { name?: string; title?: string
 
       <div className="h-1 w-56 overflow-hidden rounded-full bg-muted">
         <motion.span
-          className="block h-full w-1/3 rounded-full bg-gradient-to-r from-accent/30 via-accent to-accent/30"
+          className="block h-full w-1/3 rounded-full bg-foreground/60"
           animate={{ x: ["-140%", "340%"] }}
           transition={{ duration: 1.2, ease: "easeInOut", repeat: Infinity }}
         />
@@ -141,7 +141,7 @@ export function RouteProgressBar() {
       {active && (
         <motion.div
           key="route-progress"
-          className="fixed inset-x-0 top-0 z-[90] h-0.5 origin-left bg-gradient-to-r from-accent/40 via-accent to-accent/40"
+          className="fixed inset-x-0 top-0 z-[90] h-0.5 origin-left bg-foreground/70"
           initial={{ scaleX: 0, opacity: 0 }}
           animate={{ scaleX: 0.9, opacity: 1 }}
           exit={{ scaleX: 1, opacity: 0 }}
