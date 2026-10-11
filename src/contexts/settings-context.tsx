@@ -68,8 +68,21 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    refresh()
-  }, [refresh])
+    let cancelled = false
+    async function load() {
+      try {
+        const res = await fetch("/api/settings")
+        const json = await res.json()
+        if (!cancelled && json.settings) setSettings(json.settings)
+      } catch (e) {
+        console.warn("[Settings] Failed to fetch settings:", e)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [])
 
   const updateSetting = useCallback(async (key: string, value: unknown): Promise<boolean> => {
     try {

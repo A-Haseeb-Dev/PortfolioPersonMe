@@ -18,10 +18,8 @@ interface AnalyticsChartProps {
   type?: ChartType
   height?: number
   color?: string
-  secondaryColor?: string
   showGrid?: boolean
   showLabels?: boolean
-  showValues?: boolean
   className?: string
   formatValue?: (value: number) => string
 }
@@ -31,20 +29,18 @@ export function AnalyticsChart({
   type = "bar",
   height = 200,
   color: colorProp,
-  secondaryColor = "#a1a1aa",
   showGrid = true,
   showLabels = true,
-  showValues = false,
   className,
   formatValue = (v) => v.toString(),
 }: AnalyticsChartProps) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
   const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = React.useSyncExternalStore(
+    React.useCallback(() => () => {}, []),
+    () => true,
+    () => false,
+  )
 
   const isDark = mounted && resolvedTheme === "dark"
   const color = colorProp ?? (isDark ? "#f4f4f5" : "#18181b")

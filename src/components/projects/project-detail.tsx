@@ -3,6 +3,7 @@
 import * as React from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -18,7 +19,6 @@ import {
   BookOpen,
   Sparkles,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { Container } from "@/components/ui/container"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -174,10 +174,13 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           className="overflow-hidden rounded-2xl border-border bg-muted"
         >
           {project.image ? (
-            <img
+            <Image
               src={project.image}
               alt={project.title}
-              className="w-full object-cover"
+              width={1600}
+              height={850}
+              sizes="100vw"
+              style={{ width: "100%", height: "auto" }}
             />
           ) : (
             <div className="flex aspect-[21/9] items-center justify-center bg-muted">
@@ -267,10 +270,13 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                         transition={{ duration: 0.4, delay: i * 0.08 }}
                         className="overflow-hidden rounded-xl border-border"
                       >
-                        <img
+                        <Image
                           src={src}
                           alt={`${project.title} screenshot ${i + 1}`}
-                          className="w-full object-cover"
+                          width={1200}
+                          height={750}
+                          sizes="(min-width: 640px) 50vw, 100vw"
+                          style={{ width: "100%", height: "auto" }}
                         />
                       </motion.div>
                     ))}

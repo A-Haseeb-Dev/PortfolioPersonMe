@@ -9,7 +9,6 @@ interface AnalyticsProviderProps {
 
 export function AnalyticsProvider({ children }: AnalyticsProviderProps) {
   const pathname = usePathname()
-  const startTimeRef = React.useRef(Date.now())
   const trackedPathRef = React.useRef("")
 
   React.useEffect(() => {
@@ -32,8 +31,6 @@ export function AnalyticsProvider({ children }: AnalyticsProviderProps) {
       }).catch(() => {})
       sessionStorage.setItem("visitor_tracked", "1")
     }
-
-    startTimeRef.current = Date.now()
   }, [pathname])
 
   return <>{children}</>

@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { technologySchema } from "@/lib/validations"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -23,7 +23,7 @@ export async function GET(
     return apiResponse({ technology: tech })
   } catch (error) {
     console.error("[TECHNOLOGY_GET]", error)
-    return apiError("Failed to fetch technology", 500)
+    return toApiError(error, "Failed to fetch technology")
   }
 }
 
@@ -86,7 +86,7 @@ export async function PUT(
     return apiResponse({ technology: tech })
   } catch (error) {
     console.error("[TECHNOLOGY_PUT]", error)
-    return apiError("Failed to update technology", 500)
+    return toApiError(error, "Failed to update technology")
   }
 }
 
@@ -115,6 +115,6 @@ export async function DELETE(
     return apiResponse({ message: "Technology deleted successfully" })
   } catch (error) {
     console.error("[TECHNOLOGY_DELETE]", error)
-    return apiError("Failed to delete technology", 500)
+    return toApiError(error, "Failed to delete technology")
   }
 }

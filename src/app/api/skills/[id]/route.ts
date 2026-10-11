@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -27,7 +27,7 @@ export async function GET(
     return apiResponse({ category })
   } catch (error) {
     console.error("[SKILL_CATEGORY_GET] Failed to fetch skill category", error)
-    return apiError("Failed to fetch skill category", 500)
+    return toApiError(error, "Failed to fetch skill category")
   }
 }
 
@@ -73,7 +73,7 @@ export async function PUT(
     return apiResponse({ category })
   } catch (error) {
     console.error("[SKILL_CATEGORY_PUT] Failed to update skill category", error)
-    return apiError("Failed to update skill category", 500)
+    return toApiError(error, "Failed to update skill category")
   }
 }
 
@@ -99,6 +99,6 @@ export async function DELETE(
     return apiResponse({ message: "Category deleted successfully" })
   } catch (error) {
     console.error("[SKILL_CATEGORY_DELETE] Failed to delete skill category", error)
-    return apiError("Failed to delete skill category", 500)
+    return toApiError(error, "Failed to delete skill category")
   }
 }

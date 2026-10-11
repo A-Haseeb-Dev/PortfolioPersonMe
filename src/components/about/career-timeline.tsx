@@ -3,7 +3,7 @@
 import { useRef } from "react"
 import { useSettings } from "@/contexts/settings-context"
 import { motion, useInView } from "framer-motion"
-import { Briefcase, Calendar, ArrowUpRight } from "lucide-react"
+import { Briefcase, Calendar } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"

@@ -1,6 +1,7 @@
+import type { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
 import { projectSchema } from "@/lib/validations"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -12,10 +13,9 @@ export async function GET(request: Request) {
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") ?? "10")))
     const published = searchParams.get("published")
     const featured = searchParams.get("featured")
-    const category = searchParams.get("category")
     const search = searchParams.get("search")
 
-    const where: Record<string, unknown> = { deletedAt: null }
+    const where: Prisma.ProjectWhereInput = { deletedAt: null }
     if (published === "true") where.published = true
     if (published === "false") where.published = false
     if (featured === "true") where.featured = true
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
 
     const [projects, total] = await Promise.all([
       db.project.findMany({
-        where: where as any,
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: "desc" },
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
           images: true,
         },
       }),
-      db.project.count({ where: where as any }),
+      db.project.count({ where }),
     ])
 
     return apiResponse({
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error("[PROJECTS_GET]", error)
-    return apiError("Failed to fetch projects", 500)
+    return toApiError(error, "Failed to fetch projects")
   }
 }
 
@@ -106,6 +106,6 @@ export async function POST(request: Request) {
     return apiResponse({ project }, 201)
   } catch (error) {
     console.error("[PROJECTS_POST]", error)
-    return apiError("Failed to create project", 500)
+    return toApiError(error, "Failed to create project")
   }
 }

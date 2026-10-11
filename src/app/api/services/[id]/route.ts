@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -21,7 +21,7 @@ export async function GET(
     return apiResponse({ service })
   } catch (error) {
     console.error("[SERVICE_GET] Failed to fetch service", error)
-    return apiError("Failed to fetch service", 500)
+    return toApiError(error, "Failed to fetch service")
   }
 }
 
@@ -63,7 +63,7 @@ export async function PUT(
     return apiResponse({ service })
   } catch (error) {
     console.error("[SERVICE_PUT] Failed to update service", error)
-    return apiError("Failed to update service", 500)
+    return toApiError(error, "Failed to update service")
   }
 }
 
@@ -92,6 +92,6 @@ export async function DELETE(
     return apiResponse({ message: "Service deleted successfully" })
   } catch (error) {
     console.error("[SERVICE_DELETE] Failed to delete service", error)
-    return apiError("Failed to delete service", 500)
+    return toApiError(error, "Failed to delete service")
   }
 }

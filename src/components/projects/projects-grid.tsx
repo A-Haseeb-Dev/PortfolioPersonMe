@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { ExternalLink, Code2, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -65,10 +66,12 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       >
         <div className="relative aspect-[16/10] overflow-hidden bg-muted">
           {project.image ? (
-            <img
+            <Image
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
               src={project.image}
               alt={project.title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div

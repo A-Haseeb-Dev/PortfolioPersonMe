@@ -4,7 +4,6 @@ import * as React from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Container } from "@/components/ui/container"
-import { Badge } from "@/components/ui/badge"
 
 const categories = [
   { id: "all", label: "All" },

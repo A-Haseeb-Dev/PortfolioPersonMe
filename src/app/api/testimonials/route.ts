@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 
@@ -12,7 +12,7 @@ export async function GET() {
     return apiResponse({ testimonials })
   } catch (error) {
     console.error("[TESTIMONIALS_GET] Failed to fetch testimonials", error)
-    return apiError("Failed to fetch testimonials", 500)
+    return toApiError(error, "Failed to fetch testimonials")
   }
 }
 
@@ -49,6 +49,6 @@ export async function POST(request: Request) {
     return apiResponse({ testimonial }, 201)
   } catch (error) {
     console.error("[TESTIMONIALS_POST] Failed to create testimonial", error)
-    return apiError("Failed to create testimonial", 500)
+    return toApiError(error, "Failed to create testimonial")
   }
 }

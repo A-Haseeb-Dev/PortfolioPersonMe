@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 
@@ -20,7 +20,7 @@ export async function GET(
     return apiResponse({ client })
   } catch (error) {
     console.error("[CLIENT_GET] Failed to fetch client", error)
-    return apiError("Failed to fetch client", 500)
+    return toApiError(error, "Failed to fetch client")
   }
 }
 
@@ -60,7 +60,7 @@ export async function PUT(
     return apiResponse({ client })
   } catch (error) {
     console.error("[CLIENT_PUT] Failed to update client", error)
-    return apiError("Failed to update client", 500)
+    return toApiError(error, "Failed to update client")
   }
 }
 
@@ -87,6 +87,6 @@ export async function DELETE(
     return apiResponse({ message: "Client deleted successfully" })
   } catch (error) {
     console.error("[CLIENT_DELETE] Failed to delete client", error)
-    return apiError("Failed to delete client", 500)
+    return toApiError(error, "Failed to delete client")
   }
 }

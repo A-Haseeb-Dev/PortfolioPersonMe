@@ -97,10 +97,11 @@ export default function AdminDashboard() {
   const [totalPageViews, setTotalPageViews] = useState(0)
 
   useEffect(() => {
-    const hour = new Date().getHours()
-    if (hour < 12) setGreeting("Good morning")
-    else if (hour < 18) setGreeting("Good afternoon")
-    else setGreeting("Good evening")
+    const id = setTimeout(() => {
+      const hour = new Date().getHours()
+      setGreeting(hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening")
+    }, 0)
+    return () => clearTimeout(id)
   }, [])
 
   useEffect(() => {
@@ -133,7 +134,14 @@ export default function AdminDashboard() {
         if (!res.ok) return
         const data = await res.json()
         if (data.activities?.length) {
-          setRecentActivity(data.activities.map((a: any) => ({
+          setRecentActivity(data.activities.map((a: {
+            id: string
+            action: Activity["type"]
+            entity: string
+            entityType: string
+            createdAt: string
+            user?: { name?: string } | null
+          }) => ({
             id: a.id,
             type: a.action,
             entity: a.entity,
@@ -146,6 +154,33 @@ export default function AdminDashboard() {
       } catch {}
     }
     loadActivity()
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    const to = new Date()
+    const from = new Date()
+    from.setDate(to.getDate() - 7)
+    fetch(`/api/analytics?from=${from.toISOString()}&to=${to.toISOString()}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((result) => {
+        if (cancelled || !result) return
+        if (typeof result.summary?.totalPageViews === "number") {
+          setTotalPageViews(result.summary.totalPageViews)
+        }
+        if (Array.isArray(result.dailyViews)) {
+          setPageViews(
+            (result.dailyViews as { date?: string; views?: number }[]).map((d) => ({
+              label: d.date?.slice(8, 10) || "",
+              value: Number(d.views) || 0,
+            })),
+          )
+        }
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const statsData = [
@@ -286,8 +321,8 @@ export default function AdminDashboard() {
               <Sparkline data={pageViews.length ? pageViews : [{ value: 0, label: "" }]} className="text-blue-500" />
             </div>
             <div className="mt-4 grid grid-cols-7 gap-1">
-              {(pageViews.length ? pageViews : Array.from({ length: 7 }, (_, i) => ({ value: 0, label: "" }))).map((d) => (
-                <div key={d.label || Math.random()} className="text-center">
+              {(pageViews.length ? pageViews : Array.from({ length: 7 }, () => ({ value: 0, label: "" }))).map((d, i) => (
+                <div key={d.label || `placeholder-${i}`} className="text-center">
                   <div
                     className="mx-auto w-full rounded-sm bg-blue-500/15"
                     style={{ height: `${(d.value / Math.max(...pageViews.map((x) => x.value), 1)) * 40}px` }}

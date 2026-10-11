@@ -1,6 +1,7 @@
+import type { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
 import { blogSchema } from "@/lib/validations"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
     const tag = searchParams.get("tag")
     const search = searchParams.get("search")
 
-    const where: Record<string, unknown> = { deletedAt: null }
+    const where: Prisma.BlogWhereInput = { deletedAt: null }
     if (published === "true") where.published = true
     if (published === "false") where.published = false
     if (featured === "true") where.featured = true
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
 
     const [posts, total] = await Promise.all([
       db.blog.findMany({
-        where: where as any,
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: "desc" },
@@ -48,7 +49,7 @@ export async function GET(request: Request) {
           },
         },
       }),
-      db.blog.count({ where: where as any }),
+      db.blog.count({ where }),
     ])
 
     return apiResponse({
@@ -62,16 +63,15 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error("[BLOG_GET] Failed to fetch blog posts", error)
-    return apiError("Failed to fetch blog posts", 500)
+    return toApiError(error, "Failed to fetch blog posts")
   }
 }
 
 export async function POST(request: Request) {
-  let body: any
   try {
     await requireRole(["ADMIN", "SUPER_ADMIN", "EDITOR"])
 
-    body = await request.json()
+    const body = await request.json()
     const parsed = blogSchema.safeParse(body)
     if (!parsed.success) {
       return apiError("Validation failed", 422)
@@ -129,6 +129,6 @@ export async function POST(request: Request) {
     return apiResponse({ post }, 201)
   } catch (error) {
     console.error("[BLOG_POST] Failed to create blog post", error)
-    return apiError("Failed to create blog post", 500)
+    return toApiError(error, "Failed to create blog post")
   }
 }

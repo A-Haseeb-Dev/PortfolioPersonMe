@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { blogSchema } from "@/lib/validations"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -29,7 +29,7 @@ export async function GET(
     return apiResponse({ post })
   } catch (error) {
     console.error("[BLOG_GET] Failed to fetch blog post", error)
-    return apiError("Failed to fetch blog post", 500)
+    return toApiError(error, "Failed to fetch blog post")
   }
 }
 
@@ -99,7 +99,7 @@ export async function PUT(
     return apiResponse({ post })
   } catch (error) {
     console.error("[BLOG_PUT] Failed to update blog post", error)
-    return apiError("Failed to update blog post", 500)
+    return toApiError(error, "Failed to update blog post")
   }
 }
 
@@ -128,6 +128,6 @@ export async function DELETE(
     return apiResponse({ message: "Post deleted successfully" })
   } catch (error) {
     console.error("[BLOG_DELETE] Failed to delete blog post", error)
-    return apiError("Failed to delete blog post", 500)
+    return toApiError(error, "Failed to delete blog post")
   }
 }

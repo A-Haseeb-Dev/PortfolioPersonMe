@@ -45,7 +45,7 @@ async function processBatch(items: BatchItem[]) {
     try {
       switch (item.type) {
         case "pageview": {
-          const { page, ip, userAgent, referrer, country, device, browser } = item.data as Record<string, string>
+          const { page, ip, referrer, country, device, browser } = item.data as Record<string, string>
           const today = new Date()
           today.setHours(0, 0, 0, 0)
 
@@ -69,7 +69,7 @@ async function processBatch(items: BatchItem[]) {
           break
         }
         case "visitor": {
-          const { page, ip, userAgent, referrer, country, device, browser } = item.data as Record<string, string>
+          const { page, ip, referrer, country, device, browser } = item.data as Record<string, string>
           const today = new Date()
           today.setHours(0, 0, 0, 0)
 
@@ -152,11 +152,11 @@ function detectDevice(userAgent: string): string {
 }
 
 function detectBrowser(userAgent: string): string {
+  if (userAgent.includes("Edg")) return "Edge"
+  if (userAgent.includes("OPR")) return "Opera"
   if (userAgent.includes("Firefox")) return "Firefox"
   if (userAgent.includes("Chrome")) return "Chrome"
   if (userAgent.includes("Safari")) return "Safari"
-  if (userAgent.includes("Edge")) return "Edge"
-  if (userAgent.includes("Opera")) return "Opera"
   return "Other"
 }
 
@@ -364,14 +364,23 @@ export async function getAnalytics(days: number = 30): Promise<AnalyticsSummary>
   }
 }
 
-function aggregateByDate<T extends { date: string }>(items: T[]): any[] {
-  const map = new Map<string, any>()
+function aggregateByDate<T extends { date: string }>(items: T[]): T[] {
+  const map = new Map<string, Record<string, unknown>>()
   for (const item of items) {
-    const existing = map.get(item.date) || {}
-    Object.assign(existing, item)
-    map.set(item.date, existing)
+    const { date } = item
+    const existing = map.get(date) ?? {}
+    for (const [key, value] of Object.entries(item)) {
+      if (key === "date") continue
+      if (typeof value === "number") {
+        const prev = existing[key]
+        existing[key] = (typeof prev === "number" ? prev : 0) + value
+      } else if (!(key in existing)) {
+        existing[key] = value
+      }
+    }
+    map.set(date, existing)
   }
   return Array.from(map.entries())
-    .map(([date, data]) => ({ date, ...data }))
+    .map(([date, data]) => ({ ...data, date }) as unknown as T)
     .sort((a, b) => a.date.localeCompare(b.date))
 }

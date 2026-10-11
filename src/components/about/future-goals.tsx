@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { useSettings } from "@/contexts/settings-context"
 import {
   Lightbulb,

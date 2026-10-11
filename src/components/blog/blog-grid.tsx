@@ -36,11 +36,12 @@ interface BlogGridProps {
 
 export default function BlogGrid({ posts, loading = false }: BlogGridProps) {
   const [currentPage, setCurrentPage] = React.useState(1)
-  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE)
-
-  React.useEffect(() => {
+  const [prevPostCount, setPrevPostCount] = React.useState(posts.length)
+  if (prevPostCount !== posts.length) {
+    setPrevPostCount(posts.length)
     setCurrentPage(1)
-  }, [posts.length])
+  }
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE)
 
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE
   const paginatedPosts = posts.slice(startIndex, startIndex + POSTS_PER_PAGE)

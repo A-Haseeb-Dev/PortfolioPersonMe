@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { CalendarDays, Clock, ArrowUpRight } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { Badge } from "@/components/ui/badge"
@@ -71,10 +72,10 @@ export default function FeaturedBlogs() {
       subtitle="Insights, tutorials, and thoughts on software development, technology, and more."
       action={
         <Button variant="ghost" size="sm" asChild>
-          <a href="/blog">
+          <Link href="/blog">
             View All Posts
             <ArrowUpRight className="ml-1 h-4 w-4" />
-          </a>
+          </Link>
         </Button>
       }
     >

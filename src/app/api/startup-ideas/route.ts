@@ -1,5 +1,6 @@
+import type { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -22,7 +23,7 @@ export async function GET(request: Request) {
     const status = searchParams.get("status")
     const search = searchParams.get("search")
 
-    const where: Record<string, unknown> = { deletedAt: null }
+    const where: Prisma.StartupIdeaWhereInput = { deletedAt: null }
     if (published === "true") where.published = true
     if (published === "false") where.published = false
     if (status && statusMap[status]) where.status = statusMap[status]
@@ -36,12 +37,12 @@ export async function GET(request: Request) {
 
     const [startupIdeas, total] = await Promise.all([
       db.startupIdea.findMany({
-        where: where as any,
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: "desc" },
       }),
-      db.startupIdea.count({ where: where as any }),
+      db.startupIdea.count({ where }),
     ])
 
     return apiResponse({
@@ -55,16 +56,15 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error("[STARTUP_IDEAS_GET] Failed to fetch startup ideas", error)
-    return apiError("Failed to fetch startup ideas", 500)
+    return toApiError(error, "Failed to fetch startup ideas")
   }
 }
 
 export async function POST(request: Request) {
-  let body: any
   try {
     await requireRole(["ADMIN", "SUPER_ADMIN"])
 
-    body = await request.json()
+    const body = await request.json()
     const { title, slug, problem, solution, market, revenueModel, status, published } = body
 
     if (!title || typeof title !== "string") {
@@ -95,6 +95,6 @@ export async function POST(request: Request) {
     return apiResponse({ startupIdea }, 201)
   } catch (error) {
     console.error("[STARTUP_IDEAS_POST] Failed to create startup idea", error)
-    return apiError("Failed to create startup idea", 500)
+    return toApiError(error, "Failed to create startup idea")
   }
 }

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 
 export async function POST(request: Request) {
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     return apiResponse({ download, fileUrl: resource.fileUrl }, 201)
   } catch (error) {
     console.error("[DOWNLOADS_POST]", error)
-    return apiError("Failed to record download", 500)
+    return toApiError(error, "Failed to record download")
   }
 }
 
@@ -73,6 +73,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error("[DOWNLOADS_GET]", error)
-    return apiError("Failed to fetch download stats", 500)
+    return toApiError(error, "Failed to fetch download stats")
   }
 }

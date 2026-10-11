@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 type AchievementType = "AWARD" | "CERTIFICATION" | "MILESTONE" | "PROJECT"
@@ -25,7 +25,7 @@ export async function GET() {
     return apiResponse({ achievements })
   } catch (error) {
     console.error("[ACHIEVEMENTS_GET] Failed to fetch achievements", error)
-    return apiError("Failed to fetch achievements", 500)
+    return toApiError(error, "Failed to fetch achievements")
   }
 }
 
@@ -55,6 +55,6 @@ export async function POST(request: Request) {
     return apiResponse({ achievement }, 201)
   } catch (error) {
     console.error("[ACHIEVEMENTS_POST] Failed to create achievement", error)
-    return apiError("Failed to create achievement", 500)
+    return toApiError(error, "Failed to create achievement")
   }
 }

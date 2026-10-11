@@ -43,13 +43,6 @@ interface TechDetailProps {
   technologies: Technology[]
 }
 
-const experienceColors: Record<string, string> = {
-  beginner: "bg-blue-500",
-  intermediate: "bg-amber-500",
-  advanced: "bg-emerald-500",
-  expert: "bg-purple-500",
-}
-
 const resourceIcons: Record<string, React.ReactNode> = {
   Documentation: <FileText size={14} />,
   Course: <MonitorPlay size={14} />,

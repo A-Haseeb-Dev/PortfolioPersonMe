@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { GlassCard } from "@/components/ui/glass-card"
 import {
   Dialog,
   DialogContent,
@@ -18,7 +17,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { formatDate, cn } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 interface Testimonial {
   id: string

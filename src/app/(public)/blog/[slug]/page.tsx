@@ -29,25 +29,38 @@ interface BlogPost {
   }
 }
 
-function transformBlogPost(p: any): BlogPost {
-  const isObject = (v: any) => v !== null && typeof v === "object"
+function transformBlogPost(input: unknown): BlogPost {
+  const p = (input ?? {}) as {
+    id: string
+    title: string
+    slug: string
+    excerpt?: string | null
+    content?: string | null
+    coverImage?: string | null
+    category?: string | { name?: string } | null
+    tags?: Array<string | { name?: string; tag?: { name?: string } }> | null
+    readingTime?: number | string | null
+    date?: string | null
+    createdAt?: string | null
+    featured?: boolean | null
+    author?: { name?: string; image?: string | null; avatar?: string | null; role?: string } | null
+  }
   return {
     id: p.id,
     title: p.title,
     slug: p.slug,
     excerpt: p.excerpt || "",
-    content: p.content,
+    content: p.content ?? "",
     coverImage: p.coverImage || null,
-    category: isObject(p.category) ? p.category.name : (p.category ?? ""),
+    category: typeof p.category === "string" ? p.category : (p.category?.name ?? ""),
     tags: Array.isArray(p.tags)
-      ? p.tags.map((t: any) => (isObject(t) ? (t.tag?.name ?? t.name ?? "") : t))
+      ? p.tags.map((t) => (typeof t === "string" ? t : (t.tag?.name ?? t.name ?? "")))
       : [],
     readingTime: typeof p.readingTime === "number" ? `${p.readingTime} min read` : (p.readingTime ?? "5 min read"),
     date: p.date
-      ? p.date
-      : p.createdAt
+      ?? (p.createdAt
         ? new Date(p.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-        : "",
+        : ""),
     featured: p.featured || false,
     author: {
       name: p.author?.name ?? "Author",
@@ -61,7 +74,7 @@ export default function BlogPostPage() {
   const params = useParams()
   const slug = params?.slug as string
 
-  const allPosts = useData<BlogPost>("/api/blog?published=true", [], (data) => ((data as any).data || []).map(transformBlogPost))
+  const allPosts = useData<BlogPost>("/api/blog?published=true", [], (data) => (Array.isArray(data.data) ? data.data : []).map(transformBlogPost))
   const post = allPosts.find((p) => p.slug === slug)
   const relatedPosts = post
     ? allPosts

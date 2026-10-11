@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error("[SERVICES_GET] Failed to fetch services", error)
-    return apiError("Failed to fetch services", 500)
+    return toApiError(error, "Failed to fetch services")
   }
 }
 
@@ -83,6 +83,6 @@ export async function POST(request: Request) {
     return apiResponse({ service }, 201)
   } catch (error) {
     console.error("[SERVICES_POST] Failed to create service", error)
-    return apiError("Failed to create service", 500)
+    return toApiError(error, "Failed to create service")
   }
 }

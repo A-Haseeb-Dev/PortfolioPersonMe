@@ -3,7 +3,6 @@
 import { useRef } from "react"
 import { useSettings } from "@/contexts/settings-context"
 import { motion, useInView } from "framer-motion"
-import { Quote } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { GlassCard } from "@/components/ui/glass-card"
 

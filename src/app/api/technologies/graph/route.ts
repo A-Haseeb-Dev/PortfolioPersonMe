@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 
 export async function GET() {
@@ -36,7 +36,7 @@ export async function GET() {
     return apiResponse({ nodes, edges })
   } catch (error) {
     console.error("[TECH_GRAPH_GET]", error)
-    return apiError("Failed to fetch technology graph", 500)
+    return toApiError(error, "Failed to fetch technology graph")
   }
 }
 
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     return apiResponse({ relation }, 201)
   } catch (error) {
     console.error("[TECH_GRAPH_POST]", error)
-    return apiError("Failed to create relation", 500)
+    return toApiError(error, "Failed to create relation")
   }
 }
 
@@ -110,6 +110,6 @@ export async function DELETE(request: Request) {
     return apiResponse({ message: "Relation deleted successfully" })
   } catch (error) {
     console.error("[TECH_GRAPH_DELETE]", error)
-    return apiError("Failed to delete relation", 500)
+    return toApiError(error, "Failed to delete relation")
   }
 }

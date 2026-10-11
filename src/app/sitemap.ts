@@ -18,7 +18,14 @@ const staticRoutes = [
   "/contact",
 ]
 
-async function fetchData(url: string): Promise<any[]> {
+interface SitemapEntry {
+  slug: string
+  date?: string | null
+  createdAt?: string | null
+  lastUpdated?: string | null
+}
+
+async function fetchData(url: string): Promise<SitemapEntry[]> {
   try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 5000)
@@ -29,7 +36,7 @@ async function fetchData(url: string): Promise<any[]> {
     clearTimeout(timeout)
     if (!res.ok) return []
     const json = await res.json()
-    return json.data || []
+    return Array.isArray(json.data) ? (json.data as SitemapEntry[]) : []
   } catch {
     return []
   }
@@ -50,16 +57,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1.0 : 0.8,
   }))
 
-  const blogPages = blogPosts.map((post: any) => ({
+  const blogPages = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.date || post.createdAt),
+    lastModified: new Date(post.date || post.createdAt || ""),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }))
 
-  const knowledgePages = knowledgeNotes.map((note: any) => ({
+  const knowledgePages = knowledgeNotes.map((note) => ({
     url: `${baseUrl}/knowledge/${note.slug}`,
-    lastModified: new Date(note.lastUpdated || note.createdAt),
+    lastModified: new Date(note.lastUpdated || note.createdAt || ""),
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }))

@@ -7,20 +7,15 @@ import {
   Eye,
   Download,
   MessageSquare,
-  Globe,
   Monitor,
   Smartphone,
   Tablet,
-  ArrowUp,
-  ArrowDown,
   Activity,
   TrendingUp,
-  MousePointerClick,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { AnalyticsChart } from "@/components/analytics/analytics-chart"
 import { AnalyticsTable, type Column } from "@/components/analytics/analytics-table"
 import { StatsCard } from "@/components/ui/stats-card"
@@ -65,26 +60,28 @@ export function AnalyticsDashboard() {
   const [data, setData] = React.useState<AnalyticsData | null>(null)
   const [loading, setLoading] = React.useState(true)
   const [days, setDays] = React.useState(30)
-  const [prevData, setPrevData] = React.useState<AnalyticsData | null>(null)
+
+  const [prevDays, setPrevDays] = React.useState(days)
+  if (prevDays !== days) {
+    setPrevDays(days)
+    setLoading(true)
+  }
 
   React.useEffect(() => {
-    setLoading(true)
+    let cancelled = false
     fetch(`/api/analytics/data?days=${days}`)
       .then((res) => res.json())
       .then((result) => {
-        setData(result)
-        setLoading(false)
+        if (!cancelled) {
+          setData(result)
+          setLoading(false)
+        }
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => { cancelled = true }
   }, [days])
-
-  const currentVsPrevious = React.useMemo(() => {
-    if (!data || !prevData) return {}
-    return {
-      visitorsChange: data.totalVisitors - (prevData?.totalVisitors || 0),
-      viewsChange: data.totalPageViews - (prevData?.totalPageViews || 0),
-    }
-  }, [data, prevData])
 
   const topPagesColumns: Column<{ page: string; views: number; visitors: number }>[] = [
     { key: "page", label: "Page", sortable: true, render: (item) => (

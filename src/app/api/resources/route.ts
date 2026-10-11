@@ -1,5 +1,6 @@
+import type { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -23,7 +24,7 @@ export async function GET(request: Request) {
     const type = searchParams.get("type")
     const search = searchParams.get("search")
 
-    const where: Record<string, unknown> = { deletedAt: null }
+    const where: Prisma.ResourceWhereInput = { deletedAt: null }
     if (published === "true") where.published = true
     if (published === "false") where.published = false
     if (type) {
@@ -39,12 +40,12 @@ export async function GET(request: Request) {
 
     const [resources, total] = await Promise.all([
       db.resource.findMany({
-        where: where as any,
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: "desc" },
       }),
-      db.resource.count({ where: where as any }),
+      db.resource.count({ where }),
     ])
 
     return apiResponse({
@@ -58,7 +59,7 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error("[RESOURCES_GET] Failed to fetch resources", error)
-    return apiError("Failed to fetch resources", 500)
+    return toApiError(error, "Failed to fetch resources")
   }
 }
 
@@ -97,6 +98,6 @@ export async function POST(request: Request) {
     return apiResponse({ resource }, 201)
   } catch (error) {
     console.error("[RESOURCES_POST] Failed to create resource", error)
-    return apiError("Failed to create resource", 500)
+    return toApiError(error, "Failed to create resource")
   }
 }

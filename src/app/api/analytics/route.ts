@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 
 export async function GET(request: Request) {
@@ -103,6 +103,6 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error("[ANALYTICS_GET]", error)
-    return apiError("Failed to fetch analytics", 500)
+    return toApiError(error, "Failed to fetch analytics")
   }
 }

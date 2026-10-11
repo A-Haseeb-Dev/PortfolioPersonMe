@@ -1,4 +1,5 @@
 import * as React from "react"
+import Link from "next/link"
 import { ChevronRight, Home } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Container } from "./container"
@@ -26,23 +27,23 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
       <Container size={containerSize}>
         {breadcrumbs && breadcrumbs.length > 0 && (
           <nav className="mb-4 flex items-center space-x-1 text-sm text-zinc-500 dark:text-zinc-400">
-            <a
+            <Link
               href="/"
               className="flex items-center transition-colors hover:text-zinc-900 dark:hover:text-zinc-50"
             >
               <Home className="h-3.5 w-3.5" />
               <span className="sr-only">Home</span>
-            </a>
+            </Link>
             {breadcrumbs.map((crumb, index) => (
               <React.Fragment key={index}>
                 <ChevronRight className="h-3.5 w-3.5" />
                 {crumb.href ? (
-                  <a
+                  <Link
                     href={crumb.href}
                     className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-50"
                   >
                     {crumb.label}
-                  </a>
+                  </Link>
                 ) : (
                   <span className="text-zinc-900 dark:text-zinc-50">{crumb.label}</span>
                 )}

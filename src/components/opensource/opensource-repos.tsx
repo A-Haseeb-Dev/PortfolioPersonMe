@@ -54,7 +54,7 @@ export default function OpensourceRepos({ repos }: { repos: Repo[] }) {
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
-          {repos.map((repo, index) => (
+          {repos.map((repo) => (
             <motion.div key={repo.id} variants={cardVariants}>
               <a
                 href={repo.url || "#"}

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import ReactMarkdown from "react-markdown"
 import rehypeHighlight from "rehype-highlight"
 import rehypeSlug from "rehype-slug"
@@ -12,7 +13,6 @@ import {
   CalendarDays,
   Clock,
   Copy,
-  Link as LinkIcon,
   Share2,
   Link2,
   Check,
@@ -21,7 +21,6 @@ import { cn } from "@/lib/utils"
 import { Container } from "@/components/ui/container"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { GlassCard } from "@/components/ui/glass-card"
 import { Button } from "@/components/ui/button"
 import BlogTableOfContents from "./blog-table-of-contents"
 import BlogCard from "./blog-card"
@@ -137,17 +136,19 @@ export default function BlogDetail({ post, relatedPosts }: BlogDetailProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const }}
             >
-              <div className="overflow-hidden rounded-2xl border border-border">
+              <div className="relative aspect-[2/1] w-full overflow-hidden rounded-2xl border border-border sm:aspect-[3/1]">
                 {post.coverImage ? (
-                  <img
+                  <Image
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                     src={post.coverImage}
                     alt={post.title}
-                    className="aspect-[2/1] w-full object-cover sm:aspect-[3/1]"
+                    className="object-cover"
                   />
                 ) : (
                   <div
                     className={cn(
-                      "flex aspect-[2/1] items-center justify-center bg-gradient-to-br sm:aspect-[3/1]",
+                      "flex h-full w-full items-center justify-center bg-gradient-to-br",
                       gradientClass
                     )}
                   >
@@ -218,6 +219,7 @@ export default function BlogDetail({ post, relatedPosts }: BlogDetailProps) {
                     </a>
                   ),
                   img: ({ src, alt, ...props }) => (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={src}
                       alt={alt || ""}

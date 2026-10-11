@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 
@@ -20,7 +20,7 @@ export async function GET() {
     return apiResponse({ categories })
   } catch (error) {
     console.error("[KNOWLEDGE_GET] Failed to fetch knowledge", error)
-    return apiError("Failed to fetch knowledge", 500)
+    return toApiError(error, "Failed to fetch knowledge")
   }
 }
 
@@ -59,6 +59,6 @@ export async function POST(request: Request) {
     return apiResponse({ note }, 201)
   } catch (error) {
     console.error("[KNOWLEDGE_POST] Failed to create note", error)
-    return apiError("Failed to create note", 500)
+    return toApiError(error, "Failed to create note")
   }
 }

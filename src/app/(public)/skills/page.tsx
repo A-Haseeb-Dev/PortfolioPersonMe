@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Command, Sparkles, X, Calendar, BarChart3, Award, BookOpen, ExternalLink, GraduationCap, Layers, MonitorPlay, FileText, FileJson, FileType, Terminal, Atom, Globe, Server, Zap, Palette, Database, Box, Smartphone, Code2, GitBranch, PenTool, Brain, Flame, Link, Share2, Cloud, Shield, Move, ClipboardList, Plug, Wrench, Cpu, Layout, Briefcase } from "lucide-react"
+import { Search, Command, Sparkles, X, Calendar, BarChart3, Award, BookOpen, ExternalLink, GraduationCap, Layers, MonitorPlay, FileText, FileJson, FileType, Terminal, Atom, Globe, Server, Zap, Palette, Database, Box, Smartphone, Code2, GitBranch, PenTool, Brain, Flame, Link, Share2, Cloud, Shield, Move, ClipboardList, Plug, Wrench, Layout, Briefcase } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/hooks/use-data"
@@ -470,7 +470,7 @@ export default function SkillsPage() {
             transition={{ delay: 0.25, duration: 0.5 }}
             className="mt-8 flex flex-wrap items-center justify-center gap-1.5"
           >
-            {filterTabs.map((tab, i) => {
+            {filterTabs.map((tab) => {
               const isActive = activeCategory === tab.id
               const count = tab.id ? categoryCounts[tab.id] || 0 : liveTechnologies.length
               return (

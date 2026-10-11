@@ -11,15 +11,35 @@ import { Container } from "@/components/ui/container"
 import { EmptyState } from "@/components/ui/empty-state"
 
 function transformProjectDetail(data: Record<string, unknown>): ProjectDetailData[] {
-  const items = (data as any).projects || []
-  return items.map((p: any): ProjectDetailData => ({
+  const items = (Array.isArray(data.projects) ? data.projects : []) as Array<{
+    id: string
+    title: string
+    slug: string
+    description?: string | null
+    coverImage?: string | null
+    images?: Array<string | { url?: string }> | null
+    technologies?: Array<string | { name?: string; technology?: { name?: string } }> | null
+    githubUrl?: string | null
+    liveUrl?: string | null
+    videoDemo?: string | null
+    problem?: string | null
+    solution?: string | null
+    architecture?: string | null
+    results?: string | null
+    featured?: boolean | null
+    published?: boolean | null
+    createdAt?: string | null
+    updatedAt?: string | null
+    features?: unknown
+  }>
+  return items.map((p): ProjectDetailData => ({
     id: p.id,
     title: p.title,
     slug: p.slug,
-    description: p.description,
+    description: p.description ?? "",
     image: p.coverImage || null,
-    images: (p.images || []).map((i: any) => typeof i === "string" ? i : i.url),
-    techStack: (p.technologies || []).map((t: any) => t.technology?.name || t.name),
+    images: (p.images ?? []).map((i) => (typeof i === "string" ? i : (i.url ?? ""))),
+    techStack: (p.technologies ?? []).map((t) => (typeof t === "string" ? t : (t.technology?.name ?? t.name ?? ""))),
     githubUrl: p.githubUrl || null,
     liveUrl: p.liveUrl || null,
     content: p.description || null,
@@ -28,17 +48,17 @@ function transformProjectDetail(data: Record<string, unknown>): ProjectDetailDat
     status: p.published ? "completed" : "in-progress" as const,
     startDate: p.createdAt ? new Date(p.createdAt) : null,
     endDate: null,
-    highlights: Array.isArray(p.features) ? p.features : [],
+    highlights: Array.isArray(p.features) ? (p.features as string[]) : [],
     createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
     updatedAt: p.updatedAt ? new Date(p.updatedAt) : new Date(),
     problem: p.problem || "",
     solution: p.solution || "",
     architecture: p.architecture || "",
-    features: Array.isArray(p.features) ? p.features : [],
+    features: Array.isArray(p.features) ? (p.features as string[]) : [],
     videoUrl: p.videoDemo || null,
     results: p.results || "",
     lessonsLearned: [],
-    screenshots: (p.images || []).map((i: any) => typeof i === "string" ? i : i.url),
+    screenshots: (p.images ?? []).map((i) => (typeof i === "string" ? i : (i.url ?? ""))),
     relatedProjects: [],
   }))
 }

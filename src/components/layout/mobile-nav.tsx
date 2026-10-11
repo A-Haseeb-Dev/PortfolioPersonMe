@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -68,6 +68,11 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const { settings } = useSettings()
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  })
 
   const navItems = useMemo(() => {
     const items = settings.nav_items || []
@@ -111,7 +116,7 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
   }, [open, handleKeyDown])
 
   useEffect(() => {
-    onClose()
+    onCloseRef.current()
   }, [pathname])
 
   return (

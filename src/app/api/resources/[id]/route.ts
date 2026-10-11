@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -29,7 +29,7 @@ export async function GET(
     return apiResponse({ resource })
   } catch (error) {
     console.error("[RESOURCE_GET] Failed to fetch resource", error)
-    return apiError("Failed to fetch resource", 500)
+    return toApiError(error, "Failed to fetch resource")
   }
 }
 
@@ -73,7 +73,7 @@ export async function PUT(
     return apiResponse({ resource })
   } catch (error) {
     console.error("[RESOURCE_PUT] Failed to update resource", error)
-    return apiError("Failed to update resource", 500)
+    return toApiError(error, "Failed to update resource")
   }
 }
 
@@ -102,6 +102,6 @@ export async function DELETE(
     return apiResponse({ message: "Resource deleted successfully" })
   } catch (error) {
     console.error("[RESOURCE_DELETE] Failed to delete resource", error)
-    return apiError("Failed to delete resource", 500)
+    return toApiError(error, "Failed to delete resource")
   }
 }

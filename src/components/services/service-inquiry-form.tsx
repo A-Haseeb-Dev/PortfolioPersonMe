@@ -7,14 +7,11 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Send,
-  Loader2,
   CheckCircle2,
   ArrowLeft,
   User,
   Mail,
   Phone,
-  DollarSign,
-  Clock,
   MessageSquare,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -75,21 +72,19 @@ interface ServiceInquiryFormProps {
 
 export default function ServiceInquiryForm({ preselectedService, onBack }: ServiceInquiryFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [serviceInterest, setServiceInterest] = useState(preselectedService || "")
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-    watch,
   } = useForm<InquiryFormData>({
     resolver: zodResolver(inquirySchema),
     defaultValues: {
       serviceInterest: preselectedService || "",
     },
   })
-
-  const selectedService = watch("serviceInterest")
 
   const onSubmit = async (data: InquiryFormData) => {
     await new Promise((resolve) => setTimeout(resolve, 1500))
@@ -175,8 +170,11 @@ export default function ServiceInquiryForm({ preselectedService, onBack }: Servi
                 Service Interest *
               </label>
               <Select
-                value={selectedService}
-                onValueChange={(value) => setValue("serviceInterest", value)}
+                value={serviceInterest}
+                onValueChange={(value) => {
+                  setServiceInterest(value)
+                  setValue("serviceInterest", value)
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a service" />

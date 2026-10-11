@@ -6,7 +6,6 @@ import { motion, useInView } from "framer-motion"
 import { GraduationCap, Calendar, MapPin } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
 
 const defaultEducation = [
   {
@@ -52,7 +51,6 @@ export default function Education() {
 
 function EducationEntry({
   item,
-  index,
   isLast,
 }: {
   item: { degree: string; institution: string; location: string; year: string; description: string }

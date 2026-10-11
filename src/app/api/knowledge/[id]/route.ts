@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 
@@ -24,7 +24,7 @@ export async function GET(
     return apiResponse({ note })
   } catch (error) {
     console.error("[KNOWLEDGE_NOTE_GET] Failed to fetch note", error)
-    return apiError("Failed to fetch note", 500)
+    return toApiError(error, "Failed to fetch note")
   }
 }
 
@@ -64,7 +64,7 @@ export async function PUT(
     return apiResponse({ note })
   } catch (error) {
     console.error("[KNOWLEDGE_NOTE_PUT] Failed to update note", error)
-    return apiError("Failed to update note", 500)
+    return toApiError(error, "Failed to update note")
   }
 }
 
@@ -94,6 +94,6 @@ export async function DELETE(
     return apiResponse({ message: "Knowledge note deleted successfully" })
   } catch (error) {
     console.error("[KNOWLEDGE_NOTE_DELETE] Failed to delete note", error)
-    return apiError("Failed to delete note", 500)
+    return toApiError(error, "Failed to delete note")
   }
 }

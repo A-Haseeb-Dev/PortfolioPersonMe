@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, FileText, Award, BookOpen, Code2, FileJson } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
@@ -75,17 +75,20 @@ export default function ResourcesGrid() {
 
   const query = searchQuery.toLowerCase().trim()
 
-  const matchesSearch = (r: Resource) =>
-    !query ||
-    r.title.toLowerCase().includes(query) ||
-    r.description.toLowerCase().includes(query) ||
-    (r.tags ?? []).some((t) => t.toLowerCase().includes(query))
+  const matchesSearch = useCallback(
+    (r: Resource) =>
+      !query ||
+      r.title.toLowerCase().includes(query) ||
+      r.description.toLowerCase().includes(query) ||
+      (r.tags ?? []).some((t) => t.toLowerCase().includes(query)),
+    [query]
+  )
 
   const filtered = useMemo(() => {
     const categoryFiltered =
       activeCategory === "all" ? resources : resources.filter((r) => r.type.toLowerCase() === activeCategory)
     return categoryFiltered.filter(matchesSearch)
-  }, [activeCategory, query, resources])
+  }, [activeCategory, matchesSearch, resources])
 
   const showSections = activeCategory === "all" && !query
   const sections = useMemo(() => groupByType(filtered), [filtered])

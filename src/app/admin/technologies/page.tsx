@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
-import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Dialog,
@@ -71,7 +70,6 @@ export default function AdminTechnologies() {
   const [editingNode, setEditingNode] = useState<GraphNode | null>(null)
   const [newNode, setNewNode] = useState({ name: "", category: "Frontend" })
   const [showNewNode, setShowNewNode] = useState(false)
-  const [editingEdge, setEditingEdge] = useState<GraphEdge | null>(null)
   const [newEdge, setNewEdge] = useState({ from: "", to: "", label: "" })
   const [showNewEdge, setShowNewEdge] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<{ type: "node" | "edge"; id: string } | null>(null)

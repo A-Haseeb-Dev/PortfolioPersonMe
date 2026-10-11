@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Mail, MailOpen, Trash2, Reply, Search, Filter, Loader2 } from "lucide-react"
+import { Mail, MailOpen, Trash2, Reply, Filter, Loader2 } from "lucide-react"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Separator } from "@/components/ui/separator"

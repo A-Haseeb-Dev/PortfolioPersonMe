@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 
 export async function GET() {
@@ -12,7 +12,7 @@ export async function GET() {
     return apiResponse({ repos, profile })
   } catch (error) {
     console.error("[OPENSOURCE_GET] Failed to fetch open source data", error)
-    return apiError("Failed to fetch open source data", 500)
+    return toApiError(error, "Failed to fetch open source data")
   }
 }
 
@@ -55,6 +55,6 @@ export async function PUT(request: Request) {
     return apiResponse({ profile })
   } catch (error) {
     console.error("[OPENSOURCE_PUT] Failed to update profile", error)
-    return apiError("Failed to update profile", 500)
+    return toApiError(error, "Failed to update profile")
   }
 }

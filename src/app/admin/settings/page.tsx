@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Save, Loader2, GripVertical, Image as ImageIcon } from "lucide-react"
-import { FormWrapper, FormSection, FormGrid } from "@/components/admin/form-wrapper"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
@@ -158,14 +157,14 @@ export default function AdminSettings() {
         setAboutAvailability(about.availability || "")
         setAboutResumeUrl(about.resumeUrl || "")
         setAboutAvatar(about.avatar || "")
-        setAboutStats((about.stats || []).map((s: any) => ({ ...s, value: String(s.value) })))
+        setAboutStats((about.stats || []).map((s: AboutStat) => ({ ...s, value: String(s.value) })))
         setAboutStory(about.story || [])
         setAboutMissionText(about.mission?.text || "")
         setAboutMissionBullets((about.mission?.bullets || []).join("\n"))
         setAboutVisionText(about.vision?.text || "")
         setAboutVisionBullets((about.vision?.bullets || []).join("\n"))
         setAboutEducation(about.education || [])
-        setAboutCareer((about.career || []).map((c: any) => ({ ...c, tags: Array.isArray(c.tags) ? c.tags.join("\n") : c.tags || "" })))
+        setAboutCareer((about.career || []).map((c: CareerItem) => ({ ...c, tags: Array.isArray(c.tags) ? c.tags.join("\n") : c.tags || "" })))
         setAboutGoals(about.goals || [])
         setHomeSections(s.home_sections || [
           { id: "hero", label: "Hero Section", enabled: true },

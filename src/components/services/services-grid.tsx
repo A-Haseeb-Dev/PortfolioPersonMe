@@ -2,22 +2,12 @@
 
 import { motion } from "framer-motion"
 import {
-  Globe,
-  Smartphone,
-  Cloud,
-  Database,
-  Cpu,
-  BrainCircuit,
-  Code2,
   ChevronRight,
-  X,
-  CheckCircle2,
   ArrowUpRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 
 const containerVariants = {
   hidden: { opacity: 0 },

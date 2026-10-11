@@ -24,6 +24,13 @@ export function apiError(message: string, status = 400): Response {
   return Response.json({ error: message }, { status })
 }
 
+export function toApiError(error: unknown, fallbackMessage: string): Response {
+  if (error instanceof ApiError) {
+    return apiError(error.message, error.status)
+  }
+  return apiError(fallbackMessage, 500)
+}
+
 export function apiValidationError(errors: Record<string, string[]>): Response {
   return Response.json({ error: "Validation failed", details: errors }, { status: 422 })
 }

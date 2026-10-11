@@ -47,7 +47,10 @@ export function absoluteUrl(path: string) {
 
 export function catchError(error: unknown): { message: string; status?: number } {
   if (error instanceof Error) {
-    return { message: error.message }
+    const status = (error as { status?: unknown }).status
+    return typeof status === "number"
+      ? { message: error.message, status }
+      : { message: error.message }
   }
   if (typeof error === "string") {
     return { message: error }

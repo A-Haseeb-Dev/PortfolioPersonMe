@@ -28,6 +28,8 @@ const ParticleBackground = ({
   return <Particles count={particleCount} speed={speed} color={color} className={className} {...props} />
 }
 
+const emptySubscribe = () => () => {}
+
 const Particles = ({
   count,
   speed,
@@ -39,11 +41,7 @@ const Particles = ({
   speed: number
   color?: string
 } & React.HTMLAttributes<HTMLDivElement>) => {
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = React.useSyncExternalStore(emptySubscribe, () => true, () => false)
 
   const particles = React.useMemo(() => {
     return Array.from({ length: count }, (_, i) => ({

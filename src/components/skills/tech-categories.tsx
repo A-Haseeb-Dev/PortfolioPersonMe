@@ -51,7 +51,6 @@ export default function TechCategories({
     return acc
   }, {})
   const [expandedCategory, setExpandedCategory] = useState<string | null>("frontend")
-  const [expandedTechs, setExpandedTechs] = useState<Set<string>>(new Set())
 
   const filteredCategories = skillCategories.filter((cat) => {
     if (activeCategory && activeCategory !== cat.id) return false

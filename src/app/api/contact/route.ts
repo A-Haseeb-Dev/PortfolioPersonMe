@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { contactFormSchema } from "@/lib/validations"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { rateLimitIp } from "@/lib/rate-limit"
 
 export async function POST(request: Request) {
@@ -30,6 +30,6 @@ export async function POST(request: Request) {
     return apiResponse({ message: "Message sent successfully", id: contact.id }, 201)
   } catch (error) {
     console.error("[CONTACT_POST]", error)
-    return apiError("Failed to send message", 500)
+    return toApiError(error, "Failed to send message")
   }
 }

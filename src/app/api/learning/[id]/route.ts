@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 
@@ -40,7 +40,7 @@ export async function GET(
     return apiResponse({ journey })
   } catch (error) {
     console.error("[LEARNING_GET] Failed to fetch learning journey", error)
-    return apiError("Failed to fetch learning journey", 500)
+    return toApiError(error, "Failed to fetch learning journey")
   }
 }
 
@@ -83,7 +83,7 @@ export async function PUT(
     return apiResponse({ journey })
   } catch (error) {
     console.error("[LEARNING_PUT] Failed to update learning journey", error)
-    return apiError("Failed to update learning journey", 500)
+    return toApiError(error, "Failed to update learning journey")
   }
 }
 
@@ -112,6 +112,6 @@ export async function DELETE(
     return apiResponse({ message: "Learning journey deleted" })
   } catch (error) {
     console.error("[LEARNING_DELETE] Failed to delete learning journey", error)
-    return apiError("Failed to delete learning journey", 500)
+    return toApiError(error, "Failed to delete learning journey")
   }
 }

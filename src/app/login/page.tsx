@@ -12,7 +12,7 @@ import { ParticleBackground } from "@/components/ui/particle-background"
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const emailRef = useRef<HTMLInputElement>(null)
 
   const callbackUrl = searchParams.get("callbackUrl") || "/admin"

@@ -7,8 +7,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
   LayoutDashboard,
   FileText,
-  FolderGit2,
-  BookOpen,
   Briefcase,
   MessageSquare,
   Settings,
@@ -18,13 +16,6 @@ import {
   PanelRightClose,
   BarChart3,
   Code2,
-  GraduationCap,
-  Lightbulb,
-  Trophy,
-  Star,
-  Library,
-  BookMarked,
-  Network,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 

@@ -73,7 +73,7 @@ export default function AchievementsTimeline() {
       <div className="relative">
         <div className="pointer-events-none absolute left-[23px] top-0 h-full w-px bg-zinc-200 dark:bg-zinc-800 sm:left-1/2 sm:-translate-x-px" />
 
-        {Object.entries(grouped).map(([year, items], yearIndex) => (
+        {Object.entries(grouped).map(([year, items]) => (
           <div key={year} className="relative">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}

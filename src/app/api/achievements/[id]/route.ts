@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 type AchievementType = "AWARD" | "CERTIFICATION" | "MILESTONE" | "PROJECT"
@@ -33,7 +33,7 @@ export async function GET(
     return apiResponse({ achievement })
   } catch (error) {
     console.error("[ACHIEVEMENT_GET] Failed to fetch achievement", error)
-    return apiError("Failed to fetch achievement", 500)
+    return toApiError(error, "Failed to fetch achievement")
   }
 }
 
@@ -73,7 +73,7 @@ export async function PUT(
     return apiResponse({ achievement })
   } catch (error) {
     console.error("[ACHIEVEMENT_PUT] Failed to update achievement", error)
-    return apiError("Failed to update achievement", 500)
+    return toApiError(error, "Failed to update achievement")
   }
 }
 
@@ -100,6 +100,6 @@ export async function DELETE(
     return apiResponse({ message: "Achievement deleted successfully" })
   } catch (error) {
     console.error("[ACHIEVEMENT_DELETE] Failed to delete achievement", error)
-    return apiError("Failed to delete achievement", 500)
+    return toApiError(error, "Failed to delete achievement")
   }
 }

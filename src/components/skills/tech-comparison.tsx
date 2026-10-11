@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRightLeft, BarChart3, X } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { ArrowRightLeft, BarChart3 } from "lucide-react"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Badge } from "@/components/ui/badge"
 import {

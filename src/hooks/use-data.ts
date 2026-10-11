@@ -10,7 +10,10 @@ export function useData<T>(
 ): T[] {
   const [data, setData] = useState<T[]>(fallback)
   const transformRef = useRef(transform)
-  transformRef.current = transform
+
+  useEffect(() => {
+    transformRef.current = transform
+  }, [transform])
 
   useEffect(() => {
     let cancelled = false

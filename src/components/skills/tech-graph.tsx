@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { motion } from "framer-motion"
 import { ZoomIn, ZoomOut, Maximize2, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
@@ -17,15 +16,6 @@ interface GraphNode {
   y?: number
   vx?: number
   vy?: number
-}
-
-interface GraphEdge {
-  id?: string
-  source: string
-  target: string
-  sourceName?: string
-  targetName?: string
-  relationType?: string | null
 }
 
 interface GraphLink {
@@ -100,9 +90,11 @@ export default function TechGraph({ onTechSelect, selectedTech, highlightTech }:
       vy: 0,
     }))
 
-    setNodes(initialized)
-    setLinks(graphLinks)
-    setDimensions({ width: w, height: h })
+    queueMicrotask(() => {
+      setNodes(initialized)
+      setLinks(graphLinks)
+      setDimensions({ width: w, height: h })
+    })
   }, [apiNodes, apiEdges])
 
   useEffect(() => {

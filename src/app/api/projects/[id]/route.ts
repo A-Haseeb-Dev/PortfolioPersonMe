@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { projectSchema } from "@/lib/validations"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -28,7 +28,7 @@ export async function GET(
     return apiResponse({ project })
   } catch (error) {
     console.error("[PROJECT_GET]", error)
-    return apiError("Failed to fetch project", 500)
+    return toApiError(error, "Failed to fetch project")
   }
 }
 
@@ -95,7 +95,7 @@ export async function PUT(
     return apiResponse({ project })
   } catch (error) {
     console.error("[PROJECT_PUT]", error)
-    return apiError("Failed to update project", 500)
+    return toApiError(error, "Failed to update project")
   }
 }
 
@@ -124,6 +124,6 @@ export async function DELETE(
     return apiResponse({ message: "Project deleted successfully" })
   } catch (error) {
     console.error("[PROJECT_DELETE]", error)
-    return apiError("Failed to delete project", 500)
+    return toApiError(error, "Failed to delete project")
   }
 }

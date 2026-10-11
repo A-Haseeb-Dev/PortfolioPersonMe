@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 
 export async function PUT(
@@ -34,7 +34,7 @@ export async function PUT(
     return apiResponse({ repo })
   } catch (error) {
     console.error("[OPENSOURCE_PUT] Failed to update repository", error)
-    return apiError("Failed to update repository", 500)
+    return toApiError(error, "Failed to update repository")
   }
 }
 
@@ -57,6 +57,6 @@ export async function DELETE(
     return apiResponse({ message: "Repository deleted successfully" })
   } catch (error) {
     console.error("[OPENSOURCE_DELETE] Failed to delete repository", error)
-    return apiError("Failed to delete repository", 500)
+    return toApiError(error, "Failed to delete repository")
   }
 }

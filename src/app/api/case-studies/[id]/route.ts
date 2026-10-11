@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -21,7 +21,7 @@ export async function GET(
     return apiResponse({ caseStudy })
   } catch (error) {
     console.error("[CASE_STUDY_GET] Failed to fetch case study", error)
-    return apiError("Failed to fetch case study", 500)
+    return toApiError(error, "Failed to fetch case study")
   }
 }
 
@@ -76,7 +76,7 @@ export async function PUT(
     return apiResponse({ caseStudy })
   } catch (error) {
     console.error("[CASE_STUDY_PUT] Failed to update case study", error)
-    return apiError("Failed to update case study", 500)
+    return toApiError(error, "Failed to update case study")
   }
 }
 
@@ -105,6 +105,6 @@ export async function DELETE(
     return apiResponse({ message: "Case study deleted successfully" })
   } catch (error) {
     console.error("[CASE_STUDY_DELETE] Failed to delete case study", error)
-    return apiError("Failed to delete case study", 500)
+    return toApiError(error, "Failed to delete case study")
   }
 }

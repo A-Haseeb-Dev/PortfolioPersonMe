@@ -1,5 +1,6 @@
+import type { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
     const read = searchParams.get("read")
     const replied = searchParams.get("replied")
 
-    const where: Record<string, unknown> = {}
+    const where: Prisma.ContactMessageWhereInput = {}
     if (read === "true") where.read = true
     if (read === "false") where.read = false
     if (replied === "true") where.replied = true
@@ -21,12 +22,12 @@ export async function GET(request: Request) {
 
     const [messages, total] = await Promise.all([
       db.contactMessage.findMany({
-        where: where as any,
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: "desc" },
       }),
-      db.contactMessage.count({ where: where as any }),
+      db.contactMessage.count({ where }),
     ])
 
     return apiResponse({
@@ -40,7 +41,7 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error("[MESSAGES_GET]", error)
-    return apiError("Failed to fetch messages", 500)
+    return toApiError(error, "Failed to fetch messages")
   }
 }
 
@@ -74,6 +75,6 @@ export async function PUT(request: Request) {
     return apiResponse({ message })
   } catch (error) {
     console.error("[MESSAGES_PUT]", error)
-    return apiError("Failed to update message", 500)
+    return toApiError(error, "Failed to update message")
   }
 }

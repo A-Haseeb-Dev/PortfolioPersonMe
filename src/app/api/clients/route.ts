@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 
@@ -12,7 +12,7 @@ export async function GET() {
     return apiResponse({ clients })
   } catch (error) {
     console.error("[CLIENTS_GET] Failed to fetch clients", error)
-    return apiError("Failed to fetch clients", 500)
+    return toApiError(error, "Failed to fetch clients")
   }
 }
 
@@ -42,6 +42,6 @@ export async function POST(request: Request) {
     return apiResponse({ client }, 201)
   } catch (error) {
     console.error("[CLIENTS_POST] Failed to create client", error)
-    return apiError("Failed to create client", 500)
+    return toApiError(error, "Failed to create client")
   }
 }

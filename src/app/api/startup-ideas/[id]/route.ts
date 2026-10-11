@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -30,7 +30,7 @@ export async function GET(
     return apiResponse({ startupIdea })
   } catch (error) {
     console.error("[STARTUP_IDEA_GET] Failed to fetch startup idea", error)
-    return apiError("Failed to fetch startup idea", 500)
+    return toApiError(error, "Failed to fetch startup idea")
   }
 }
 
@@ -74,7 +74,7 @@ export async function PUT(
     return apiResponse({ startupIdea })
   } catch (error) {
     console.error("[STARTUP_IDEA_PUT] Failed to update startup idea", error)
-    return apiError("Failed to update startup idea", 500)
+    return toApiError(error, "Failed to update startup idea")
   }
 }
 
@@ -103,6 +103,6 @@ export async function DELETE(
     return apiResponse({ message: "Startup idea deleted successfully" })
   } catch (error) {
     console.error("[STARTUP_IDEA_DELETE] Failed to delete startup idea", error)
-    return apiError("Failed to delete startup idea", 500)
+    return toApiError(error, "Failed to delete startup idea")
   }
 }

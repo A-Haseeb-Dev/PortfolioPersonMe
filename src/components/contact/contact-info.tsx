@@ -32,24 +32,6 @@ const iconMap: Record<string, LucideIcon> = {
   send: Mail,
 }
 
-const colorMap: Record<string, string> = {
-  whatsapp: "text-emerald-500",
-  linkedin: "text-blue-600",
-  github: "text-zinc-900 dark:text-zinc-50",
-  facebook: "text-blue-600",
-  instagram: "text-pink-600",
-  email: "text-amber-600",
-}
-
-const gradientMap: Record<string, string> = {
-  whatsapp: "from-emerald-500 to-emerald-400",
-  linkedin: "from-blue-500 to-blue-400",
-  github: "from-zinc-700 to-zinc-500",
-  facebook: "from-blue-600 to-blue-500",
-  instagram: "from-pink-500 to-rose-400",
-  email: "from-amber-500 to-orange-400",
-}
-
 interface SocialLink {
   platform: string
   url: string
@@ -105,8 +87,6 @@ export default function ContactInfo() {
 
       {contactLinks.map((link) => {
         const Icon = iconMap[link.icon?.toLowerCase()] || Mail
-        const colorClass = colorMap[link.platform?.toLowerCase()] || "text-zinc-500"
-        const gradient = gradientMap[link.platform?.toLowerCase()] || "from-zinc-500 to-zinc-400"
         return (
           <motion.div key={link.platform || link.label} variants={itemVariants}>
             <a

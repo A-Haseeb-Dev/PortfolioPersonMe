@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useSyncExternalStore } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -25,6 +25,8 @@ import { cn } from "@/lib/utils"
 import { useSettings } from "@/contexts/settings-context"
 import MobileNav from "./mobile-nav"
 
+const emptySubscribe = () => () => {}
+
 const iconMap: Record<string, React.ReactNode> = {
   BookOpen: <BookOpen size={15} />,
   Layers: <Layers size={15} />,
@@ -45,7 +47,7 @@ export default function Navbar() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const { settings } = useSettings()
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
   const navItems = settings.nav_items.length > 0 ? settings.nav_items : []
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
@@ -59,9 +61,11 @@ export default function Navbar() {
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const headerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const [prevPathname, setPrevPathname] = useState(pathname)
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname)
+    setOpenDropdown(null)
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -110,10 +114,6 @@ export default function Navbar() {
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current)
     }
   }, [])
-
-  useEffect(() => {
-    setOpenDropdown(null)
-  }, [pathname])
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

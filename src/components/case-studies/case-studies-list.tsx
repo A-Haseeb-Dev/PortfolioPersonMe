@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { ArrowUpRight, Clock, Zap, BarChart3 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -41,10 +42,12 @@ function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
       >
         <div className="relative aspect-[2/1] overflow-hidden bg-muted sm:aspect-[16/9]">
           {study.image ? (
-            <img
+            <Image
+              fill
+              sizes="(max-width: 640px) 100vw, 50vw"
               src={study.image}
               alt={study.title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div className={cn("flex h-full w-full items-center justify-center bg-gradient-to-br", gradient)}>

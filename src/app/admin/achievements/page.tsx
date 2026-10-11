@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { Plus, Edit3, Trash2, Trophy, Award, BookOpen, Medal, Sparkles } from "lucide-react"
+import { Plus, Edit3, Trash2, Trophy, Award, BookOpen, Sparkles } from "lucide-react"
 import { DataTable, useTableSearch, useTablePagination, type Column } from "@/components/admin/data-table"
 import { fetchAdminData, apiAction } from "@/lib/admin-api"
 import { Button } from "@/components/ui/button"
@@ -48,8 +48,8 @@ export default function AdminAchievements() {
 
   useEffect(() => {
     fetchAdminData<Achievement>("/api/achievements").then((data) => {
-      const transformed = data.map((a: any) => {
-        if (a.category) return a as Achievement
+      const transformed = data.map((a: Achievement & { type?: string; url?: string }) => {
+        if (a.category) return a as unknown as Achievement
         return {
           id: a.id,
           title: a.title,

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 
 export async function GET(request: Request) {
   try {
@@ -100,6 +100,6 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error("[SEARCH_GET]", error)
-    return apiError("Search failed", 500)
+    return toApiError(error, "Search failed")
   }
 }

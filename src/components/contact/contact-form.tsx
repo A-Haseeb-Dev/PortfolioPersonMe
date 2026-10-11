@@ -7,7 +7,6 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Send,
-  Loader2,
   CheckCircle2,
   User,
   Mail,

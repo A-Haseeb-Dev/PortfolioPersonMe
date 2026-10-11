@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronUp, ChevronDown, ChevronsUpDown, Search, X, Loader2 } from "lucide-react"
+import { ChevronUp, ChevronDown, ChevronsUpDown, Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -43,7 +43,7 @@ interface DataTableProps<T> {
   className?: string
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T extends object>({
   columns,
   data,
   keyField,
@@ -67,14 +67,16 @@ export function DataTable<T extends Record<string, unknown>>({
   selectable,
   className,
 }: DataTableProps<T>) {
-  const allSelected = data.length > 0 && data.every((item) => selectedIds.includes(item[keyField] as string))
-  const someSelected = data.some((item) => selectedIds.includes(item[keyField] as string))
+  const getField = (item: T, key: string): unknown => (item as Record<string, unknown>)[key]
+
+  const allSelected = data.length > 0 && data.every((item) => selectedIds.includes(getField(item, keyField) as string))
+  const someSelected = data.some((item) => selectedIds.includes(getField(item, keyField) as string))
 
   const toggleAll = () => {
     if (allSelected) {
       onSelectionChange?.([])
     } else {
-      onSelectionChange?.(data.map((item) => item[keyField] as string))
+      onSelectionChange?.(data.map((item) => getField(item, keyField) as string))
     }
   }
 
@@ -180,7 +182,7 @@ export function DataTable<T extends Record<string, unknown>>({
               ) : (
                 <AnimatePresence>
                   {data.map((item, index) => {
-                    const id = item[keyField] as string
+                    const id = getField(item, keyField) as string
                     return (
                       <motion.tr
                         key={id}
@@ -213,7 +215,7 @@ export function DataTable<T extends Record<string, unknown>>({
                               key={col.key}
                               className={cn("px-4 py-3 text-sm text-muted-foreground", col.className)}
                             >
-                              {col.render ? col.render(item) : (item[col.key] as React.ReactNode) ?? "—"}
+                              {col.render ? col.render(item) : (getField(item, col.key) as React.ReactNode) ?? "—"}
                             </td>
                           ))}
                       </motion.tr>
@@ -271,34 +273,32 @@ export function DataTable<T extends Record<string, unknown>>({
   )
 }
 
-export function useTableSearch(data: any[], fields: string[]) {
+export function useTableSearch<T>(data: T[], fields: string[]) {
   const [search, setSearch] = React.useState("")
 
   const filtered = React.useMemo(() => {
     if (!search.trim()) return data
     const q = search.toLowerCase()
-    return data.filter((item) =>
-      fields.some((field) => {
-        const val = item[field]
-        return val && String(val).toLowerCase().includes(q)
+    return data.filter((item) => {
+      const record = item as unknown as Record<string, unknown>
+      return fields.some((field) => {
+        const val = record[field]
+        return val ? String(val).toLowerCase().includes(q) : false
       })
-    )
+    })
   }, [data, search, fields])
 
   return { search, setSearch, filtered }
 }
 
-export function useTablePagination(data: any[], pageSize = 10) {
+export function useTablePagination<T>(data: T[], pageSize = 10) {
   const [page, setPage] = React.useState(1)
   const totalPages = Math.max(1, Math.ceil(data.length / pageSize))
+  const safePage = Math.min(page, totalPages)
   const paginated = React.useMemo(() => {
-    const start = (page - 1) * pageSize
+    const start = (safePage - 1) * pageSize
     return data.slice(start, start + pageSize)
-  }, [data, page, pageSize])
+  }, [data, safePage, pageSize])
 
-  React.useEffect(() => {
-    if (page > totalPages) setPage(totalPages)
-  }, [totalPages, page])
-
-  return { page, setPage, totalPages, paginated }
+  return { page: safePage, setPage, totalPages, paginated }
 }

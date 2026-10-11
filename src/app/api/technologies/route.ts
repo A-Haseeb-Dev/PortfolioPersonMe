@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { technologySchema } from "@/lib/validations"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -26,7 +26,7 @@ export async function GET() {
     return apiResponse({ categories, technologies: allTechnologies })
   } catch (error) {
     console.error("[TECHNOLOGIES_GET]", error)
-    return apiError("Failed to fetch technologies", 500)
+    return toApiError(error, "Failed to fetch technologies")
   }
 }
 
@@ -76,6 +76,6 @@ export async function POST(request: Request) {
     return apiResponse({ technology: tech }, 201)
   } catch (error) {
     console.error("[TECHNOLOGIES_POST]", error)
-    return apiError("Failed to create technology", 500)
+    return toApiError(error, "Failed to create technology")
   }
 }

@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowUpRight, TrendingUp, Users, Clock, DollarSign, ArrowRight, ChevronRight, AlertCircle, Route, Target, Quote } from "lucide-react"
+import { ArrowUpRight, ArrowRight, ChevronRight, AlertCircle, Route, Target } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -20,8 +21,6 @@ interface CaseStudyItem {
   results: string | null
   slug: string
 }
-
-const metricIcons: Record<string, React.ElementType> = { TrendingUp, Users, Clock, DollarSign }
 
 const accentColors = [
   { bg: "from-blue-500 to-cyan-500", light: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-600 dark:text-blue-400" },
@@ -78,10 +77,10 @@ export default function FeaturedCaseStudies() {
       subtitle="Real projects, real results. See how I've helped businesses transform their digital presence."
       action={
         <Button variant="ghost" size="sm" asChild>
-          <a href="/case-studies">
+          <Link href="/case-studies">
             View All Case Studies
             <ArrowUpRight className="ml-1 h-4 w-4" />
-          </a>
+          </Link>
         </Button>
       }
     >

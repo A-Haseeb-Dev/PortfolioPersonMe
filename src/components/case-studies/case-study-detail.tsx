@@ -3,6 +3,7 @@
 import * as React from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -78,6 +79,9 @@ const sectionIcons: Record<string, React.ReactNode> = {
 export function CaseStudyDetail({ study }: CaseStudyDetailProps) {
   const [activeSection, setActiveSection] = React.useState<string>("overview")
   const sectionRefs = React.useRef<Record<string, HTMLDivElement | null>>({})
+  const registerSectionRef = React.useCallback((id: string, el: HTMLDivElement | null) => {
+    sectionRefs.current[id] = el
+  }, [])
 
   const sections = defaultSections.filter((s) => study[s.id as keyof CaseStudy])
 
@@ -163,7 +167,14 @@ export function CaseStudyDetail({ study }: CaseStudyDetailProps) {
             transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] as const }}
             className="overflow-hidden rounded-2xl border border-border"
           >
-            <img src={study.image} alt={study.title} className="w-full object-cover" />
+            <Image
+              src={study.image}
+              alt={study.title}
+              width={1600}
+              height={900}
+              sizes="100vw"
+              style={{ width: "100%", height: "auto" }}
+            />
           </motion.div>
         </Container>
       )}
@@ -245,7 +256,7 @@ export function CaseStudyDetail({ study }: CaseStudyDetailProps) {
           </nav>
 
           <div className="space-y-20 lg:col-span-3">
-            <SectionBlock id="overview" icon={<BarChart3 className="h-5 w-5" />} title="Overview" sectionRefs={sectionRefs}>
+            <SectionBlock id="overview" icon={<BarChart3 className="h-5 w-5" />} title="Overview" registerRef={registerSectionRef}>
               <p className="text-base leading-relaxed text-muted-foreground">
                 {study.overview}
               </p>
@@ -269,60 +280,60 @@ export function CaseStudyDetail({ study }: CaseStudyDetailProps) {
             </SectionBlock>
 
             {study.research && (
-              <SectionBlock id="research" icon={sectionIcons.research!} title="Research" sectionRefs={sectionRefs}>
+              <SectionBlock id="research" icon={sectionIcons.research!} title="Research" registerRef={registerSectionRef}>
                 <ContentBlock content={study.research} />
               </SectionBlock>
             )}
 
             {study.planning && (
-              <SectionBlock id="planning" icon={sectionIcons.planning!} title="Planning" sectionRefs={sectionRefs}>
+              <SectionBlock id="planning" icon={sectionIcons.planning!} title="Planning" registerRef={registerSectionRef}>
                 <ContentBlock content={study.planning} />
               </SectionBlock>
             )}
 
             {study.design && (
-              <SectionBlock id="design" icon={sectionIcons.design!} title="Design" sectionRefs={sectionRefs}>
+              <SectionBlock id="design" icon={sectionIcons.design!} title="Design" registerRef={registerSectionRef}>
                 <ContentBlock content={study.design} />
               </SectionBlock>
             )}
 
             {study.architecture && (
-              <SectionBlock id="architecture" icon={sectionIcons.architecture!} title="Architecture" sectionRefs={sectionRefs}>
+              <SectionBlock id="architecture" icon={sectionIcons.architecture!} title="Architecture" registerRef={registerSectionRef}>
                 <ContentBlock content={study.architecture} />
               </SectionBlock>
             )}
 
             {study.approach && (
-              <SectionBlock id="approach" icon={<Code2 className="h-5 w-5" />} title="Approach" sectionRefs={sectionRefs}>
+              <SectionBlock id="approach" icon={<Code2 className="h-5 w-5" />} title="Approach" registerRef={registerSectionRef}>
                 <ContentBlock content={study.approach} />
               </SectionBlock>
             )}
 
             {study.development && (
-              <SectionBlock id="development" icon={sectionIcons.development!} title="Development" sectionRefs={sectionRefs}>
+              <SectionBlock id="development" icon={sectionIcons.development!} title="Development" registerRef={registerSectionRef}>
                 <ContentBlock content={study.development} />
               </SectionBlock>
             )}
 
             {study.testing && (
-              <SectionBlock id="testing" icon={sectionIcons.testing!} title="Testing" sectionRefs={sectionRefs}>
+              <SectionBlock id="testing" icon={sectionIcons.testing!} title="Testing" registerRef={registerSectionRef}>
                 <ContentBlock content={study.testing} />
               </SectionBlock>
             )}
 
             {study.deployment && (
-              <SectionBlock id="deployment" icon={sectionIcons.deployment!} title="Deployment" sectionRefs={sectionRefs}>
+              <SectionBlock id="deployment" icon={sectionIcons.deployment!} title="Deployment" registerRef={registerSectionRef}>
                 <ContentBlock content={study.deployment} />
               </SectionBlock>
             )}
 
             {study.solution && (
-              <SectionBlock id="solution" icon={<CheckCircle2 className="h-5 w-5" />} title="Solution" sectionRefs={sectionRefs}>
+              <SectionBlock id="solution" icon={<CheckCircle2 className="h-5 w-5" />} title="Solution" registerRef={registerSectionRef}>
                 <ContentBlock content={study.solution} />
               </SectionBlock>
             )}
 
-            <SectionBlock id="results" icon={<BarChart3 className="h-5 w-5" />} title="Results" sectionRefs={sectionRefs}>
+            <SectionBlock id="results" icon={<BarChart3 className="h-5 w-5" />} title="Results" registerRef={registerSectionRef}>
               {study.results && (
                 <p className="text-base leading-relaxed text-muted-foreground">
                   {study.results}
@@ -371,7 +382,14 @@ export function CaseStudyDetail({ study }: CaseStudyDetailProps) {
                       key={i}
                       className="overflow-hidden rounded-xl border border-border"
                     >
-                      <img src={src} alt={`${study.title} ${i + 1}`} className="w-full object-cover" />
+                      <Image
+                        src={src}
+                        alt={`${study.title} ${i + 1}`}
+                        width={1200}
+                        height={750}
+                        sizes="(min-width: 640px) 50vw, 100vw"
+                        style={{ width: "100%", height: "auto" }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -413,19 +431,19 @@ function SectionBlock({
   icon,
   title,
   children,
-  sectionRefs,
+  registerRef,
 }: {
   id: string
   icon: React.ReactNode
   title: string
   children: React.ReactNode
-  sectionRefs?: React.MutableRefObject<Record<string, HTMLDivElement | null>>
+  registerRef?: (id: string, el: HTMLDivElement | null) => void
 }) {
   return (
     <motion.div
       id={id}
       ref={(el) => {
-        if (sectionRefs) sectionRefs.current[id] = el
+        registerRef?.(id, el)
       }}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}

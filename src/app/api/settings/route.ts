@@ -1,7 +1,6 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
-import type { SiteSettings } from "@/types"
 
 const DEFAULT_SETTINGS = {
   site_config: {
@@ -186,21 +185,6 @@ const DEFAULT_SETTINGS = {
   ],
 }
 
-// SiteSettings type is defined in @/types
-
-async function getOrCreateSettings(key: string) {
-  let setting = await db.settings.findUnique({ where: { key } })
-  if (!setting) {
-    setting = await db.settings.create({
-      data: {
-        key,
-        value: (DEFAULT_SETTINGS as Record<string, unknown>)[key] ?? {},
-      },
-    })
-  }
-  return setting
-}
-
 export async function GET() {
   try {
     const allSettings = await db.settings.findMany()
@@ -252,6 +236,6 @@ export async function PUT(request: Request) {
     return apiResponse({ setting: updated })
   } catch (error) {
     console.error("[SETTINGS_PUT]", error)
-    return apiError("Failed to update settings", 500)
+    return toApiError(error, "Failed to update settings")
   }
 }

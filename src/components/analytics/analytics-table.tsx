@@ -24,7 +24,7 @@ interface AnalyticsTableProps<T> {
   emptyMessage?: string
 }
 
-export function AnalyticsTable<T extends Record<string, any>>({
+export function AnalyticsTable<T extends Record<string, unknown>>({
   data,
   columns,
   searchable = true,
@@ -37,6 +37,12 @@ export function AnalyticsTable<T extends Record<string, any>>({
   const [sortKey, setSortKey] = React.useState<string | null>(null)
   const [sortDir, setSortDir] = React.useState<"asc" | "desc">("desc")
   const [page, setPage] = React.useState(0)
+  const [prevQueryKey, setPrevQueryKey] = React.useState<string | null>(null)
+  const queryKey = `${search}|${sortKey}|${sortDir}`
+  if (prevQueryKey !== queryKey) {
+    setPrevQueryKey(queryKey)
+    setPage(0)
+  }
 
   const filtered = React.useMemo(() => {
     if (!search.trim()) return data
@@ -56,7 +62,9 @@ export function AnalyticsTable<T extends Record<string, any>>({
       const bVal = b[sortKey]
       if (aVal == null) return 1
       if (bVal == null) return -1
-      const cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0
+      const cmp = typeof aVal === "number" && typeof bVal === "number"
+        ? aVal - bVal
+        : String(aVal).localeCompare(String(bVal))
       return sortDir === "asc" ? cmp : -cmp
     })
   }, [filtered, sortKey, sortDir])
@@ -64,8 +72,6 @@ export function AnalyticsTable<T extends Record<string, any>>({
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize))
   const safePage = Math.min(page, totalPages - 1)
   const paged = sorted.slice(safePage * pageSize, (safePage + 1) * pageSize)
-
-  React.useEffect(() => { setPage(0) }, [search, sortKey, sortDir])
 
   function toggleSort(key: string) {
     if (sortKey === key) {
@@ -138,7 +144,7 @@ export function AnalyticsTable<T extends Record<string, any>>({
               ) : (
                 paged.map((item, i) => (
                   <tr
-                    key={item.id || i}
+                    key={(item.id as React.Key) ?? i}
                     className="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
                   >
                     {columns.map((col) => (
@@ -146,7 +152,7 @@ export function AnalyticsTable<T extends Record<string, any>>({
                         key={col.key}
                         className="whitespace-nowrap px-4 py-3 text-zinc-700 dark:text-zinc-300"
                       >
-                        {col.render ? col.render(item) : item[col.key] ?? "—"}
+                        {col.render ? col.render(item) : (item[col.key] as React.ReactNode) ?? "—"}
                       </td>
                     ))}
                   </tr>

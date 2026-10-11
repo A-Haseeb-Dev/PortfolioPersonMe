@@ -16,7 +16,6 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { formatDate, cn } from "@/lib/utils"
 
 type UserRole = "SUPER_ADMIN" | "ADMIN" | "EDITOR"

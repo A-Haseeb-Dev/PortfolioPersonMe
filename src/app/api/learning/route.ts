@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { logActivity } from "@/lib/activity"
 
@@ -31,7 +31,7 @@ export async function GET() {
     return apiResponse({ learning })
   } catch (error) {
     console.error("[LEARNING_GET] Failed to fetch learning journeys", error)
-    return apiError("Failed to fetch learning journeys", 500)
+    return toApiError(error, "Failed to fetch learning journeys")
   }
 }
 
@@ -74,6 +74,6 @@ export async function POST(req: Request) {
     return apiResponse({ journey }, 201)
   } catch (error) {
     console.error("[LEARNING_POST] Failed to create learning journey", error)
-    return apiError("Failed to create learning journey", 500)
+    return toApiError(error, "Failed to create learning journey")
   }
 }

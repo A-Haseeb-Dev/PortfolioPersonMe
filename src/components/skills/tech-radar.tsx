@@ -72,18 +72,14 @@ export default function TechRadar({ technologies, skillCategories }: TechRadarPr
   )
 
   const categorizedData = useMemo(() => {
-    const cats = skillCategories.map((c) => ({
-      ...c,
-      angle: (skillCategories.findIndex((sc) => sc.id === c.id) * 2 * Math.PI) / skillCategories.length,
-    }))
-
     const items = radarData
       .filter((item) => !selectedCategory || item.category === selectedCategory)
-      .map((item) => {
+      .map((item, index) => {
         const ring = rings.find((r) => r.key === item.ring) || rings[3]
         const catIndex = skillCategories.findIndex((c) => c.id === item.category)
         const baseAngle = (catIndex * 2 * Math.PI) / skillCategories.length
-        const jitter = (Math.random() - 0.5) * (Math.PI / 8)
+        const seed = ((item.name.charCodeAt(0) + index * 37) % 100) / 100
+        const jitter = (seed - 0.5) * (Math.PI / 8)
         const angle = baseAngle + jitter
 
         const r = ring.radius * maxRadius

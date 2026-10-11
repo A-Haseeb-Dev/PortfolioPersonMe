@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { LogOut, Bell, User, ChevronDown, Shield, Settings } from "lucide-react"
@@ -148,12 +149,14 @@ export default function AdminLayout({ children, user, onLogout }: AdminLayoutPro
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 text-sm font-medium text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200">
+                  <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-zinc-200 text-sm font-medium text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200">
                     {user.image ? (
-                      <img
+                      <Image
+                        fill
+                        sizes="32px"
                         src={user.image}
                         alt={user.name}
-                        className="h-full w-full rounded-full object-cover"
+                        className="rounded-full object-cover"
                       />
                     ) : (
                       <User size={16} />

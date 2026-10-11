@@ -87,8 +87,11 @@ export function SitePreloader() {
   useEffect(() => {
     if (!show) return
     if (!loading && pending === 0 && minElapsed) {
-      hasBooted = true
-      setShow(false)
+      const id = setTimeout(() => {
+        hasBooted = true
+        setShow(false)
+      }, 0)
+      return () => clearTimeout(id)
     }
   }, [show, loading, pending, minElapsed])
 

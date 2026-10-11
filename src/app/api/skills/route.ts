@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { apiResponse, apiError } from "@/lib/api"
+import { apiResponse, apiError, toApiError } from "@/lib/api"
 import { requireRole } from "@/lib/api-utils"
 import { slugify } from "@/lib/utils"
 import { logActivity } from "@/lib/activity"
@@ -24,16 +24,15 @@ export async function GET() {
     return apiResponse({ categories, technologies })
   } catch (error) {
     console.error("[SKILLS_GET] Failed to fetch skills", error)
-    return apiError("Failed to fetch skills", 500)
+    return toApiError(error, "Failed to fetch skills")
   }
 }
 
 export async function POST(request: Request) {
-  let body: any
   try {
     await requireRole(["ADMIN", "SUPER_ADMIN"])
 
-    body = await request.json()
+    const body = await request.json()
     const { name, description, icon, order } = body
     let { slug } = body
 
@@ -63,6 +62,6 @@ export async function POST(request: Request) {
     return apiResponse({ category }, 201)
   } catch (error) {
     console.error("[SKILLS_POST] Failed to create skill category", error)
-    return apiError("Failed to create skill category", 500)
+    return toApiError(error, "Failed to create skill category")
   }
 }

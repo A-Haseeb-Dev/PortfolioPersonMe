@@ -1,13 +1,13 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { motion } from "framer-motion"
 import {
   ArrowDown,
   ArrowRight,
   Camera,
   Code2,
-  Download,
   ExternalLink,
   Globe,
   Link2,
@@ -37,10 +37,13 @@ export default function HeroSection() {
   const [titleIndex, setTitleIndex] = React.useState(0)
   const [displayText, setDisplayText] = React.useState("")
   const [isDeleting, setIsDeleting] = React.useState(false)
-  const rotatingTitles = hero.titles.length > 0 ? hero.titles : ["Full Stack Developer"]
+  const rotatingTitles = React.useMemo(
+    () => (hero.titles.length > 0 ? hero.titles : ["Full Stack Developer"]),
+    [hero.titles],
+  )
 
   React.useEffect(() => {
-    const currentTitle = rotatingTitles[titleIndex]
+    const currentTitle = rotatingTitles[titleIndex % rotatingTitles.length]
     let timeout: ReturnType<typeof setTimeout>
 
     if (!isDeleting && displayText.length < currentTitle.length) {
@@ -54,8 +57,10 @@ export default function HeroSection() {
         setDisplayText(displayText.slice(0, -1))
       }, 40)
     } else if (isDeleting && displayText.length === 0) {
-      setIsDeleting(false)
-      setTitleIndex((prev) => (prev + 1) % rotatingTitles.length)
+      timeout = setTimeout(() => {
+        setIsDeleting(false)
+        setTitleIndex((prev) => (prev + 1) % rotatingTitles.length)
+      }, 40)
     }
 
     return () => clearTimeout(timeout)
@@ -113,16 +118,16 @@ export default function HeroSection() {
 
           <FadeIn delay={0.5} className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Button variant="primary" size="lg" asChild>
-              <a href="/projects">
+              <Link href="/projects">
                 View Projects
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
+              </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <a href="/contact">
+              <Link href="/contact">
                 Contact Me
                 <ExternalLink className="ml-2 h-4 w-4" />
-              </a>
+              </Link>
             </Button>
           </FadeIn>
 

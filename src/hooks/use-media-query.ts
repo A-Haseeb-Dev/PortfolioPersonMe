@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useSyncExternalStore } from "react"
 
 const breakpoints = {
   sm: "(min-width: 640px)",
@@ -16,18 +16,15 @@ const breakpoints = {
 export type Breakpoint = keyof typeof breakpoints
 
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false)
-
-  useEffect(() => {
+  const subscribe = useCallback((onStoreChange: () => void) => {
     const mql = window.matchMedia(query)
-    setMatches(mql.matches)
-
-    const handler = (e: MediaQueryListEvent) => setMatches(e.matches)
-    mql.addEventListener("change", handler)
-    return () => mql.removeEventListener("change", handler)
+    mql.addEventListener("change", onStoreChange)
+    return () => mql.removeEventListener("change", onStoreChange)
   }, [query])
 
-  return matches
+  const getSnapshot = useCallback(() => window.matchMedia(query).matches, [query])
+
+  return useSyncExternalStore(subscribe, getSnapshot, () => false)
 }
 
 export function useBreakpoint(breakpoint: Breakpoint): boolean {

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowUpRight, GitBranch, ExternalLink, ChevronRight } from "lucide-react"
 import { Section } from "@/components/ui/section"
@@ -105,10 +106,10 @@ export default function FeaturedProjects() {
       subtitle="A selection of recent work that showcases my expertise across different domains."
       action={
         <Button variant="ghost" size="sm" asChild>
-          <a href="/projects">
+          <Link href="/projects">
             View All Projects
             <ArrowUpRight className="ml-1 h-4 w-4" />
-          </a>
+          </Link>
         </Button>
       }
     >
