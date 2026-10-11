@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
+import { beginLoading } from "@/lib/loading-store"
 
 const gradients = [
   "from-blue-600 via-blue-500 to-cyan-400",
@@ -35,6 +36,7 @@ export default function FeaturedProjects() {
 
   React.useEffect(() => {
     let cancelled = false
+    const end = beginLoading()
 
     fetch("/api/projects?featured=true&published=true&limit=6")
       .then((r) => {
@@ -77,6 +79,7 @@ export default function FeaturedProjects() {
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
+        end()
       })
 
     return () => { cancelled = true }

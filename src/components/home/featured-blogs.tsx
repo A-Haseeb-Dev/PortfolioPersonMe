@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
 import { FadeIn } from "@/components/ui/animated-text"
 import { Skeleton } from "@/components/ui/skeleton"
+import { beginLoading } from "@/lib/loading-store"
 
 interface BlogPost {
   id: string
@@ -25,6 +26,7 @@ export default function FeaturedBlogs() {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
+    const end = beginLoading()
     fetch("/api/blog?published=true&limit=3")
       .then((r) => r.json())
       .then((json) => {
@@ -43,7 +45,10 @@ export default function FeaturedBlogs() {
         }
       })
       .catch(() => {})
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setLoading(false)
+        end()
+      })
   }, [])
 
   if (loading) {

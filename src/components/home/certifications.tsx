@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
+import { beginLoading } from "@/lib/loading-store"
 
 interface CertificateItem {
   id: string
@@ -33,6 +34,7 @@ export default function Certifications() {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
+    const end = beginLoading()
     fetch("/api/achievements?limit=10")
       .then((r) => r.json())
       .then((json) => {
@@ -47,9 +49,12 @@ export default function Certifications() {
             description: c.description as string | null,
           })))
         }
-        setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {})
+      .finally(() => {
+        setLoading(false)
+        end()
+      })
   }, [])
 
   if (loading) {

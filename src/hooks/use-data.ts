@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import { beginLoading } from "@/lib/loading-store"
 
 export function useData<T>(
   apiUrl: string,
@@ -8,9 +9,12 @@ export function useData<T>(
   transform?: (data: Record<string, unknown>) => T[],
 ): T[] {
   const [data, setData] = useState<T[]>(fallback)
+  const transformRef = useRef(transform)
+  transformRef.current = transform
 
   useEffect(() => {
     let cancelled = false
+    const end = beginLoading()
 
     fetch(apiUrl)
       .then((r) => {
@@ -19,8 +23,9 @@ export function useData<T>(
       })
       .then((res: Record<string, unknown>) => {
         if (cancelled) return
-        if (transform) {
-          const transformed = transform(res)
+        const transformFn = transformRef.current
+        if (transformFn) {
+          const transformed = transformFn(res)
           if (transformed.length > 0) setData(transformed)
         } else {
           const items: unknown[] = res.data as unknown[] ||
@@ -34,9 +39,12 @@ export function useData<T>(
       .catch((err: Error) => {
         if (!cancelled) console.error(`[useData] Failed to fetch ${apiUrl}:`, err)
       })
+      .finally(() => {
+        end()
+      })
 
     return () => { cancelled = true }
-  }, [apiUrl, transform])
+  }, [apiUrl])
 
   return data
 }

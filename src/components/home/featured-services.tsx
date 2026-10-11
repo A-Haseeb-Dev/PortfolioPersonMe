@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
+import { beginLoading } from "@/lib/loading-store"
 
 const iconMap: Record<string, React.ReactNode> = {
   globe: <Globe className="h-5 w-5" />,
@@ -53,6 +54,7 @@ export default function FeaturedServices() {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
+    const end = beginLoading()
     fetch("/api/services?published=true&limit=6")
       .then((r) => r.json())
       .then((json) => {
@@ -68,9 +70,12 @@ export default function FeaturedServices() {
             slug: s.slug as string,
           })))
         }
-        setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {})
+      .finally(() => {
+        setLoading(false)
+        end()
+      })
   }, [])
 
   if (loading) {

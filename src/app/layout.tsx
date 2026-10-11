@@ -4,10 +4,6 @@ import { ThemeProvider } from "@/components/layout/theme-provider"
 import { SessionProvider } from "@/components/layout/session-provider"
 import { ChatProvider } from "@/contexts/chat-context"
 import { SettingsProvider } from "@/contexts/settings-context"
-import { ChatButton } from "@/components/chat/chat-button"
-import { ChatWindow } from "@/components/chat/chat-window"
-import Navbar from "@/components/layout/navbar"
-import Footer from "@/components/layout/footer"
 import { Toaster } from "@/components/ui/toast"
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -71,11 +67,7 @@ export default function RootLayout({
         >
           <SettingsProvider>
             <ChatProvider>
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <ChatButton />
-              <ChatWindow />
+              {children}
               <Toaster />
             </ChatProvider>
           </SettingsProvider>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
+import { beginLoading } from "@/lib/loading-store"
 
 interface TestimonialItem {
   id: string
@@ -25,6 +26,7 @@ export default function Testimonials() {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
+    const end = beginLoading()
     fetch("/api/testimonials?limit=10")
       .then((r) => r.json())
       .then((json) => {
@@ -39,9 +41,12 @@ export default function Testimonials() {
             rating: (t.rating as number) || 5,
           })))
         }
-        setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {})
+      .finally(() => {
+        setLoading(false)
+        end()
+      })
   }, [])
 
   React.useEffect(() => {

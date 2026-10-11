@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Section } from "@/components/ui/section"
 import { FadeIn } from "@/components/ui/animated-text"
 import { cn } from "@/lib/utils"
+import { beginLoading } from "@/lib/loading-store"
 
 interface Client {
   id: string
@@ -22,6 +23,7 @@ export default function ClientsSection() {
 
   React.useEffect(() => {
     let cancelled = false
+    const end = beginLoading()
     fetch("/api/clients?featured=true")
       .then((res) => res.ok ? res.json() : null)
       .then((json) => {
@@ -29,10 +31,11 @@ export default function ClientsSection() {
         if (json && Array.isArray(json.clients)) {
           setClients(json.clients)
         }
-        setLoading(false)
       })
-      .catch(() => {
+      .catch(() => {})
+      .finally(() => {
         if (!cancelled) setLoading(false)
+        end()
       })
     return () => { cancelled = true }
   }, [])
