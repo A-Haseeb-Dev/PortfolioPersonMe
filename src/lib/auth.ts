@@ -1,9 +1,15 @@
 import NextAuth from "next-auth"
+import { CredentialsSignin } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 
 import { db } from "@/lib/db"
+import { rateLimit, getClientIp } from "@/lib/rate-limit"
+
+class TooManyAttemptsError extends CredentialsSignin {
+  code = "TooManyAttempts"
+}
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db),
@@ -19,11 +25,27 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null
 
-        const email = credentials.email as string
+        const email = (credentials.email as string).toLowerCase()
         const password = credentials.password as string
+
+        const ip = getClientIp(request.headers)
+
+        // Per-IP: block distributed brute force.
+        if (!rateLimit(`login:ip:${ip}`, { windowMs: 15 * 60_000, max: 30 })) {
+          throw new TooManyAttemptsError(
+            "Too many login attempts from this IP. Try again later.",
+          )
+        }
+
+        // Per-email: block targeted guessing.
+        if (!rateLimit(`login:email:${email}`, { windowMs: 15 * 60_000, max: 10 })) {
+          throw new TooManyAttemptsError(
+            "Too many login attempts for this account. Try again later.",
+          )
+        }
 
         const user = await db.user.findUnique({
           where: { email },

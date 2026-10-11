@@ -37,6 +37,7 @@ function LoginForm() {
   const errorMessage =
     clientError ||
     (errorType === "CredentialsSignin" ? "Invalid email or password. Please try again." :
+     errorType === "TooManyAttempts" ? "Too many login attempts. Please try again later." :
      errorType === "SessionRequired" ? "Please sign in to access this page." :
      errorType ? "Sign in failed. Please try again." : "")
 
