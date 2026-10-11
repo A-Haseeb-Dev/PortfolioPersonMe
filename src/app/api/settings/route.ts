@@ -185,6 +185,22 @@ const DEFAULT_SETTINGS = {
   ],
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
+function mergeDefaults<T>(defaultValue: T, stored: unknown): T {
+  if (stored === undefined || stored === null) return defaultValue
+  if (isPlainObject(defaultValue) && isPlainObject(stored)) {
+    const result: Record<string, unknown> = { ...stored }
+    for (const [key, value] of Object.entries(defaultValue)) {
+      result[key] = key in stored ? mergeDefaults(value, stored[key]) : value
+    }
+    return result as T
+  }
+  return stored as T
+}
+
 export async function GET() {
   try {
     const allSettings = await db.settings.findMany()
@@ -192,7 +208,7 @@ export async function GET() {
 
     for (const [key, defaultValue] of Object.entries(DEFAULT_SETTINGS)) {
       const existing = allSettings.find((s) => s.key === key)
-      settingsMap[key] = existing?.value ?? defaultValue
+      settingsMap[key] = existing ? mergeDefaults(defaultValue, existing.value) : defaultValue
     }
 
     return apiResponse({ settings: settingsMap })
