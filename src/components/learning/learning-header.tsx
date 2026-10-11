@@ -5,7 +5,7 @@ import { GraduationCap } from "lucide-react"
 
 export default function LearningHeader() {
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background pb-12 pt-20 sm:pt-28">
+    <section className="relative overflow-hidden border-b border-border bg-background pb-24 pt-20 sm:pb-32 sm:pt-28">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-emerald-100/60 to-transparent blur-3xl dark:from-emerald-900/30" />
         <div className="absolute -bottom-40 right-0 h-[500px] w-[500px] rounded-full bg-gradient-to-tl from-teal-100/50 to-transparent blur-3xl dark:from-teal-800/25" />

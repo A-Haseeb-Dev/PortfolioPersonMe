@@ -69,7 +69,7 @@ export default function AchievementsTimeline() {
   const grouped = useMemo(() => groupByYear(achievements), [achievements])
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="pb-16 sm:pb-24">
       <div className="relative">
         <div className="pointer-events-none absolute left-[23px] top-0 h-full w-px bg-zinc-200 dark:bg-zinc-800 sm:left-1/2 sm:-translate-x-px" />
 

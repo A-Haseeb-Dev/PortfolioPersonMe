@@ -25,7 +25,7 @@ export default function ServicesHeader() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="relative overflow-hidden py-20 sm:py-28"
+      className="relative overflow-hidden pb-24 pt-20 sm:pb-32 sm:pt-28"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-zinc-200/40 to-transparent blur-3xl dark:from-zinc-800/40" />
