@@ -8,7 +8,7 @@ interface CaseStudiesHeaderProps {
 
 export function CaseStudiesHeader({ totalStudies }: CaseStudiesHeaderProps) {
   return (
-    <section className="relative overflow-hidden border-b border-border/50 bg-background pb-12 pt-20 sm:pt-28">
+    <section className="relative overflow-hidden border-b border-border/50 bg-background pb-24 pt-20 sm:pb-32 sm:pt-28">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-blue-100/60 to-transparent blur-3xl dark:from-blue-950/40" />
         <div className="absolute -bottom-40 right-0 h-[500px] w-[500px] rounded-full bg-gradient-to-tl from-indigo-100/50 to-transparent blur-3xl dark:from-indigo-950/30" />

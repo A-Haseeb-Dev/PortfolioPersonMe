@@ -30,6 +30,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSettings } from "@/contexts/settings-context"
+import { DEFAULT_NAV_ITEMS } from "@/lib/constants"
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   Home, User, Code2, FolderGit2, BookOpen, BrainCircuit, Mail, Phone,
@@ -75,7 +76,7 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
   })
 
   const navItems = useMemo(() => {
-    const items = settings.nav_items || []
+    const items = settings.nav_items?.length ? settings.nav_items : DEFAULT_NAV_ITEMS
     return items.filter((i) => !i.children).map((item) => {
       const iconName = item.label === "Home" ? "Home"
         : item.label === "About" ? "User"

@@ -22,6 +22,7 @@ import {
   Award,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { DEFAULT_NAV_ITEMS } from "@/lib/constants"
 import { useSettings } from "@/contexts/settings-context"
 import MobileNav from "./mobile-nav"
 
@@ -48,7 +49,7 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme()
   const { settings } = useSettings()
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
-  const navItems = settings.nav_items.length > 0 ? settings.nav_items : []
+  const navItems = settings.nav_items.length > 0 ? settings.nav_items : DEFAULT_NAV_ITEMS
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [visible, setVisible] = useState(true)

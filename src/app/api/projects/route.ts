@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     ])
 
     return apiResponse({
-      projects,
+      projects: projects.map((p) => ({ ...p, status: p.published ? "published" : "draft" })),
       pagination: {
         page,
         limit,
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
         githubUrl: parsed.data.githubUrl || null,
         liveUrl: parsed.data.liveUrl || null,
         videoDemo: parsed.data.videoDemo || null,
-        published: parsed.data.status === "completed",
+        published: parsed.data.published === true || parsed.data.status === "completed",
       },
     })
 

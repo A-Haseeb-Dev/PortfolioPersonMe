@@ -70,7 +70,9 @@ export async function PUT(
     if (parsed.data.githubUrl !== undefined) data.githubUrl = parsed.data.githubUrl || null
     if (parsed.data.liveUrl !== undefined) data.liveUrl = parsed.data.liveUrl || null
     if (parsed.data.videoDemo !== undefined) data.videoDemo = parsed.data.videoDemo || null
-    if (parsed.data.status !== undefined) data.published = parsed.data.status === "completed"
+    if (parsed.data.status !== undefined || parsed.data.published !== undefined) {
+      data.published = parsed.data.published === true || parsed.data.status === "completed"
+    }
 
     const project = await db.project.update({
       where: { id },

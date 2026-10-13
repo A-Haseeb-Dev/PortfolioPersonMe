@@ -393,7 +393,7 @@ export default function SkillsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      <section className="relative overflow-hidden border-b border-zinc-200/50 pb-16 pt-20 sm:pb-20 sm:pt-24 dark:border-zinc-800/50">
+      <section className="relative overflow-hidden border-b border-zinc-200/50 pb-24 pt-20 sm:pb-32 sm:pt-24 dark:border-zinc-800/50">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-zinc-200/40 to-transparent blur-3xl dark:from-zinc-800/30" />
           <div className="absolute -bottom-40 -right-40 h-[400px] w-[400px] rounded-full bg-gradient-to-tl from-zinc-200/30 to-transparent blur-3xl dark:from-zinc-800/20" />

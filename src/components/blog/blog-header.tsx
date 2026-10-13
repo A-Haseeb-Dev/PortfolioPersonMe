@@ -28,7 +28,7 @@ export default function BlogHeader({
         <div className="absolute -bottom-40 right-0 h-[500px] w-[500px] rounded-full bg-gradient-to-tl from-fuchsia-100/50 to-transparent blur-3xl dark:from-fuchsia-950/30" />
       </div>
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="relative mx-auto max-w-3xl pb-16 pt-20 text-center sm:pt-28">
+        <div className="relative mx-auto max-w-3xl pb-24 pt-20 text-center sm:pb-32 sm:pt-28">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}

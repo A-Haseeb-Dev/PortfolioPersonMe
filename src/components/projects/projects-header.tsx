@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Container } from "@/components/ui/container"
 
-const categories = [
+const defaultCategories = [
   { id: "all", label: "All" },
   { id: "web", label: "Web" },
   { id: "mobile", label: "Mobile" },
@@ -18,11 +18,12 @@ interface ProjectsHeaderProps {
   activeCategory: string
   onCategoryChange: (category: string) => void
   totalProjects: number
+  categories?: { id: string; label: string }[]
 }
 
-export function ProjectsHeader({ activeCategory, onCategoryChange, totalProjects }: ProjectsHeaderProps) {
+export function ProjectsHeader({ activeCategory, onCategoryChange, totalProjects, categories = defaultCategories }: ProjectsHeaderProps) {
   return (
-    <div className="relative overflow-hidden border-b border-border/50 bg-background pb-12 pt-16 sm:pt-24">
+    <div className="relative overflow-hidden border-b border-border/50 bg-background pb-24 pt-20 sm:pb-32 sm:pt-28">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,0,0,0.02)_0%,transparent_50%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.02)_0%,transparent_50%)]" />
       <Container>
         <motion.div

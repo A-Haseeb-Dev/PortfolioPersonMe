@@ -30,6 +30,7 @@ export const projectSchema = z.object({
   videoDemo: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   category: z.string().min(1, "Category is required"),
   featured: z.boolean().default(false),
+  published: z.boolean().optional(),
   status: z.enum(["completed", "in-progress", "planned"]).default("completed"),
   startDate: z.string().optional(),
   endDate: z.string().optional(),

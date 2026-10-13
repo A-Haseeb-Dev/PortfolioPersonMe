@@ -85,6 +85,7 @@ export default function CreateProject() {
           image: "",
           category: "Web",
           featured,
+          published,
           status: asDraft ? "in-progress" : "completed",
         }),
       })
