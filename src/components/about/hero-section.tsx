@@ -50,7 +50,7 @@ export default function HeroSection() {
     .toUpperCase()
 
   return (
-    <section className="relative overflow-hidden py-20 sm:py-28">
+    <section className="relative overflow-hidden pb-24 pt-20 sm:pb-32 sm:pt-28">
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-50/80 to-transparent dark:from-zinc-950/80" />
         <div className="absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-gradient-to-br from-zinc-200/40 to-transparent blur-3xl dark:from-zinc-800/20" />
