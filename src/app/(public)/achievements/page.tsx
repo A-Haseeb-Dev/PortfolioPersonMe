@@ -7,8 +7,8 @@ import AchievementsTimeline from "@/components/achievements/achievements-timelin
 export default function AchievementsPage() {
   return (
     <main className="min-h-screen pb-24">
+      <AchievementsHeader />
       <Container>
-        <AchievementsHeader />
         <AchievementsTimeline />
       </Container>
     </main>

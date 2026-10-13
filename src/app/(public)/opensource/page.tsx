@@ -78,8 +78,8 @@ export default function OpensourcePage() {
 
   return (
     <main className="min-h-screen pb-24">
+      <OpensourceHeader profile={profile} />
       <Container>
-        <OpensourceHeader profile={profile} />
         <OpensourceContributions />
         <OpensourceRepos repos={repos} />
       </Container>

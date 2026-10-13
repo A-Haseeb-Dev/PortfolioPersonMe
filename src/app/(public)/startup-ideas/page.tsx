@@ -7,8 +7,8 @@ import StartupGrid from "@/components/startup/startup-grid"
 export default function StartupIdeasPage() {
   return (
     <main className="min-h-screen pb-24">
+      <StartupHeader />
       <Container>
-        <StartupHeader />
         <StartupGrid />
       </Container>
     </main>

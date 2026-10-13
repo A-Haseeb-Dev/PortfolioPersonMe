@@ -4,12 +4,13 @@ import { motion } from "framer-motion"
 
 export default function ResourcesHeader() {
   return (
-    <section className="relative overflow-hidden pb-24 pt-20 sm:pb-32 sm:pt-28">
+    <section className="relative overflow-hidden border-b border-border bg-background pb-24 pt-20 sm:pb-32 sm:pt-28">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-violet-100/60 to-transparent blur-3xl dark:from-violet-950/40" />
         <div className="absolute -bottom-40 right-0 h-[500px] w-[500px] rounded-full bg-gradient-to-tl from-amber-100/50 to-transparent blur-3xl dark:from-amber-950/30" />
       </div>
-      <div className="relative mx-auto max-w-2xl text-center">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-2xl text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,6 +40,7 @@ export default function ResourcesHeader() {
         >
           Resumes, certificates, cheat sheets, and guides — everything you need to level up your development career.
         </motion.p>
+        </div>
       </div>
     </section>
   )

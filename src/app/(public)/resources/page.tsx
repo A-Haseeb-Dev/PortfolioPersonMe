@@ -7,8 +7,8 @@ import ResourcesGrid from "@/components/resources/resources-grid"
 export default function ResourcesPage() {
   return (
     <main className="min-h-screen pb-24">
+      <ResourcesHeader />
       <Container>
-        <ResourcesHeader />
         <ResourcesGrid />
       </Container>
     </main>

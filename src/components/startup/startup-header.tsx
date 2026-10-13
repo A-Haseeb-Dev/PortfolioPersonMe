@@ -21,17 +21,18 @@ const itemVariants = {
 
 export default function StartupHeader() {
   return (
-    <motion.div
+    <motion.section
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="relative overflow-hidden pb-24 pt-20 sm:pb-32 sm:pt-28"
+      className="relative overflow-hidden border-b border-border bg-background pb-24 pt-20 sm:pb-32 sm:pt-28"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-zinc-200/40 to-transparent blur-3xl dark:from-zinc-800/40" />
         <div className="absolute -right-40 bottom-0 h-[400px] w-[400px] rounded-full bg-gradient-to-tl from-emerald-200/30 to-transparent blur-3xl dark:from-emerald-900/30" />
       </div>
-      <motion.div variants={itemVariants} className="relative mx-auto max-w-3xl text-center">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <motion.div variants={itemVariants} className="relative mx-auto max-w-3xl text-center">
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/50 px-4 py-1.5 text-xs font-medium text-zinc-600 backdrop-blur-sm dark:border-zinc-700/50 dark:bg-zinc-900/50 dark:text-zinc-400">
           <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
           Ideas &amp; experiments
@@ -47,6 +48,7 @@ export default function StartupHeader() {
           Each one tackles a real problem with a thoughtful solution.
         </p>
       </motion.div>
-    </motion.div>
+      </div>
+    </motion.section>
   )
 }
