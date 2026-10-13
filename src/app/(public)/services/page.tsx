@@ -73,7 +73,7 @@ export default function ServicesPage() {
   return (
     <main className="min-h-screen pb-24">
       <ServicesHeader />
-      <Container>
+      <Container className="pt-6 sm:pt-8">
         <AnimatePresence mode="wait">
           {showInquiry ? (
             <ServiceInquiryForm

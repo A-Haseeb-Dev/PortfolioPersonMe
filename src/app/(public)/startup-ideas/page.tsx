@@ -8,7 +8,7 @@ export default function StartupIdeasPage() {
   return (
     <main className="min-h-screen pb-24">
       <StartupHeader />
-      <Container>
+      <Container className="pt-6 sm:pt-8">
         <StartupGrid />
       </Container>
     </main>

@@ -8,7 +8,7 @@ export default function ResourcesPage() {
   return (
     <main className="min-h-screen pb-24">
       <ResourcesHeader />
-      <Container>
+      <Container className="pt-6 sm:pt-8">
         <ResourcesGrid />
       </Container>
     </main>

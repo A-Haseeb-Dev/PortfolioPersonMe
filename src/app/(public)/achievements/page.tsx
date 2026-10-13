@@ -8,7 +8,7 @@ export default function AchievementsPage() {
   return (
     <main className="min-h-screen pb-24">
       <AchievementsHeader />
-      <Container>
+      <Container className="pt-6 sm:pt-8">
         <AchievementsTimeline />
       </Container>
     </main>
